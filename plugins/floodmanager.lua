@@ -31,6 +31,7 @@ local function do_keyboard_flood(chat_id, ln)
     
     local exceptions = {
         ['text'] = lang[ln].floodmanager.text,
+        ['forward'] = lang[ln].floodmanager.forward,
         ['sticker'] = lang[ln].floodmanager.sticker,
         ['image'] = lang[ln].floodmanager.image,
         ['gif'] = lang[ln].floodmanager.gif,

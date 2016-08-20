@@ -29,8 +29,9 @@ end
 local pre_process = function(msg)
     
     local msg_type = 'text'
-    if msg.media then msg_type = msg.media_type end
-    if not is_ignored(msg.chat.id, msg_type) then
+	if msg.forward_from then msg_type = 'forward' end
+    local msg_media = msg.media_type
+    if not is_ignored(msg.chat.id, msg_type) or msg.media and not is_ignored(msg.chat.id, msg_media) then
         local spamhash = 'spam:'..msg.chat.id..':'..msg.from.id
         local msgs = tonumber(db:get(spamhash)) or 0
         if msgs == 0 then msgs = 1 end

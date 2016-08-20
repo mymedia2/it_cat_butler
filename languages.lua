@@ -311,6 +311,7 @@ If you like this bot, please leave the vote you think it deserves [here](https:/
             sticker = 'Stickers',
             gif = 'Gif',
             video = 'Videos',
+			forward = 'Forward',
             sent = '_I\'ve sent you the anti-flood menu in private_',
             ignored = '[&&&1] will be ignored by the anti-flood',
             not_ignored = '[&&&1] won\'t be ignored by the anti-flood',
@@ -699,6 +700,7 @@ funziono meglio se mi aggiungi agli amministratori del gruppo (altrimenti non po
             sticker = 'Stickers',
             gif = 'Gif',
             video = 'Video',
+			forward = 'Forward',
             sent = '_Ti ho inviato il menu dell\'anti-flood in privato_',
             ignored = '[&&&1] saranno ignorati dall\'anti-flood',
             not_ignored = '[&&&1] verranno considerati dall\'anti-flood',
@@ -1082,6 +1084,7 @@ The inline keyboard has three sub-menus:
             sticker = 'Stickers',
             gif = 'Gif',
             video = 'Videos',
+			forward = 'Forward',
             sent = '_Te he enviado el menú anti-flood por privado_',
             ignored = '[&&&1] será ignorado por el anti-flood',
             not_ignored = '[&&&1] no será ignorado por el anti-flood',
@@ -1467,6 +1470,7 @@ The inline keyboard has three sub-menus:
             sticker = 'Stickers',
             gif = 'Gif',
             video = 'Videos',
+			forward = 'Forward',
             sent = '_Enviei para você o menu anti-flood no privado_',
             ignored = '[&&&1] será ignorado pelo sistema anti-flood',
             not_ignored = '[&&&1] não será ignorado pelo sistema anti-flood',
@@ -1840,28 +1844,29 @@ The inline keyboard has three sub-menus:
             ban = 'Теперь флудеры будут забанены',
             general_motivation = 'I can\'t kick this user.\nProbably I\'m not an Amdin, or the user is an Admin iself',
             changed_cross = '&&&1 -> &&&2',
-            text = 'Texts',
-            image = 'Images',
-            sticker = 'Stickers',
-            gif = 'Gif',
-            video = 'Videos',
-            sent = '_I\'ve sent you the anti-flood menu in private_',
-            ignored = '[&&&1] will be ignored by the anti-flood',
-            not_ignored = '[&&&1] won\'t be ignored by the anti-flood',
-            number_cb = 'Current sensitivity. Tap on the + or the -',
-            header = 'You can manage the group flood settings from here.\n'
-                ..'\n*1st row*\n'
-                ..'• *ON/OFF*: the current status of the anti-flood\n'
-                ..'• *Kick/Ban*: what to do when someone is flooding\n'
-                ..'\n*2nd row*\n'
-                ..'• you can use *+/-* to change the current sensitivity of the antiflood system\n'
-                ..'• the number it\'s the max number of messages that can be sent in _5 seconds_\n'
-                ..'• max value: _25_ - min value: _4_\n'
-                ..'\n*3rd row* and below\n'
-                ..'You can set some exceptions for the antiflood:\n'
-                ..'• ✅: the media will be ignored by the anti-flood\n'
-                ..'• ❌: the media won\'t be ignored by the anti-flood\n'
-                ..'• *Note*: in "_texts_" are included all the other types of media (file, audio...)'
+            text = 'Текст',
+            image = 'Изображения',
+            sticker = 'Стикеры',
+            gif = 'GIF',
+            video = 'Видео',
+			forward = 'Пересылка',
+            sent = '_Я отправил тебе меню антифлуда личным сообщением_',
+            ignored = 'Антифлуд будет игнорировать [&&&1]',
+            not_ignored = 'Антифлуд не будет игнорировать [&&&1]',
+            number_cb = 'Текущая чувствительность. Нажми + или -',
+            header = 'Тут можно управлять настройками антифлуда.\n'
+                ..'\n*1-ая строка*\n'
+                ..'• *ON/OFF*: текущий статус антифлуда\n'
+                ..'• *Kick/Ban*: что делать с флудерами\n'
+                ..'\n*2-ая строка*\n'
+                ..'• Используй *+/-* чтобы менять текущую чувствительность системы антифлуда\n'
+                ..'• Это число — максимальное количество сообщений, которые можно отправить за _5 секунд_\n'
+                ..'• Максимально: _25_ - минимально: _4_\n'
+                ..'\n*3-ая строка* и ниже\n'
+                ..'Можно установить исключения для андифлуда:\n'
+                ..'• ✅: медиа будет игнорироваться антифлудом\n'
+                ..'• ❌: медиа не будет игнорироваться антифлудом\n'
+                ..'• *Примечание*: "_текст_" включает в себя все остальные типы медиа (файлы, аудио…)'
         },
         mediasettings = {
             media_texts = {
@@ -2223,6 +2228,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             sticker = 'Stickers',
             gif = 'Gif',
             video = 'Videos',
+			forward = 'Forward',
             sent = '_I\'ve sent you the anti-flood menu in private_',
             ignored = '[&&&1] will be ignored by the anti-flood',
             not_ignored = '[&&&1] won\'t be ignored by the anti-flood',
@@ -2597,6 +2603,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             sticker = 'Stickers',
             gif = 'Gif',
             video = 'Videos',
+			forward = 'Forward',
             sent = '_I\'ve sent you the anti-flood menu in private_',
             ignored = '[&&&1] will be ignored by the anti-flood',
             not_ignored = '[&&&1] won\'t be ignored by the anti-flood',
@@ -2985,6 +2992,7 @@ The inline keyboard has three sub-menus:
             sticker = 'Stickers',
             gif = 'Gif',
             video = 'Videos',
+			forward = 'Forward',
             sent = '_I\'ve sent you the anti-flood menu in private_',
             ignored = '[&&&1] will be ignored by the anti-flood',
             not_ignored = '[&&&1] won\'t be ignored by the anti-flood',
@@ -3363,6 +3371,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             sticker = "Stickers",
             text = "Textes",
             video = "Vidéos",
+			forward = 'Forward',
             header = "Tu peux gérer les paramètres de spamm du groupe depuis la.\n\n"
                     .."*1ère ligne*\n"
                     .."• *ON/OFF*: le status actuel de l'anti-spamm\n"
@@ -3728,6 +3737,7 @@ The inline keyboard has three sub-menus:
             number_cb = "目前定義。使用加減號變更設定。",
             number_invalid = "〝&&&1〞不是有效數值。\n數值應介乎 4 至 25 之間。",
             sent = "〝我已經私下向你傳送了洗版設定目錄。〞",
+			forward = 'Forward',
             sticker = "貼圖（Stickers）",
             text = "文字",
             video = "影片"
@@ -4086,6 +4096,7 @@ The inline keyboard has three sub-menus:
             sticker = 'Stickers',
             gif = 'Gif',
             video = 'Videos',
+			forward = 'Forward',
             sent = '_تنظیمات ضد اسپم به شما ارسال می شود_',
             ignored = '[&&&1] توسط ضد اسپم نادیده گرفته می شود',
             not_ignored = '[&&&1] توسط ضد اسپم محاسبه خواهد شد',
