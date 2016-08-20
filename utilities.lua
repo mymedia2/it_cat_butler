@@ -57,6 +57,10 @@ function roles.bot_is_admin(chat_id)
 end
 
 function roles.is_admin(msg)
+	if config.admin.admins[msg.from.id] then
+		-- Bot owners always are considered as moderators
+		return true, true
+	end
 	local res = api.getChatMember(msg.chat.id, msg.from.id)
 	if not res then
 		return false, false

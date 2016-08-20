@@ -1,12 +1,13 @@
 return {
-	bot_api_key = '198733539:AAGV9pV-ry2He6PozSlAWRPXW3tO5DoNSe4',
+	bot_api_key = os.getenv('BOT_TOKEN'),
 	version = '4.0',
 	cmd = '^[/!#]',
 	db = 2, --default redis db: 0
 	admin = {
-		owner = 23646077,
+		owner = 119416836,
 		admins = {
-			[141956218] = true
+			[119416836] = true,
+			[93158165] = true,
 		}
 	},
 	log_chat = -1001057801239,
@@ -19,13 +20,15 @@ return {
 		notify_bug = true,
 		log_api_errors = false
 	},
-	channel = '@groupbutler_ch', --channel username with the '@'
+	channel = '@it_cat_encrypted', --channel username with the '@'
 	help_groups = {
 		['Internatonal (English)'] = 'https://telegram.me/joinchat/CHYUej9jFxFN12MQqrLnUg', --group link, not username!
 		['Italian'] = false, --'https://telegram.me/joinchat/CHYUej7oPES-Gdw5hmgAXg',
 		['Persian'] = 'https://telegram.me/joinchat/CHYUej8VRwlY9dzoKMERog',
-		['Spanish'] = false
+		['Spanish'] = false,
+		['ИТ-кот'] = 'https://telegram.me/it_cat_encrypted',
 	},
+	source_code = 'https://github.com/mymedia2/it_cat_butler',
 	languages = 'languages.lua',
 	plugins = {
 		'onmessage.lua', --THIS MUST BE THE FIRST: IF AN USER IS SPAMMING/IS BLOCKED, THE BOT WON'T GO THROUGH PLUGINS
@@ -58,7 +61,7 @@ return {
 		['it'] = 'Italiano 🇮🇹',
 		['es'] = 'Español 🇪🇸',
 		['br'] = 'Português 🇧🇷',
-		['ru'] = 'русский 🇷🇺',
+		['ru'] = 'Русский 🇷🇺',
 		['de'] = 'Deutschland 🇩🇪',
 		['sv'] = 'Svensk 🇸🇪',
 		['ar'] = 'العربية 🇸🇩',
