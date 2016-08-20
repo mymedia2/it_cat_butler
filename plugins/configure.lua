@@ -17,13 +17,13 @@ local function action(msg, blocks)
     local keyboard = do_keyboard_config(chat_id)
     if msg.cb then
         chat_id = msg.target_id
-        api.editMessageText(msg.chat.id, msg.message_id, '_Navigate the keyboard to change the settings_', keyboard, true)
+        api.editMessageText(msg.chat.id, msg.message_id, lang[msg.ln].config.main, keyboard, true)
     else
         if not roles.is_admin_cached(msg) then return end
-        local res = api.sendKeyboard(msg.from.id, '_Navigate the keyboard to change the settings_', keyboard, true)
+        local res = api.sendKeyboard(msg.from.id, lang[msg.ln].config.main, keyboard, true)
         if not misc.is_silentmode_on(msg.chat.id) then --send the responde in the group only if the silent mode is off
             if res then
-                api.sendMessage(msg.chat.id, '_I\'ve sent you the keyboard in private_', true)
+                api.sendMessage(msg.chat.id, lang[msg.ln].config.private, true)
             else
                 misc.sendStartMe(msg.chat.id, lang[msg.ln].help.group_not_success, msg.ln)
             end

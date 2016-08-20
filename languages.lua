@@ -1676,16 +1676,16 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
     },
     ru = {
         config = {
-            private = '_I\'ve sent you the settings keyboard in private_',
-            main = 'Surf this keyboard to change the group settings'
+            private = '_Я отправил тебе клавиатуру с настройками личным сообщением_',
+            main = 'Используй эту клавиатуру для изменения настроек группы',
         },
         status = {
-            kicked = '&&&1 is banned from this group',
-            left = '&&&1 left the group or has been kicked and unbanned',
-            administrator = '&&&1 is an Admin',
-            creator = '&&&1 is the group creator',
-            unknown = 'This user has nothing to do with this chat',
-            member = '&&&1 is a chat member'
+            kicked = '&&&1 забанен в этой группе',
+            left = '&&&1 покинул группу или был кикнут и разбанен',
+            administrator = '&&&1 администратор',
+            creator = '&&&1 создатель группы',
+            unknown = 'Этот пользователь не имеет отношения к этому чату',
+            member = '&&&1 участник чата'
         },
         getban = {
             header = '*Global stats* for ',
@@ -1709,15 +1709,15 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
             reply_or_mention = 'Reply to an user or mention him (works by id too)'
         },
         bonus = {
-            general_pm = '_I\'ve sent you the message in private_',
+			general_pm = '_Я отправил тебе личное сообщение_',
             no_user = 'Я не видел этого человека раньше.\nЕсли ты хочешь объяснить мне, кто он, сделай мне forward его сообщения',
             the_group = 'Группа',
-            adminlist_admin_required = 'I\'m not a group Admin.\n*Only an Admin can see the administrators list*',
-            settings_header = 'Текущие настройки для *the group*:\n\n*Язык*: `&&&1`\n',
+            adminlist_admin_required = 'Я не администратор группы\n*Только админы могут видеть список администраторов*',
+            settings_header = 'Текущие настройки *группы*:\n\n*Язык*: `&&&1`\n',
             reply = '*Reply to someone* to use this command, or write a *username*',
             too_long = 'This text is too long, I can\'t send it',
             msg_me = '_Чтобы я мог тебе писать, сначала напиши мне_',
-            menu_cb_settings = 'Tap on an icon!',
+            menu_cb_settings = 'Нажми на иконку!',
             menu_cb_warns = 'Use the row below to change the warns settings!',
         },
         not_mod = 'Ты *не* модератор',
@@ -1842,7 +1842,7 @@ The inline keyboard has three sub-menus:
                     ..'• I can also warn, kick or ban users when they post a specific media\n'
                     ..'...and more, below you can find the "all commands" button to get the whole list!\n'
                     ..'\nI work better if you add me to the group administrators (otherwise I won\'t be able to kick or ban)!',
-            group_success = '_Я отправил тебе приватное сообщение_',
+            group_success = '_Я отправил тебе личное сообщение_',
             group_not_success = '_Сначала напиши мне, потом я смогу писать тебе_',
             initial = 'You can surf this keyboard to see *all the available commands*',
             kb_header = 'Tap on a button to see the *related commands*',
@@ -1858,13 +1858,13 @@ The inline keyboard has three sub-menus:
             link_unsetted = 'Ссылка *удалена*',
         },
         mod = {
-            modlist = '*Creator*:\n&&&1\n\n*Admins*:\n&&&2'
+			modlist = '*Создатель*:\n&&&1\n\n*Администраторы*:\n&&&2',
         },
         service = {
             welcome = 'Привет, &&&1! Добро пожаловать в *&&&2*!',
             welcome_rls = 'АНАРХИЯ!',
             welcome_abt = 'Описание этой группы отсутствует!',
-            welcome_modlist = '\n\n*Creator*:\n&&&1\n*Admins*:\n&&&2',
+			welcome_modlist = '\n\n*Создатель*:\n&&&1\n*Администраторы*:\n&&&2',
             abt = '\n\n*Описание*:\n',
             rls = '\n\n*Правила*:\n',
             goodbye = 'До свидания, &&&1!',
@@ -1876,7 +1876,7 @@ The inline keyboard has three sub-menus:
             added = '* Описание добавлено:*\n"&&&1"',
             no_input_set = ' Пожалуйста, напиши что-нибудь после "/setabout"',
             clean = ' Описание было изменено.',
-            about_setted = 'New description *saved successfully*!'
+			about_setted = 'Новое описание *успешно сохранено*!',
         },
         setrules = {
             no_rules = '*ТОЛЬКО АНАРХИЯ*!',
@@ -1885,23 +1885,23 @@ The inline keyboard has three sub-menus:
             added = '*Правила добавлены:*\n"&&&1"',
             no_input_set = 'Пожалуйста, напиши что-нибудь после "/setrules"',
             clean = 'Правила были очищены.',
-            rules_setted = 'New rules *saved successfully*!'
+			rules_setted = 'Новые правила *успешно сохранены*!'
         },
         settings = {
             disable = {
-                welcome_locked = 'Приветст��енное сообщение теперь не будет показано.',
+                welcome_locked = 'Приветственное сообщение теперь не будет показано.',
                 extra_locked = '#extra теперь доступна только для модераторов',
                 rtl_locked = 'Anti-RTL фильтр включен',
-                flood_locked = 'Antiflood is nor off',
-                rules_locked = '/rules will reply in private (for users)',
+				flood_locked = 'Антифлуд фильтр выключен',
+				rules_locked = 'Правила будут отправляться в ЛС (для пользователей)',
                 arab_locked = 'Anti-arab фильтр включен',
             },
             enable = {
                 welcome_unlocked = 'Приветственное сообщение теперь будет показываться',
                 extra_unlocked = 'Extra # теперь доступна для всех',
                 rtl_unlocked = 'Anti-RTL фильтр выключен',
-                flood_unlocked = 'Аnti-flood is now on',
-                rules_unlocked = '/rules will reply in the group (with everyone)',
+				flood_unlocked = 'Антифлуд фильтр включён',
+				rules_locked = 'Правила будут отправляться в группу (для всех)',
                 arab_unlocked = 'Anti-arab фильтр тепепь выключен',
             },
             welcome = {
@@ -1950,10 +1950,10 @@ The inline keyboard has three sub-menus:
             warned_max_ban = 'Пользователь &&&1 *забанен* по причине достижения максимального количества предупреждений',
             warned = '*Пользователь* &&&1 *был предупрежден!*\n_Количество предупреждений_   *&&&2*\n_Максимальное разрешение_   *&&&3*',
             warnmax = 'Макмимальное количество предупреждений изменено&&&3.\n*Старое* значение: &&&1\n*Новое* значение: &&&2',
-            inline_high = 'The new value is too high (>12)',
-            inline_low = 'The new value is too low (<1)',
-            zero = 'The number of warnings received by this user is already _zero_',
-            warn_removed = '*Warn removed!*\n_Number of warnings_   *&&&1*\n_Max allowed_   *&&&2*',
+            inline_high = 'Значение слишком большое (>12)',
+            inline_low = 'Значение слишком маленькое (<1)',
+			zero = 'Количество предупреждений, полученных этим пользователем, уже _нулевое_',
+			warn_removed = '*Предупреждение удалено!*\n_Количество предупреждений_   *&&&1*\n_Максимально допустимо_   *&&&2*',
             nowarn = 'Количество предупреждений у этого пользователя *сброшено*'
         },
         setlang = {
@@ -1961,21 +1961,21 @@ The inline keyboard has three sub-menus:
             success = '*Новый язык установлен:* &&&1',
         },
 		banhammer = {
-            kicked = '&&&1 kicked &&&2! ( все еще может зайти )',
-            banned = '&&&1 banned &&&2!',
+            kicked = '&&&1 кикнут &&&2! ( все еще может зайти )',
+            banned = '&&&1 забанен &&&2!',
             already_banned_normal = '&&&1 *уже забанен*!',
-            unbanned = 'User unbanned by &&&1!',
-            reply = 'Ответь (reply) на сообщение этого пользователя',
+            unbanned = 'Пользователя разбанил &&&1!',
+            reply = 'Ответь на сообщение этого пользователя',
             not_banned = 'Это обычная группа, пользователи не блокируются, когда кикаются из группы',
-            banlist_header = '*Banned users*:\n\n',
-            banlist_empty = '_The list is empty_',
-            banlist_error = '_An error occurred while cleaning the banlist_',
-            banlist_cleaned = '_The banlist has been cleaned_',
+			banlist_header = '*Заблокированные пользователи*:\n\n',
+			banlist_empty = '_Список пуст_',
+			banlist_error = '_Произошла ошибка при очистке банлиста_',
+			banlist_cleaned = '_Банлист очищен_',
             tempban_zero = 'For this, you can directly use /ban',
             tempban_week = 'The time limit is one week (10.080 minutes)',
-            tempban_banned = 'User &&&1 banned. Ban expiration:',
-            tempban_updated = 'Ban time updated for &&&1. Ban expiration:',
-            general_motivation = 'I can\'t kick this user.\nProbably I\'m not an Amdin, or the user is an Admin iself'
+			tempban_banned = 'Пользователь &&&1 забанен. Бан истекает:',
+			tempban_updated = 'Время бана обновлено для &&&1. Бан истекает:',
+			general_motivation = 'Я не могу забанить этого пользователя.\nВозможно, я не админ или пользователь сам админ',
         },
         floodmanager = {
             number_invalid = '`&&&1` неправильное число!\nЧисло должно быть *больше* чем `3` и *меньше* чем `26`',
@@ -1985,7 +1985,6 @@ The inline keyboard has three sub-menus:
             disabled = 'Антифлуд фильтр выключен',
             kick = 'Теперь флудеры будут кикнуты',
             ban = 'Теперь флудеры будут забанены',
-            general_motivation = 'I can\'t kick this user.\nProbably I\'m not an Amdin, or the user is an Admin iself',
             changed_cross = '&&&1 -> &&&2',
             text = 'Текст',
             image = 'Изображения',
@@ -1993,7 +1992,6 @@ The inline keyboard has three sub-menus:
             gif = 'GIF',
             video = 'Видео',
 			forward = 'Пересылка',
-            sent = '_Я отправил тебе меню антифлуда личным сообщением_',
             ignored = 'Антифлуд будет игнорировать [&&&1]',
             not_ignored = 'Антифлуд не будет игнорировать [&&&1]',
             number_cb = 'Текущая чувствительность. Нажми + или -',
@@ -2013,19 +2011,19 @@ The inline keyboard has three sub-menus:
         },
         mediasettings = {
             media_texts = {
-                image = 'Images',
-                video = 'Videos',
-                file = 'Documents',
-                TGlink = 'telegram.me links',
-                voice = 'Vocal messages',
-                gif = 'Gifs',
-                link = 'Links',
-                audio = 'Music',
-                sticker = 'Stickers',
-                contact = 'Contacts',
+                image = 'Изображения',
+                video = 'Видео',
+                file = 'Документы',
+                TGlink = 'Ссылки telegram.me',
+                voice = 'Голосовые сообщения',
+                gif = 'GIF',
+                link = 'Ссылки',
+                audio = 'Музыка',
+                sticker = 'Стикеры',
+                contact = 'Контакты',
             },
 			settings_header = '*Текущие настройки для медиа*:\n\n',
-            cb_alert = emoji.alert..' Tap on the right column',
+            cb_alert = emoji.alert..' Нажми на правую колонку',
             changed = 'Новый статус = &&&1',
         },
         preprocess = {
@@ -2034,10 +2032,10 @@ The inline keyboard has three sub-menus:
             media_kick = ' *кикнут*: отправленный тип медиа не разрешен',
             media_ban = ' *забанен*: отправленный тип медиа не разрешен',
             rtl_kicked = ' *кикнут*: rtl символы в имени/сообщениях не разрешены',
-            arab_kicked = ' *кикнут*: арабские сообщения обнаружены',
-            rtl_banned = ' *banned*: rtl character in names/messages not allowed!',
-            arab_banned = ' *banned*: arab message detected!',
-            first_warn = 'This type of media is *not allowed* in this chat.'
+            arab_kicked = ' *кикнут*: обнаружены арабские сообщения',
+            rtl_kicked = ' *забанен*: rtl символы в имени/сообщениях не разрешены',
+            arab_kicked = ' *забанен*: обнаружены арабские сообщения',
+			first_warn = 'Этот тип медиа *не разрешён* в этом чате.',
         },
         kick_errors = {
             [1] = 'Я не администратор этой группы, я не могу кикать людей', --1
@@ -2047,17 +2045,17 @@ The inline keyboard has three sub-menus:
         },
         all = {
             dashboard = {
-                private = '_I\'ve sent you the group dashboard in private_',
+				private = '_Я отправил тебе панель личным сообщением_',
                 first = 'Navigate this message to see *all the info* about this group!',
                 antiflood = '- *Status*: `&&&1`\n- *Action* when an user floods: `&&&2`\n- Number of messages *every 5 seconds* allowed: `&&&3`\n- *Ignored media*:\n&&&4',
-                settings = 'Settings',
-                admins = 'Admins',
-                rules = 'Rules',
-                about = 'Description',
-                welcome = 'Welcome message',
-                extra = 'Extra commands',
-                flood = 'Anti-flood settings',
-                media = 'Media settings'
+                settings = 'Настройки',
+                admins = 'Админы',
+                rules = 'Правила',
+                about = 'Описание',
+                welcome = 'Приветствие',
+                extra = 'Доп. команды',
+                flood = 'Настройки антифлуда',
+                media = 'Настройки медиа',
             },
             menu_first = 'Manage the settings of the group.\n'
                 ..'\nSome commands (_/rules, /about, /adminlist, #extra commands_) can be *disabled for non-admin users*\n'
