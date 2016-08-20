@@ -303,7 +303,16 @@ local function media_to_msg(msg)
 	if msg.entities then
 		for i,entity in pairs(msg.entities) do
 			if entity.type == 'text_mention' then
-				msg.mention_id = entity.user.id
+				msg.mentions = msg.mentions or {}
+				msg.mentions[entity.user.id] = true
+			end
+			if entity.type == 'mention' then
+				local username = msg.text:sub(entity.offset + 1, entity.offset + entity.length)
+				local user_id = misc.resolve_user(username, msg.chat.id)
+				if user_id then
+					msg.mentions = msg.mentions or {}
+					msg.mentions[user_id] = true
+				end
 			end
 			if entity.type == 'url' or entity.type == 'text_link' then
 				if msg.text:match('[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm]%.[Mm][Ee]') then

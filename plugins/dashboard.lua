@@ -97,7 +97,7 @@ local action = function(msg, blocks)
             if res then
                 api.sendMessage(msg.chat.id, lang[msg.ln].all.dashboard.private, true)
             else
-                misc.sendStartMe(msg, msg.ln)
+                misc.sendStartMe(msg.chat.id, lang[msg.ln].help.group_not_success, msg.ln)
             end
         end
 	    return

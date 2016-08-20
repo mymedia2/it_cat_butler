@@ -25,7 +25,7 @@ local function action(msg, blocks)
             if res then
                 api.sendMessage(msg.chat.id, '_I\'ve sent you the keyboard in private_', true)
             else
-                misc.sendStartMe(msg, msg.ln)
+                misc.sendStartMe(msg.chat.id, lang[msg.ln].help.group_not_success, msg.ln)
             end
         end
     end

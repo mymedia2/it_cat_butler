@@ -75,7 +75,7 @@ local action = function(msg, blocks)
 		end
 	end
 	if blocks[1] == 'resolve' then
-		local id = misc.res_user_group(blocks[2], msg.chat.id)
+		local id = misc.resolve_user(blocks[2], msg.chat.id)
 		if not id then
 			message = lang[msg.ln].bonus.no_user
 		else

@@ -19,10 +19,10 @@ local function get_user_id(msg, blocks)
 	elseif msg.reply then
 		return msg.reply.from.id
 	elseif blocks[2] then
-		if msg.mention_id then
-			return msg.mention_target_id
+		if msg.mentions then
+			return msg.mentions[-1]
 		else
-			return misc.res_user_group(blocks[2], msg.chat.id)
+			return misc.resolve_user(blocks[2], msg.chat.id)
 		end
 	end
 end

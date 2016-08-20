@@ -208,7 +208,7 @@ end
 local function create_folder(name)
 	local cmd = io.popen('sudo mkdir '..name)
     cmd:read('*all')
-    cmd = io.popen('sudo chmod -R 777 '..name)
+    cmd = io.popen('sudo chmod -R 775 '..name)
     cmd:read('*all')
     cmd:close()
 end
@@ -298,32 +298,19 @@ function misc.get_date(timestamp)
 	return os.date('%d/%m/%y')
 end
 
-function misc.res_user(username)
-	local hash = 'bot:usernames'
-	local stored = db:hget(hash, username)
-	if not stored then
-		return false
-	else
-		return stored
-	end
-end
-
-function misc.res_user_group(username, chat_id)
-	if not username then return false end
+function misc.resolve_user(username, chat_id)
 	username = username:lower()
-	local hash = 'bot:usernames:'..chat_id
-	local stored = db:hget(hash, username)
-	if stored then
-		return stored
-	else
-		hash = 'bot:usernames'
-		stored = db:hget(hash, username)
-		if stored then
-			return stored
-		else
-			return false
-		end
+
+	if chat_id then
+		local hash = string.format('bot:usernames:%d', chat_id)
+		local stored = db:hget(hash, username)
+		if stored then return tonumber(stored) end
 	end
+
+	local stored = db:hget('bot:usernames', username)
+	if stored then return tonumber(stored) end
+
+	return false
 end
 
 function misc.is_lang_supported(code)
@@ -338,7 +325,7 @@ end
 function misc.create_folder(name)
 	local cmd = io.popen('sudo mkdir '..name)
     cmd:read('*all')
-    cmd = io.popen('sudo chmod -R 777 '..name)
+    cmd = io.popen('sudo chmod -R 775 '..name)
     cmd:read('*all')
     cmd:close()
 end
@@ -730,14 +717,14 @@ function misc.changeMediaStatus(chat_id, media, new_status, ln)
 	return lang[ln].mediasettings.changed:compose(new_status_icon), true
 end
 
-function misc.sendStartMe(msg, ln)
+function misc.sendStartMe(chat_id, text, ln)
     local keyboard = {}
     keyboard.inline_keyboard = {
     	{
-    		{text = 'Start me', url = 'https://telegram.me/'..bot.username}
+    		{text = lang[ln].help.start_me, url = 'https://telegram.me/'..bot.username}
 	    }
     }
-	api.sendKeyboard(msg.chat.id, lang[ln].help.group_not_success, keyboard, true)
+	api.sendKeyboard(chat_id, text, keyboard, true)
 end
 
 function misc.initGroup(chat_id)

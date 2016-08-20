@@ -171,6 +171,12 @@ The inline keyboard has three sub-menus:
 `/help` : show this message.'
 
 If you like this bot, please leave the vote you think it deserves [here](https://telegram.me/storebot?start=groupbutler_bot)']],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
 		    private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -185,7 +191,8 @@ If you like this bot, please leave the vote you think it deserves [here](https:/
             group_success = '_I\'ve sent you the help message in private_',
             group_not_success = '_Please message me first so I can message you_',
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = 'Tap on a button to see the *related commands*'
+            kb_header = 'Tap on a button to see the *related commands*',
+			start_me = 'Start me',
         },
         links = {
             no_link = '*No link* for this group. Ask the owner to generate one',
@@ -409,6 +416,16 @@ It will just send the message in private.]],
 You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media
 The number is not related the the normal `/warn` command']],
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
+		},
     },
 	it = {
 	    config = {
@@ -565,6 +582,12 @@ La tastiera ha 3 sub-menu:
 `/groups` : mostra la lista dei gruppi di discussione riguardo al bot
 `/help` : show this message.'
 \n\nSe ti piace questo bot, per favore lascia il voto che credi si meriti [qui](https://telegram.me/storebot?start=groupbutler_bot)]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
 		    private = [[Ciao *&&&1* '..emoji.shaking_hand..', piacere di conoscerti!
 Sono Group Butler, il primo bot per amministrare gruppi che utilizza la Bot API ufficiale.
 
@@ -581,7 +604,8 @@ funziono meglio se mi aggiungi agli amministratori del gruppo (altrimenti non po
             group_success = '_Ti ho inviato il messaggio in privato_',
             group_not_success = '_Per favore, avviami cosicchè io possa risponderti_',
             initial = 'Puoi navigare questa tastiera per dare uno sguardo a *tutti i comandi disponibili*',
-            kb_header = 'Scegli una voce per visualizzarne i *comandi associati*'
+            kb_header = 'Scegli una voce per visualizzarne i *comandi associati*',
+			start_me = 'Start me',
         },
         links = {
             no_link = '*Nessun link* per questo gruppo. Chiedi al proprietario di settarne uno',
@@ -808,6 +832,16 @@ funziono meglio se mi aggiungi agli amministratori del gruppo (altrimenti non po
                         ..'Puoi usare l\'ultima riga per decidere quante volte il bot deve avvisare un utente prima di bannarlo/kickarlo per aver inviato un media proibito.\n'
                         ..'Questo numero non è correlato in alcun modo al comando `/warn`.',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
+		},
     },
 	es = {
 	    config = {
@@ -975,6 +1009,12 @@ The inline keyboard has three sub-menus:
 `/info` : ver informacion sobre el bot
 `/groups` : get the list of the discussion groups
 `/help` : ver este mensaje]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
 		    private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -989,7 +1029,8 @@ The inline keyboard has three sub-menus:
             group_success = '_Te he enviado el mensaje por privado_',
             group_not_success = '_Por favor, envíame un mensaje primero para que yo pueda enviarte un mensaje_',
             initial = 'Escoge el *rol* para ver los comandos disponibles:',
-            kb_header = 'Pulsa sobre un botón para ver los *comandos relacionados*'
+            kb_header = 'Pulsa sobre un botón para ver los *comandos relacionados*',
+			start_me = 'Start me',
         },
         links = {
             no_link = '*No hay enlace* para este grupo. Pidele al admin que lo añada',
@@ -1210,6 +1251,16 @@ Los iconos junto al comando mostrarán el estado actual:
 
 *Otros ajustes*: para los otros ajustes, los iconos se explican por sí solos]]
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
+		},
     },
     br = {
         config = {
@@ -1364,6 +1415,12 @@ The inline keyboard has three sub-menus:
 `/info` : mostra algumas informações úteis sobre o bot
 `/groups` : get the list of the discussion groups
 `/help` : exibe esta mensagem]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -1378,7 +1435,8 @@ The inline keyboard has three sub-menus:
             group_success = '_Enviei a mensagem de ajuda no privado_',
             group_not_success = '_Caso você nunca tenha me usado, me *inicie* e envie o comando /help por aqui novamente_',
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = 'Toque em um botão para ver os *comandos relacionados*'
+            kb_header = 'Toque em um botão para ver os *comandos relacionados*',
+			start_me = 'Start me',
         },
         links = {
             no_link = '*Sem link* para este grupo. Peça ao dono para registrar um',
@@ -1605,6 +1663,16 @@ The inline keyboard has three sub-menus:
                         ..'Você pode usar a última linha para mudar quantas advertências o bot deve entregar antes de kickar/banir alguém por mídia proibida\n'
                         ..'O número não é relativo ao do comando normal `/warn`',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
+		},
     },
     ru = {
         config = {
@@ -1751,12 +1819,18 @@ The inline keyboard has three sub-menus:
 `/rules` : показать правила группы (via pm)
 `/about` : показать описание группы (via pm)
 `/adminlist` : показать модераторов этой группы (via pm)
-`/kickme` : get kicked by the bot
+`/kickme` : попросить бота кинуть тебя
 `/id` : show the chat id, or the id of an user if by reply
 `/echo [text]` : the bot will send the text back (with markdown, available only in private for non-admin users)
 `/info` : показать информацию о боте
-`/groups` : get the list of the discussion groups
-`/help` : show this message]],
+`/groups` : показать список групп обсуждения бота
+`/help` : показать это сообщение]],
+			subscribe = [[
+*Команды управления подпиской*:
+Если ты часто пропускаешь обращения к себе в шумных чатах, можешь подписаться на уведомления от меня. Отправь в нужную группу команду `/subscribe`, если хочешь получать такие уведомления. Используй команду `/unscribe`, чтобы отписаться.
+Даже если ты покинешь группу с подпиской, уведомления об упоминаниях всё равно будут продолжать приходить, и ты сможешь ответить на него.
+Если у тебя нет возможности снова вступить в группу, чтобы отписаться, просто ответь на очередное уведомление командой `/unscribe`.
+]],
 		    private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -1771,7 +1845,8 @@ The inline keyboard has three sub-menus:
             group_success = '_Я отправил тебе приватное сообщение_',
             group_not_success = '_Сначала напиши мне, потом я смогу писать тебе_',
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = 'Tap on a button to see the *related commands*'
+            kb_header = 'Tap on a button to see the *related commands*',
+			start_me = 'Запусти меня',
         },
         links = {
             no_link = '*Нет ссылки* на это группу. Попроси главного сгенерировать ссылку',
@@ -1997,6 +2072,16 @@ The inline keyboard has three sub-menus:
                         ..'You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media\n'
                         ..'The number is not related the the normal `/warn` command',
         },
+		notifications = {
+			mention1 = '&&&1 [упомянул](&&&2) тебя в группе «&&&3»',
+			mention2 = '&&&1 упомянул тебя в группе «&&&2»',
+			subscribe_success = '_Подписка на твои упоминания успешно активирована_',
+			subscribe_already = '_Подписка уже активирована_',
+			unscribe_success = '_Подписка успешно деактивирована_',
+			unscribe_already = '_Подписка уже деактивирована_',
+			reminder = 'Уведомления не будут приходить, пока ты не напишешь мне',
+			help_unsubscribe = 'Чтобы отписаться, ответь мне командой `/unscribe` на нежелательное уведомление',
+		},
     },
     de = {
         config = {
@@ -2067,10 +2152,22 @@ The inline keyboard has three sub-menus:
                 .."_JEDER VORSCHLAG UND JEDE FUNKTIONSERWEITERUNGSANFRAGE (FEATURE REQUEST) IST GERNE GESEHEN_ Der Entwickler wird SBWM (so bald wie möglich ^^ ; ASAP - as soon as possible) antworten\n"
                 .."`/help` : Zeige diese Nachricht an\n\n"
                 .."Wenn dir der Bot gefällt, bewerte ihn [hier](https://telegram.me/storebot?start=groupbutler_bot) bitte so wie du es für richtig hälst",
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             group_not_success = "_Schreibe zuerst mir, damit ich dann dir schreiben kann>_",
             group_success = "_Ich habe dir das Hilfsmenü als Direktnachricht geschickt_",
             initial = 'You can surf this keyboard to see *all the available commands*',
             kb_header = "Klicke auf ein Feld (button) um die *damit verbundenen Befehle (related commands)* anzuzeigen",
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             mods = {
                 banhammer = "*Moderatoren: Die Macht des Sperrschlägers (banhammer powers):*\n\n"
                     .."`/kick [per Antworten (reply) | Nutzername (username)]` = entferne einen Nutzer (user) aus der Gruppe (er kann wieder hinzugefügt (readded) werden.\n"
@@ -2165,6 +2262,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                     ..'• I can also warn, kick or ban users when they post a specific media\n'
                     ..'...and more, below you can find the "all commands" button to get the whole list!\n'
                     ..'\nI work better if you add me to the group administrators (otherwise I won\'t be able to kick or ban)!',
+			start_me = 'Start me',
         },
         links = {
             link = "[&&&1](&&&2)",
@@ -2389,6 +2487,16 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                 ..'• 👤: the bot will reply *in private* with normal users and in the group with admins\n'
                 ..'\n*Other settings*: for the other settings, icon are self explanatory\n',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
+		},
     },
     sv = {
         config = {
@@ -2458,6 +2566,12 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             .."`/info` : visa användbar information om botten\n"
             ..'`/groups` : get the list of the discussion groups\n'
             .."`/help` : visa detta meddelande.\n\nOm du gillar den här botten, lämna gärna den röst du tycker botten förtjänar [här](https://telegram.me/storebot?start=groupbutler_bot)",
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             group_not_success = "_Skicka mig ett meddelande först, så kan jag därefter skicka meddelanden till dig_",
             group_success = "_Jag har skickat dig hjälpen privat_",
             initial = 'You can surf this keyboard to see *all the available commands*',
@@ -2554,6 +2668,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                     ..'• I can also warn, kick or ban users when they post a specific media\n'
                     ..'...and more, below you can find the "all commands" button to get the whole list!\n'
                     ..'\nI work better if you add me to the group administrators (otherwise I won\'t be able to kick or ban)!',
+			start_me = 'Start me',
         },
         links = {
             link = "[&&&1](&&&2)",
@@ -2777,6 +2892,16 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                 ..'• 👤: the bot will reply *in private* with normal users and in the group with admins\n'
                 ..'\n*Other settings*: for the other settings, icon are self explanatory\n',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
+		},
     },
     ar = {
         config = {
@@ -2930,6 +3055,12 @@ The inline keyboard has three sub-menus:
 `/info` : أظهر بعض المعلومات المفيدة حول البوت
 `/groups` : get the list of the discussion groups
 `/help` : أظهر هذه الرسالة']],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
 		    private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -2944,7 +3075,8 @@ The inline keyboard has three sub-menus:
             group_success = '_لقد قمت بإرسال لك رسالة المساعدة برسالة خاصة_',
             group_not_success = '_رجاءً أرسل لي رسالة أولاً، حتي يمكنني إرسال رسائل لك._',
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = 'اضغط زر حتى ترى الأوامر ذات الصلة'
+            kb_header = 'اضغط زر حتى ترى الأوامر ذات الصلة',
+			start_me = 'Start me',
         },
         links = {
             no_link = '*ليس هناك رابط* لهذه المجموعة. اسأل المالك من أجل خلقه',
@@ -3179,6 +3311,16 @@ The inline keyboard has three sub-menus:
                         ..'You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media\n'
                         ..'The number is not related the the normal `/warn` command',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
+		},
     },
     fr = {
         config = {
@@ -3333,6 +3475,12 @@ How to change the max. number of warnings allowed for media: `/config` command, 
 `/info` : montrer quelques informations à propos du bot
 `/groups` : get the list of the discussion groups
 `/help` : montrer ce message]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -3347,7 +3495,8 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             group_success = "_Je t'ai envoyé le message d'aide en privé_",
             group_not_success = "_S'il te plaît, envoie-moi d'abord un message que je puisse t'écrire_",
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = "Tapes sur un bouton pour voir les *commandes associées*"
+            kb_header = "Tapes sur un bouton pour voir les *commandes associées*",
+			start_me = 'Start me',
         },
         links = {
             link = "[&&&1](&&&2)",
@@ -3567,6 +3716,16 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                         ..'You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media\n'
                         ..'The number is not related the the normal `/warn` command',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
+		},
     },
     tc = {
         config = {
@@ -3709,6 +3868,12 @@ The inline keyboard has three sub-menus:
 `/echo [訊息內容]`︰人機會向你重複訊息內容（會實施字型符號，只在私訊有用）
 `/info`︰顯示關於人機的有用資訊\n`/group`︰獲取討論（人機）群組的連結
 如果你喜歡本人機，請在[here](https://telegram.me/storebot?start=groupbutler_bot)表達你的想法（也是英文）\n（中文內容由 @Firewood\\_LoKi 翻譯）]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -3724,6 +3889,7 @@ The inline keyboard has three sub-menus:
             group_not_success = "〝你必須先對我私訊（PM），我才能向你私訊（PM）。〞",
             initial = 'You can surf this keyboard to see *all the available commands*',
             kb_header = "點擊選項來查看相關指令。",
+			start_me = 'Start me',
         },
         links = {
             link = "[&&&1](&&&2)",
@@ -3936,6 +4102,16 @@ The inline keyboard has three sub-menus:
                         ..'You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media\n'
                         ..'The number is not related the the normal `/warn` command',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
+		},
     },
 	fa = {
 	    config = {
@@ -4089,6 +4265,12 @@ The inline keyboard has three sub-menus:
 /info` : نمایش برخی اطلاعات مربوط به ربات
 /groups` : get the list of the discussion groups
 /help` : نمایش این پیام]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
 		    private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -4103,7 +4285,8 @@ The inline keyboard has three sub-menus:
             group_success = '_من به شما پیام خصوصی خواهم داد_',
             group_not_success = '_لطفا اول به من پیام دهید تا بتوانم به شما پیام بفرستم_',
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = 'Tap on a button to see the *related commands*'
+            kb_header = 'Tap on a button to see the *related commands*',
+			start_me = 'Start me',
         },
         links = {
             no_link = 'هیچ لینکی برای این گروه تعریف نشده از سازنده بخواهید یک لینک جدید تعریف کند!',
@@ -4322,5 +4505,15 @@ The inline keyboard has three sub-menus:
                         ..'You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media\n'
                         ..'The number is not related the the normal `/warn` command',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
+		},
     },
 }
