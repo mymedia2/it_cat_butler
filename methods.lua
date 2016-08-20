@@ -343,9 +343,12 @@ function api.sendLocation(chat_id, latitude, longitude, reply_to_message_id)
 
 end
 
-function api.forwardMessage(chat_id, from_chat_id, message_id)
+function api.forwardMessage(chat_id, from_chat_id, message_id, send_sound)
 
 	local url = BASE_URL .. '/forwardMessage?chat_id=' .. chat_id .. '&from_chat_id=' .. from_chat_id .. '&message_id=' .. message_id
+	if not send_sound then
+		url = url..'&disable_notification=true' --messages are silent by default
+	end
 
 	return sendRequest(url)
 	

@@ -409,6 +409,15 @@ It will just send the message in private.]],
 You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media
 The number is not related the the normal `/warn` command']],
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+		},
     },
 	it = {
 	    config = {
@@ -808,6 +817,15 @@ funziono meglio se mi aggiungi agli amministratori del gruppo (altrimenti non po
                         ..'Puoi usare l\'ultima riga per decidere quante volte il bot deve avvisare un utente prima di bannarlo/kickarlo per aver inviato un media proibito.\n'
                         ..'Questo numero non è correlato in alcun modo al comando `/warn`.',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+		},
     },
 	es = {
 	    config = {
@@ -1210,6 +1228,15 @@ Los iconos junto al comando mostrarán el estado actual:
 
 *Otros ajustes*: para los otros ajustes, los iconos se explican por sí solos]]
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+		},
     },
     br = {
         config = {
@@ -1605,6 +1632,15 @@ The inline keyboard has three sub-menus:
                         ..'Você pode usar a última linha para mudar quantas advertências o bot deve entregar antes de kickar/banir alguém por mídia proibida\n'
                         ..'O número não é relativo ao do comando normal `/warn`',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+		},
     },
     ru = {
         config = {
@@ -1997,6 +2033,15 @@ The inline keyboard has three sub-menus:
                         ..'You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media\n'
                         ..'The number is not related the the normal `/warn` command',
         },
+		notifications = {
+			mention1 = '&&&1 [упомянул](&&&2) тебя в группе «&&&3»',
+			mention2 = '&&&1 упомянул тебя в группе «&&&2»',
+			subscribe_success = '_Подписка на твои упоминания успешно активирована_',
+			subscribe_already = '_Подписка уже активирована_',
+			unscribe_success = '_Подписка успешно деактивирована_',
+			unscribe_already = 'Подписка уже деактивирована_',
+			reminder = 'Уведомления не будут приходить, пока ты не напишешь мне',
+		},
     },
     de = {
         config = {
@@ -2389,6 +2434,15 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                 ..'• 👤: the bot will reply *in private* with normal users and in the group with admins\n'
                 ..'\n*Other settings*: for the other settings, icon are self explanatory\n',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+		},
     },
     sv = {
         config = {
@@ -2777,6 +2831,15 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                 ..'• 👤: the bot will reply *in private* with normal users and in the group with admins\n'
                 ..'\n*Other settings*: for the other settings, icon are self explanatory\n',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+		},
     },
     ar = {
         config = {
@@ -3179,6 +3242,15 @@ The inline keyboard has three sub-menus:
                         ..'You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media\n'
                         ..'The number is not related the the normal `/warn` command',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+		},
     },
     fr = {
         config = {
@@ -3567,6 +3639,15 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                         ..'You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media\n'
                         ..'The number is not related the the normal `/warn` command',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+		},
     },
     tc = {
         config = {
@@ -3936,6 +4017,15 @@ The inline keyboard has three sub-menus:
                         ..'You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media\n'
                         ..'The number is not related the the normal `/warn` command',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+		},
     },
 	fa = {
 	    config = {
@@ -4322,5 +4412,14 @@ The inline keyboard has three sub-menus:
                         ..'You can use the last line to change how many warnings should the bot give before kick/ban someone for a forbidden media\n'
                         ..'The number is not related the the normal `/warn` command',
         },
+		notifications = {
+			mention1 = '&&&1 [mentioned](&&&2) you in the group "&&&3"',
+			mention2 = '&&&1 mentioned you in the group "&&&2"',
+			subscribe_success = '_The subscribe to your mentions has activated successfully_',
+			subscribe_already = '_Your subscribe already activated_',
+			unscribe_success = '_The subscribe has deactivated successfully_',
+			unscribe_already = '_Your subscribe already deactivated_',
+			reminder = 'Notifications will not come until you message me',
+		},
     },
 }

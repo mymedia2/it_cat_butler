@@ -32,6 +32,7 @@ return {
 	languages = 'languages.lua',
 	plugins = {
 		'onmessage.lua', --THIS MUST BE THE FIRST: IF AN USER IS SPAMMING/IS BLOCKED, THE BOT WON'T GO THROUGH PLUGINS
+		'notifications.lua',
 		'configure.lua',
 		'menu.lua',
 		'dashboard.lua',
