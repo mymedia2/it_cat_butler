@@ -730,14 +730,14 @@ function misc.changeMediaStatus(chat_id, media, new_status, ln)
 	return lang[ln].mediasettings.changed:compose(new_status_icon), true
 end
 
-function misc.sendStartMe(msg, ln)
+function misc.sendStartMe(chat_id, text, ln)
     local keyboard = {}
     keyboard.inline_keyboard = {
     	{
-    		{text = 'Start me', url = 'https://telegram.me/'..bot.username}
+    		{text = lang[ln].help.start_me, url = 'https://telegram.me/'..bot.username}
 	    }
     }
-	api.sendKeyboard(msg.chat.id, lang[ln].help.group_not_success, keyboard, true)
+	api.sendKeyboard(chat_id, text, keyboard, true)
 end
 
 function misc.initGroup(chat_id)

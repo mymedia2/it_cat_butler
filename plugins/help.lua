@@ -62,16 +62,6 @@ local function do_keyboard_private()
     return keyboard
 end
 
-local function do_keyboard_startme()
-    local keyboard = {}
-    keyboard.inline_keyboard = {
-    	{
-    		{text = 'Start me', url = 'https://telegram.me/'..bot.username}
-	    }
-    }
-    return keyboard
-end
-
 local action = function(msg, blocks)
     -- save stats
     if blocks[1] == 'start' then
@@ -92,7 +82,7 @@ local action = function(msg, blocks)
                     api.sendMessage(msg.chat.id, lang[msg.ln].help.group_success, true)
                 end
             else
-                api.sendKeyboard(msg.chat.id, lang[msg.ln].help.group_not_success, do_keyboard_startme(), true)
+				misc.sendStartMe(msg.chat.id, lang[msg.ln].help.group_not_success, msg.ln)
             end
         end
     end

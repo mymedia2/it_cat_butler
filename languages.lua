@@ -185,7 +185,8 @@ If you like this bot, please leave the vote you think it deserves [here](https:/
             group_success = '_I\'ve sent you the help message in private_',
             group_not_success = '_Please message me first so I can message you_',
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = 'Tap on a button to see the *related commands*'
+            kb_header = 'Tap on a button to see the *related commands*',
+			start_me = 'Start me',
         },
         links = {
             no_link = '*No link* for this group. Ask the owner to generate one',
@@ -417,6 +418,7 @@ The number is not related the the normal `/warn` command']],
 			unscribe_success = '_The subscribe has deactivated successfully_',
 			unscribe_already = '_Your subscribe already deactivated_',
 			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
 		},
     },
 	it = {
@@ -590,7 +592,8 @@ funziono meglio se mi aggiungi agli amministratori del gruppo (altrimenti non po
             group_success = '_Ti ho inviato il messaggio in privato_',
             group_not_success = '_Per favore, avviami cosicchè io possa risponderti_',
             initial = 'Puoi navigare questa tastiera per dare uno sguardo a *tutti i comandi disponibili*',
-            kb_header = 'Scegli una voce per visualizzarne i *comandi associati*'
+            kb_header = 'Scegli una voce per visualizzarne i *comandi associati*',
+			start_me = 'Start me',
         },
         links = {
             no_link = '*Nessun link* per questo gruppo. Chiedi al proprietario di settarne uno',
@@ -825,6 +828,7 @@ funziono meglio se mi aggiungi agli amministratori del gruppo (altrimenti non po
 			unscribe_success = '_The subscribe has deactivated successfully_',
 			unscribe_already = '_Your subscribe already deactivated_',
 			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
 		},
     },
 	es = {
@@ -1007,7 +1011,8 @@ The inline keyboard has three sub-menus:
             group_success = '_Te he enviado el mensaje por privado_',
             group_not_success = '_Por favor, envíame un mensaje primero para que yo pueda enviarte un mensaje_',
             initial = 'Escoge el *rol* para ver los comandos disponibles:',
-            kb_header = 'Pulsa sobre un botón para ver los *comandos relacionados*'
+            kb_header = 'Pulsa sobre un botón para ver los *comandos relacionados*',
+			start_me = 'Start me',
         },
         links = {
             no_link = '*No hay enlace* para este grupo. Pidele al admin que lo añada',
@@ -1236,6 +1241,7 @@ Los iconos junto al comando mostrarán el estado actual:
 			unscribe_success = '_The subscribe has deactivated successfully_',
 			unscribe_already = '_Your subscribe already deactivated_',
 			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
 		},
     },
     br = {
@@ -1405,7 +1411,8 @@ The inline keyboard has three sub-menus:
             group_success = '_Enviei a mensagem de ajuda no privado_',
             group_not_success = '_Caso você nunca tenha me usado, me *inicie* e envie o comando /help por aqui novamente_',
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = 'Toque em um botão para ver os *comandos relacionados*'
+            kb_header = 'Toque em um botão para ver os *comandos relacionados*',
+			start_me = 'Start me',
         },
         links = {
             no_link = '*Sem link* para este grupo. Peça ao dono para registrar um',
@@ -1640,6 +1647,7 @@ The inline keyboard has three sub-menus:
 			unscribe_success = '_The subscribe has deactivated successfully_',
 			unscribe_already = '_Your subscribe already deactivated_',
 			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
 		},
     },
     ru = {
@@ -1807,7 +1815,8 @@ The inline keyboard has three sub-menus:
             group_success = '_Я отправил тебе приватное сообщение_',
             group_not_success = '_Сначала напиши мне, потом я смогу писать тебе_',
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = 'Tap on a button to see the *related commands*'
+            kb_header = 'Tap on a button to see the *related commands*',
+			start_me = 'Запусти меня',
         },
         links = {
             no_link = '*Нет ссылки* на это группу. Попроси главного сгенерировать ссылку',
@@ -2039,8 +2048,9 @@ The inline keyboard has three sub-menus:
 			subscribe_success = '_Подписка на твои упоминания успешно активирована_',
 			subscribe_already = '_Подписка уже активирована_',
 			unscribe_success = '_Подписка успешно деактивирована_',
-			unscribe_already = 'Подписка уже деактивирована_',
+			unscribe_already = '_Подписка уже деактивирована_',
 			reminder = 'Уведомления не будут приходить, пока ты не напишешь мне',
+			help_unsubscribe = 'Чтобы отписаться, ответь мне командой `/unscribe` на нежелательное уведомление',
 		},
     },
     de = {
@@ -2210,6 +2220,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                     ..'• I can also warn, kick or ban users when they post a specific media\n'
                     ..'...and more, below you can find the "all commands" button to get the whole list!\n'
                     ..'\nI work better if you add me to the group administrators (otherwise I won\'t be able to kick or ban)!',
+			start_me = 'Start me',
         },
         links = {
             link = "[&&&1](&&&2)",
@@ -2442,6 +2453,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
 			unscribe_success = '_The subscribe has deactivated successfully_',
 			unscribe_already = '_Your subscribe already deactivated_',
 			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
 		},
     },
     sv = {
@@ -2608,6 +2620,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                     ..'• I can also warn, kick or ban users when they post a specific media\n'
                     ..'...and more, below you can find the "all commands" button to get the whole list!\n'
                     ..'\nI work better if you add me to the group administrators (otherwise I won\'t be able to kick or ban)!',
+			start_me = 'Start me',
         },
         links = {
             link = "[&&&1](&&&2)",
@@ -2839,6 +2852,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
 			unscribe_success = '_The subscribe has deactivated successfully_',
 			unscribe_already = '_Your subscribe already deactivated_',
 			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
 		},
     },
     ar = {
@@ -3007,7 +3021,8 @@ The inline keyboard has three sub-menus:
             group_success = '_لقد قمت بإرسال لك رسالة المساعدة برسالة خاصة_',
             group_not_success = '_رجاءً أرسل لي رسالة أولاً، حتي يمكنني إرسال رسائل لك._',
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = 'اضغط زر حتى ترى الأوامر ذات الصلة'
+            kb_header = 'اضغط زر حتى ترى الأوامر ذات الصلة',
+			start_me = 'Start me',
         },
         links = {
             no_link = '*ليس هناك رابط* لهذه المجموعة. اسأل المالك من أجل خلقه',
@@ -3250,6 +3265,7 @@ The inline keyboard has three sub-menus:
 			unscribe_success = '_The subscribe has deactivated successfully_',
 			unscribe_already = '_Your subscribe already deactivated_',
 			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
 		},
     },
     fr = {
@@ -3419,7 +3435,8 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             group_success = "_Je t'ai envoyé le message d'aide en privé_",
             group_not_success = "_S'il te plaît, envoie-moi d'abord un message que je puisse t'écrire_",
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = "Tapes sur un bouton pour voir les *commandes associées*"
+            kb_header = "Tapes sur un bouton pour voir les *commandes associées*",
+			start_me = 'Start me',
         },
         links = {
             link = "[&&&1](&&&2)",
@@ -3647,6 +3664,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
 			unscribe_success = '_The subscribe has deactivated successfully_',
 			unscribe_already = '_Your subscribe already deactivated_',
 			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
 		},
     },
     tc = {
@@ -3805,6 +3823,7 @@ The inline keyboard has three sub-menus:
             group_not_success = "〝你必須先對我私訊（PM），我才能向你私訊（PM）。〞",
             initial = 'You can surf this keyboard to see *all the available commands*',
             kb_header = "點擊選項來查看相關指令。",
+			start_me = 'Start me',
         },
         links = {
             link = "[&&&1](&&&2)",
@@ -4025,6 +4044,7 @@ The inline keyboard has three sub-menus:
 			unscribe_success = '_The subscribe has deactivated successfully_',
 			unscribe_already = '_Your subscribe already deactivated_',
 			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
 		},
     },
 	fa = {
@@ -4193,7 +4213,8 @@ The inline keyboard has three sub-menus:
             group_success = '_من به شما پیام خصوصی خواهم داد_',
             group_not_success = '_لطفا اول به من پیام دهید تا بتوانم به شما پیام بفرستم_',
             initial = 'You can surf this keyboard to see *all the available commands*',
-            kb_header = 'Tap on a button to see the *related commands*'
+            kb_header = 'Tap on a button to see the *related commands*',
+			start_me = 'Start me',
         },
         links = {
             no_link = 'هیچ لینکی برای این گروه تعریف نشده از سازنده بخواهید یک لینک جدید تعریف کند!',
@@ -4420,6 +4441,7 @@ The inline keyboard has three sub-menus:
 			unscribe_success = '_The subscribe has deactivated successfully_',
 			unscribe_already = '_Your subscribe already deactivated_',
 			reminder = 'Notifications will not come until you message me',
+			help_unsubscribe = 'To unsubscribe, answer me to unwanted notification with command `/unscribe`',
 		},
     },
 }
