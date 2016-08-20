@@ -1,6 +1,6 @@
-local function is_locked(chat_id)
+local function is_locked(chat_id, param)
   	local hash = 'chat:'..chat_id..':settings'
-  	local current = db:hget(hash, 'Welcome')
+  	local current = db:hget(hash, param)
   	if current == 'off' then
   		return true
   	else
@@ -8,23 +8,22 @@ local function is_locked(chat_id)
   	end
 end
 
-local function gsub_custom_welcome(msg, custom)
-	local name = msg.added.first_name:mEscape()
-	local name = name:gsub('%%', '')
-	local id = msg.added.id
+local function gsub_custom_inform(msg, custom)
+	local user = msg.added or msg.removed
+	local name = user.first_name:mEscape():gsub('%%', '')
+	local id = user.id
 	local username
-	local title = msg.chat.title:mEscape()
-	if msg.added.username then
-		username = '@'..msg.added.username:mEscape()
+	local title = msg.chat.title:mEscape():gsub('%%', '')
+	if user.username then
+		username = '@'..user.username:mEscape()
 	else
 		username = '(no username)'
 	end
-	custom = custom:gsub('$name', name):gsub('$username', username):gsub('$id', id):gsub('$title', title)
-	return custom
+	return custom:gsub('$name', name):gsub('$username', username):gsub('$id', id):gsub('$title', title)
 end
 
 local function get_welcome(msg, ln)
-	if is_locked(msg.chat.id) then
+	if is_locked(msg.chat.id, 'Welcome') then
 		return false
 	end
 	local type = (db:hget('chat:'..msg.chat.id..':welcome', 'type')) or config.chat_settings['welcome']['type']
@@ -34,9 +33,31 @@ local function get_welcome(msg, ln)
 		api.sendDocumentId(msg.chat.id, file_id)
 		return false
 	elseif type == 'custom' then
-		return gsub_custom_welcome(msg, content)
+		return gsub_custom_inform(msg, content)
 	else
 		return lang[ln].service.welcome:compose(msg.added.first_name:mEscape_hard(), msg.chat.title:mEscape_hard())
+	end
+end
+
+local function get_goodbye(msg, ln)
+	if is_locked(msg.chat.id, 'Goodbye') then
+		return false
+	end
+	local type = db:hget('chat:'..msg.chat.id..':goodbye', 'type') or 'custom'
+	local content = db:hget('chat:'..msg.chat.id..':goodbye', 'content')
+	if type == 'media' then
+		local file_id = content
+		api.sendDocumentId(msg.chat.id, file_id)
+		return false
+	elseif type == 'custom' then
+		if not content then
+			local name = msg.removed.first_name
+			if msg.removed.username then
+				name = name..' (@'..msg.removed.username..')'
+			end
+			return lang[ln].service.goodbye:compose(name:mEscape_hard())
+		end
+		return gsub_custom_inform(msg, content)
 	end
 end
 
@@ -118,6 +139,12 @@ local action = function(msg, blocks)
 				end
 				misc.saveBan(msg.removed.id, action)
 			end
+		end
+
+		if msg.removed.username and msg.removed.username:lower():find('bot', -3) then return end
+		local text = get_goodbye(msg, msg.ln)
+		if text then
+			api.sendMessage(msg.chat.id, text, true)
 		end
 	end
 end

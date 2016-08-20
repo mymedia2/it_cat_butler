@@ -84,6 +84,7 @@ return {
 	chat_settings = {
 		['settings'] = {
 			['Welcome'] = 'on',
+			['Goodbye'] = 'on',
 			['Extra'] = 'on',
 			['Flood'] = 'off',
 			['Silent'] = 'off',
@@ -100,6 +101,7 @@ return {
 		['floodexceptions'] = {
 			['text'] = 'no',
 			['image'] = 'no',
+			['forward'] = 'no',
 			['video'] = 'no',
 			['sticker'] = 'no',
 			['gif'] = 'no'
@@ -113,6 +115,9 @@ return {
 		['welcome'] = {
 			['type'] = 'no',
 			['content'] = 'no'
+		},
+		['goodbye'] = {
+			['type'] = 'custom'
 		},
 		['media'] = {
 			['image'] = 'ok', --'notok'

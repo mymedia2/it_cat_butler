@@ -95,7 +95,7 @@ _Note_ : the number must be higher than 3 and lower than 26.]],
 *List of supported media*: _image, audio, video, sticker, gif, voice, contact, file, link, telegram.me links_]],
                 welcome = [[Moderators: *welcome settings*
 
-`/menu` = receive in private the menu keyboard. You will find an option to enable/disable the welcome message.
+`/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.
 
 *Custom welcome message:*
 `/welcome Welcome $name, enjoy the group!`
@@ -103,7 +103,12 @@ Write after "/welcome" your welcome message. You can use some placeholders to in
 Placeholders: _$username_ (will be replaced with the username); _$name_ (will be replaced with the name); _$id_ (will be replaced with the id); _$title_ (will be replaced with the group title).
 
 *GIF/sticker as welcome message*
-You can use a particular gif/sticker as welcome message. To set it, reply to a gif/sticker with "/welcome"]],
+You can use a particular gif/sticker as welcome message. To set it, reply to a gif/sticker with "/welcome"
+
+*Goodbye message*
+Also you can set the custom goodbye message:
+`/goodbye` _message_
+Same placeholders and media are available]],
                 extra = [[*Moderators: extra commands*
 
 `/extra [#trigger] [reply]` = set a reply to be sent when someone writes the trigger.
@@ -201,6 +206,7 @@ If you like this bot, please leave the vote you think it deserves [here](https:/
             welcome_modlist = '\n\n*Creator*:\n&&&1\n*Admins*:\n&&&2',
             abt = '\n\n*Description*:\n',
             rls = '\n\n*Rules*:\n',
+            goodbye = 'Goodbye, &&&1!',
         },
         setabout = {
             no_bio = '*No description* for this group.',
@@ -248,6 +254,13 @@ If you like this bot, please leave the vote you think it deserves [here](https:/
                 w_default = '*Welcome type*: `default message`\n',
                 legenda = '✅ = _enabled/allowed_\n🚫 = _disabled/not allowed_\n👥 = _sent in group (always for admins)_\n👤 = _sent in private_'
             },
+			goodbye = {
+				no_input = 'No goodbye message',
+				media_setted = 'New media setted as goodbye message: ',
+				reply_media = 'Reply to a `sticker` or a `gif` to set them as *goodbye message*',
+				custom = '*Custom goodbye message* setted!\n\n&&&1',
+				custom_setted = '*Custom goodbye message saved!*',
+			},
             char = {
                 arab_kick = 'Senders of arab messages will be kicked',
                 arab_ban = 'Senders of arab messages will be banned',
@@ -257,6 +270,7 @@ If you like this bot, please leave the vote you think it deserves [here](https:/
                 rtl_allow = 'RTL character allowed',
             },
             Welcome = 'Welcome message',
+			Goodbye = 'Goodbye message',
             Extra = 'Extra',
             Flood = 'Anti-flood',
             Rtl = 'Rtl',
@@ -486,13 +500,18 @@ _Nota_ : il numero deve essere maggiore di 3 e minore di 26.\n]],
 
 *Lista dei media supportati*: _image, audio, video, sticker, gif, voice, contact, file, link, telegram.me link_]],
                 welcome = "*Moderatori: messaggio di benvenuto*\n\n"
-                            .."`/menu` = ricevi in privato la tastiera del menu. Lì troverai un\'opzione per abilitare/disabilitare il messaggio di benvenuto.\n"
+							.."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.\n"
                             .."\n*Messaggio di benvenuto personalizzato:*\n"
                             .."`/welcome Benvenuto $name, benvenuto nel gruppo!`\n"
                             .."Scrivi dopo \"/welcome\" il tuo benvenuto personalizzato. Puoi usare dei segnaposto per includere nome/username/id del nuovo membro del gruppo\n"
                             .."Segnaposto: _$username_ (verrà sostituito con lo username); _$name_ (verrà sostituito col nome); _$id_ (verrà sostituito con l\'id); _$title_ (verrà sostituito con il nome del gruppo).\n"
                             .."\n*GIF/sticker come messaggio di benvenuto*\n"
-                            .."Puoi usare una gif/uno sticker per dare il benvenuto ai nuovi membri. Per impostare la gif/sticker, invialo e rispondigli con \'/welcome\'\n",
+                            .."Puoi usare una gif/uno sticker per dare il benvenuto ai nuovi membri. Per impostare la gif/sticker, invialo e rispondigli con \'/welcome\'\n\n"
+							.."For example, with \"`/welcome rm`\", the welcome message will show rules and moderators list\n\n"
+							.."*Goodbye message*\n"
+							.."Also you can set the custom goodbye message:\n"
+							.."`/goodbye` _message_\n"
+							.."Same placeholders and media are available",
                 extra = "*Moderatori: comandi extra*\n\n"
                         .."`/extra [#comando] [risposta]` = scrivi la risposta che verrà inviata quando il comando viene scritto.\n"
                         .."_Esempio_ : con \"`/extra #ciao Buon giorno!`\", il bot risponderà \"Buon giorno!\" ogni qualvolta qualcuno scriverà #ciao.\n"
@@ -583,6 +602,7 @@ funziono meglio se mi aggiungi agli amministratori del gruppo (altrimenti non po
             welcome_modlist = '\n\n*Creatore*:\n&&&1\n*Admin*:\n&&&2',
             abt = '\n\n*Descrizione*:\n',
             rls = '\n\n*Regole*:\n',
+            goodbye = 'Goodbye, &&&1!',
         },
         setabout = {
             no_bio = '*Nessuna descrizione* per questo gruppo.',
@@ -634,6 +654,13 @@ funziono meglio se mi aggiungi agli amministratori del gruppo (altrimenti non po
                 w_default = '*Tipo di benvenuto*: `predefinito`\n',
                 legenda = '✅ = _abilitato/permesso_\n🚫 = _disabilitato/non permesso_\n👥 = _inviato nel gruppo (sempre, per gli admin)_\n👤 = _inviato in privato_'
             },
+			goodbye = {
+				no_input = 'No goodbye message',
+				media_setted = 'New media setted as goodbye message: ',
+				reply_media = 'Reply to a `sticker` or a `gif` to set them as *goodbye message*',
+				custom = '*Custom goodbye message* setted!\n\n&&&1',
+				custom_setted = '*Custom goodbye message saved!*',
+			},
             char = {
                 arab_kick = 'Messaggi in arabo = kick',
                 arab_ban = 'Messaggi in arabo = ban',
@@ -643,6 +670,7 @@ funziono meglio se mi aggiungi agli amministratori del gruppo (altrimenti non po
                 rtl_allow = 'Carattere RTL consentito',
             },
             Welcome = 'Messaggio di benvenuto',
+			Goodbye = 'Goodbye message',
             Extra = 'Extra',
             Flood = 'Anti-flood',
             Rtl = 'Rtl',
@@ -872,7 +900,7 @@ _Note_ : the number must be higher than 3 and lower than 26.]],
 *List of supported media*: _image, audio, video, sticker, gif, voice, contact, file, link, telegram.me links_]],
                 welcome = [[*Moderators: welcome settings*
 
-`/menu` = receive in private the menu keyboard. You will find an option to enable/disable the welcome message.
+`/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.
 
 *Custom welcome message:*
 `/welcome Welcome $name, enjoy the group!`
@@ -880,7 +908,12 @@ Write after "/welcome" your welcome message. You can use some placeholders to in
 Placeholders: _$username_ (will be replaced with the username); _$name_ (will be replaced with the name); _$id_ (will be replaced with the id); _$title_ (will be replaced with the group title).
 
 *GIF/sticker as welcome message*
-You can use a particular gif/sticker as welcome message. To set it, reply to a gif/sticker with '/welcome']],
+You can use a particular gif/sticker as welcome message. To set it, reply to a gif/sticker with '/welcome'
+
+*Goodbye message*
+Also you can set the custom goodbye message:
+`/goodbye` _message_
+Same placeholders and media are available]],
                 extra = [[*Moderators: extra commands*
 
 `/extra [#trigger] [reply]` = set a reply to be sent when someone writes the trigger.
@@ -972,6 +1005,7 @@ The inline keyboard has three sub-menus:
         },
         service = {
             welcome = 'Hola &&&1, bienvenido a *&&&2*!',
+            goodbye = 'Goodbye, &&&1!',
         },
         setabout = {
             no_bio = '*NO hay descripcion* de este grupo.',
@@ -1022,6 +1056,13 @@ The inline keyboard has three sub-menus:
                 w_default = '*Welcome type*: `default message`\n',
                 legenda = '✅ = _enabled/allowed_\n🚫 = _disabled/not allowed_\n👥 = _sent in group (always for admins)_\n👤 = _sent in private_'
             },
+			goodbye = {
+				no_input = 'No goodbye message',
+				media_setted = 'New media setted as goodbye message: ',
+				reply_media = 'Reply to a `sticker` or a `gif` to set them as *goodbye message*',
+				custom = '*Custom goodbye message* setted!\n\n&&&1',
+				custom_setted = '*Custom goodbye message saved!*',
+			},
             char = {
                 arab_kick = 'Senders of arab messages will be kicked',
                 arab_ban = 'Senders of arab messages will be banned',
@@ -1031,6 +1072,7 @@ The inline keyboard has three sub-menus:
                 rtl_allow = 'RTL character allowed',
             },
             Welcome = 'Mensaje Bienvenida',
+			Goodbye = 'Goodbye message',
             Extra = 'Extra',
             Flood = 'Anti-flood',
             Rtl = 'Rtl',
@@ -1258,13 +1300,17 @@ Para o uso correto de markdown, verifique [esta postagem](https://telegram.me/Gr
 
 *Lista de mídias suportadas*: _image, áudio, vídeo, sticker, gif, voz, contato, arquivo, link, telegram.me links_]],
                 welcome = "*Moderadores: configurações de boas-vindas *\n\n"
-                            .."`/menu` = receber em privada o teclado de menu. Você irá encontrar a opção de habilitar/desabilitar a mensagem de boas-vindas.\n"
+							.."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.\n"
                             .."\n*Mensagem de boas-vindas personalizada:*\n"
                             .."`/welcome Bem vindo $name, aproveite o grupo!`\n"
                             .."Escreve após \"/welcome\" sua mensagem de boas-vindas. Você pode usar alguns marcadores para incluir nome/username/id do novo membro do grupo\n"
                             .."Marcadores: _$username_ (irá ser substituído pelo username); _$name_ (irá ser substituído pelo nome); _$id_ (irá ser substituído pelo id); _$title_ (irá ser substituído pelo título do grupo).\n"
                             .."\n*GIF/sticker como mensagem de boas-vindas*\n"
-                            .."Você pode usar um gif/sticker particular como mensagem de boas-vindas. Para configurar ele, responda para o gif/sticker com \'/welcome\'\n",
+                            .."Você pode usar um gif/sticker particular como mensagem de boas-vindas. Para configurar ele, responda para o gif/sticker com \'/welcome\'\n\n"
+							.."*Goodbye message*\n"
+							.."Also you can set the custom goodbye message:\n"
+							.."`/goodbye` _message_\n"
+							.."Same placeholders and media are available",
                 extra = "*Moderadores: comandos extra*\n\n"
                         .."`/extra [#trigger] [reply]` = configure a resposta que deve ser enviada quando alguém escrever o gatilho.\n"
                         .."_Exemplo_ : com \"`/extra #ola Bom dia!`\", o bot irá responder \"Bom dia!\" cada vez que alguém escrever #ola.\n"
@@ -1353,6 +1399,7 @@ The inline keyboard has three sub-menus:
             welcome_modlist = '\n\n*Creator*:\n&&&1\n*Admins*:\n&&&2',
             abt = '\n\n*Descrição*:\n',
             rls = '\n\n*Regras*:\n',
+            goodbye = 'Goodbye, &&&1!',
         },
         setabout = {
             no_bio = '*SEM DESCRIÇÃO* para este grupo.',
@@ -1404,6 +1451,13 @@ The inline keyboard has three sub-menus:
                 w_default = '*Welcome type*: `default message`\n',
                 legenda = '✅ = _habilitado/permitido\n🚫 = _desabilitado/não permitido_\n👥 = _enviado no grupo (sempre para administradores)_\n👤 = _enviado em privado_'
             },
+			goodbye = {
+				no_input = 'No goodbye message',
+				media_setted = 'New media setted as goodbye message: ',
+				reply_media = 'Reply to a `sticker` or a `gif` to set them as *goodbye message*',
+				custom = '*Custom goodbye message* setted!\n\n&&&1',
+				custom_setted = '*Custom goodbye message saved!*',
+			},
             char = {
                 arab_kick = 'Quem enviar mensagens em árabe será kickado',
                 arab_ban = 'Quem enviar mensagens em árabe será banido',
@@ -1413,6 +1467,7 @@ The inline keyboard has three sub-menus:
                 rtl_allow = 'Caracter RTL é permitido',
             },
             Welcome = 'Mensagem de boas-vindas',
+			Goodbye = 'Goodbye message',
             Extra = 'Extra',
             Flood = 'Anti-flood',
             Rtl = 'Rtl',
@@ -1639,13 +1694,17 @@ For a correct use of the markdown, check [this post](https://telegram.me/GroupBu
 
 *List of supported media*: _image, audio, video, sticker, gif, voice, contact, file, link, telegram.me links_]],
                 welcome = "*Moderators: welcome settings*\n\n"
-                            .."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable the welcome message.\n"
+							.."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.\n"
                             .."\n*Custom welcome message:*\n"
                             .."`/welcome Welcome $name, enjoy the group!`\n"
                             .."Write after \"/welcome\" your welcome message. You can use some placeholders to include the name/username/id of the new member of the group\n"
                             .."Placeholders: _$username_ (will be replaced with the username); _$name_ (will be replaced with the name); _$id_ (will be replaced with the id); _$title_ (will be replaced with the group title).\n"
                             .."\n*GIF/sticker as welcome message*\n"
-                            .."You can use a particular gif/sticker as welcome message. To set it, reply to a gif/sticker with \'/welcome\'\n",
+                            .."You can use a particular gif/sticker as welcome message. To set it, reply to a gif/sticker with \'/welcome\'\n\n"
+							.."*Goodbye message*\n"
+							.."Also you can set the custom goodbye message:\n"
+							.."`/goodbye` _message_\n"
+							.."Same placeholders and media are available",
                 extra = "*Moderators: extra commands*\n\n"
                         .."`/extra [#trigger] [reply]` = set a reply to be sent when someone writes the trigger.\n"
                         .."_Example_ : with \"`/extra #hello Good morning!`\", the bot will reply \"Good morning!\" each time someone writes #hello.\n"
@@ -1733,6 +1792,7 @@ The inline keyboard has three sub-menus:
             welcome_modlist = '\n\n*Creator*:\n&&&1\n*Admins*:\n&&&2',
             abt = '\n\n*Описание*:\n',
             rls = '\n\n*Правила*:\n',
+            goodbye = 'До свидания, &&&1!',
         },
         setabout = {
             no_bio = 'Описание этой группы *отсутствует*.',
@@ -1783,6 +1843,13 @@ The inline keyboard has three sub-menus:
                 w_default = '*Welcome type*: `default message`\n',
                 legenda = '✅ = _enabled/allowed_\n🚫 = _disabled/not allowed_\n👥 = _sent in group (always for admins)_\n👤 = _sent in private_'
             },
+			goodbye = {
+				no_input = 'Укажи прощальное сообщение',
+				media_setted = 'New media setted as goodbye message: ',
+				reply_media = 'Reply to a `sticker` or a `gif` to set them as *goodbye message*',
+				custom = '*Custom goodbye message* setted!\n\n&&&1',
+				custom_setted = '*Custom goodbye message saved!*',
+			},
             char = {
                 arab_kick = 'Senders of arab messages will be kicked',
                 arab_ban = 'Senders of arab messages will be banned',
@@ -1791,13 +1858,14 @@ The inline keyboard has three sub-menus:
                 rtl_ban = 'The use of the RTL character will lead to a ban',
                 rtl_allow = 'RTL character allowed',
             },
-            Welcome = 'Приветственное сообщение',
-            Extra = 'Экстра',
-            Flood = 'Anti-flood',
-            Rtl = 'Rtl',
-            Rules = '/rules',
+            Welcome = 'Приветствие',
+			Goodbye = 'Прощание',
+            Extra = 'Доп. команды',
+            Flood = 'Антифлуд',
+            Rtl = 'RTL',
+            Rules = 'Правила',
             Arab = 'Арабский',
-            Silent = 'Silent mode',
+            Silent = 'Тихий режим',
         },
         warn = {
             warn_reply = 'Ответь на сообщение пользователя, на которого ты хочешь пожаловаться',
@@ -2076,11 +2144,15 @@ How to see how many warns a user has received (or to reset them): use `/user` co
 How to change the max. number of warnings allowed: `/config` command, then `menu` button.
 How to change the max. number of warnings allowed for media: `/config` command, then `media` button.]],
                 welcome = "*Moderatoren: Willkommensnachrichteinstellungen*\n\n"
-                    .."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable the welcome message.\n"
+					.."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.\n"
                     .."*Selbsterstellte Willkommensnachricht*:\n`/welcome Welcome $name, enjoy the group!"
                     .."`\nSchreibe nach \"/welcome\" deine Willkommensnachricht. Du kannst einige Platzhalter wie den Namen/Nutzernamen/ID des Neulings in der Gruppe einfügen\n"
                     .."Platzhalter: _$username_ (wird durch den Nutzernamen ersetzt); _$name_ (wird durch den Namen ersetzt); _$id_ (wird durch die ID ersetzt); _$title_ (wird durch den Gruppennamen (group title) ersetzt).\n\n"
-                    .."*GIF/Sticker als Willkommensnachricht*\nDu kannst ein bestimmtes GIF/einen bestimten Sticker als Willkommensnachricht verwenden. Dafür antworte (reply) einfach mit '/welcome' auf ein GIF/Sticker\n\n",
+                    .."*GIF/Sticker als Willkommensnachricht*\nDu kannst ein bestimmtes GIF/einen bestimten Sticker als Willkommensnachricht verwenden. Dafür antworte (reply) einfach mit '/welcome' auf ein GIF/Sticker\n\n"
+					.."*Goodbye message*\n"
+					.."Also you can set the custom goodbye message:\n"
+					.."`/goodbye` _message_\n"
+					.."Same placeholders and media are available",
             },
             private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
@@ -2112,7 +2184,8 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             welcome = "Moin &&&1, und Willkommen in der Gruppe *&&&2*!",
             welcome_abt = "Es gibt keine Gruppenbeschreibung (description).",
             welcome_modlist = '\n\n*Creator*:\n&&&1\n*Admins*:\n&&&2',
-            welcome_rls = "PAARRTY!"
+            welcome_rls = "PAARRTY!",
+            goodbye = 'Goodbye, &&&1!',
         },
         setabout = {
             added = "*Beschreibung hinzugefügt (description added)*:\n\"&&&1\"",
@@ -2163,6 +2236,13 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                 w_default = '*Welcome type*: `default message`\n',
                 legenda = '✅ = _enabled/allowed_\n🚫 = _disabled/not allowed_\n👥 = _sent in group (always for admins)_\n👤 = _sent in private_'
             },
+			goodbye = {
+				no_input = 'No goodbye message',
+				media_setted = 'New media setted as goodbye message: ',
+				reply_media = 'Reply to a `sticker` or a `gif` to set them as *goodbye message*',
+				custom = '*Custom goodbye message* setted!\n\n&&&1',
+				custom_setted = '*Custom goodbye message saved!*',
+			},
             char = {
                 arab_kick = 'Senders of arab messages will be kicked',
                 arab_ban = 'Senders of arab messages will be banned',
@@ -2177,6 +2257,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             Rtl = "RNL (RTL)",
             Rules = '/rules',
             Welcome = "Willkommensnachricht",
+			Goodbye = 'Goodbye message',
             Silent = 'Silent mode',
         },
         warn = {
@@ -2452,11 +2533,15 @@ How to see how many warns a user has received (or to reset them): use `/user` co
 How to change the max. number of warnings allowed: `/config` command, then `menu` button.
 How to change the max. number of warnings allowed for media: `/config` command, then `media` button.]],
               welcome = "*Moderatorer: välkomstinställningar*\n\n"
-              .."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable the welcome message.\n"
+			  .."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.\n"
               .."*Eget välkomstmeddelande:*\n`/welcome Välkommen $name, ha det så roligt i gruppen!`\n"
               .."Skriv ditt välkomstmeddelande efter \"/welcome\". Du kan använda You can use some \"placeholders\" för användarens namn/användarnamn/id\n"
               .."Placeholders: _$username_ (ersätts av användarnamnet); _$name_ (ersätts av namnet); _$id_ (ersätts av id); _$title_ (infogar gruppens namn).\n\n"
-              .."*GIF/sticker som välkomstmeddelande*\nDu kan använda en gif/sticker som välkomstmeddelande genom att besvara en gif/sticker med '/welcome'\n\n*Sammansatta välkomstmeddelanden*\n"
+              .."*GIF/sticker som välkomstmeddelande*\nDu kan använda en gif/sticker som välkomstmeddelande genom att besvara en gif/sticker med '/welcome'\n\n*Sammansatta välkomstmeddelanden*\n\n"
+			  .."*Goodbye message*\n"
+			  .."Also you can set the custom goodbye message:\n"
+			  .."`/goodbye` _message_\n"
+			  .."Same placeholders and media are available",
             },
             private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
@@ -2488,7 +2573,8 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             welcome = "Hej &&&1, och välkommen till *&&&2*!",
             welcome_abt = "Ingen gruppbeskrivning.",
             welcome_modlist = "\n\n*Moderatorer*:\n",
-            welcome_rls = "Total anarki!"
+            welcome_rls = "Total anarki!",
+            goodbye = 'Goodbye, &&&1!',
         },
         setabout = {
             added = "*Beskrivning satt:*\n\"&&&1\"",
@@ -2515,6 +2601,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             Rtl = "Rtl",
             Rules = '/rules',
             Welcome = "Välkomstmeddelande",
+			Goodbye = 'Goodbye message',
             Silent = 'Silent mode',
             char = {
                 arab_kick = 'Senders of arab messages will be kicked',
@@ -2547,6 +2634,13 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                 w_default = '*Welcome type*: `default message`\n',
                 legenda = '✅ = _enabled/allowed_\n🚫 = _disabled/not allowed_\n👥 = _sent in group (always for admins)_\n👤 = _sent in private_'
             },
+			goodbye = {
+				no_input = 'No goodbye message',
+				media_setted = 'New media setted as goodbye message: ',
+				reply_media = 'Reply to a `sticker` or a `gif` to set them as *goodbye message*',
+				custom = '*Custom goodbye message* setted!\n\n&&&1',
+				custom_setted = '*Custom goodbye message saved!*',
+			},
             welcome = {
                 media_setted = "Ny media satt som välkomstmeddelande: ",
                 no_input = "Välkommen och...?",
@@ -2772,13 +2866,17 @@ How to change the max. number of warnings allowed for media: `/config` command, 
 
 *قائمة وسائط يجري دعمها*: _image, audio, video, sticker, gif, voice, contact, file, link, telegram.me links_\n]],
                 welcome = "*مشرف: إعدادات الترحيب*\n\n"
-                            .."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable the welcome message.\n"
+							.."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.\n"
                             .."\n*رسالة الترحيب ال��اصة:*\n"
                             .."`/welcome مرحباً $name، استمتع بالمجموعة!`\n"
                             .."اكبت رسالتك للترحيب بعد أمر \"/welcome\". استطيع أن تكتب شيء بشكل مؤقت لتشل اسم مستخدم العضو الجديد للمجموعة.\n"
                             .."بديل مؤقت: _$username_ (سيتم استبداله باسم المستخدم); _$name_ (سيتم استبداله بالاسم); _$id_ (سيتم استدباله بالهوية); _$title_ (سيتم استبداله بعنوان المجموعة).\n"
                             .."\n*صورة متحركة أم ملصق كرسالة الترحيب*\n"
-                            .."بإمكانك استخدام صورة متحركة أم ملصق كرسالة الترحيب. لتحديده، رد لصورة متحركة أو لملصق ب \"/welcome\"\n",
+                            .."بإمكانك استخدام صورة متحركة أم ملصق كرسالة الترحيب. لتحديده، رد لصورة متحركة أو لملصق ب \"/welcome\"\n\n"
+							.."*Goodbye message*\n"
+							.."Also you can set the custom goodbye message:\n"
+							.."`/goodbye` _message_\n"
+							.."Same placeholders and media are available",
                 extra = "*المشرفون: أوامر إضافية*\n\n"
                         .."`/extra [#trigger] [reply]` = حدد در سيتم إرساله عندما يكتب أحد الكامةالمحفزة.\n"
                         .."_مثال_ : مع \"`/extra #hello صباح الخير!`\", سيرد البوت \"صباح الخير\" كلما أحد كتب #hello.\n"
@@ -2877,6 +2975,7 @@ The inline keyboard has three sub-menus:
             welcome_modlist = '\n\n*خالق*:\n&&&1\n*مشرفون*:\n&&&2',
             abt = '\n\n*وصف*:\n',
             rls = '\n\n*قواعد*:\n',
+            goodbye = 'Goodbye, &&&1!',
         },
         setabout = {
             no_bio = 'لا يوجد وصف لهذه المجموعة.',
@@ -2927,6 +3026,13 @@ The inline keyboard has three sub-menus:
                 w_default = '*Welcome type*: `default message`\n',
                 w_custom = '*نوع الترحيب*: `رسالة مخصصة`\n',
             },
+			goodbye = {
+				no_input = 'No goodbye message',
+				media_setted = 'New media setted as goodbye message: ',
+				reply_media = 'Reply to a `sticker` or a `gif` to set them as *goodbye message*',
+				custom = '*Custom goodbye message* setted!\n\n&&&1',
+				custom_setted = '*Custom goodbye message saved!*',
+			},
             char = {
                 arab_kick = 'Senders of arab messages will be kicked',
                 arab_ban = 'Senders of arab messages will be banned',
@@ -2937,6 +3043,7 @@ The inline keyboard has three sub-menus:
             },
             Silent = 'Silent mode',
             Welcome = 'رسالة الترحيب',
+			Goodbye = 'Goodbye message',
             Extra = 'إكسترا',
             Flood = 'مكافحة التكرار',
             Rtl = 'نص مكبوت من اليمين إلى اليسار',
@@ -3204,12 +3311,16 @@ How to see how many warns a user has received (or to reset them): use `/user` co
 How to change the max. number of warnings allowed: `/config` command, then `menu` button.
 How to change the max. number of warnings allowed for media: `/config` command, then `media` button.]],
                 welcome = "*Modérateurs: paramètres de bienvenue*\n\n"
-                    .."`/menu` = recevoir en privé le clavier de menu. Tu trouveras une option pour activer/désactiver le message de bienvenue.\n\n"
+					.."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.\n"
                     .."*Custumiser le message de bienvenue:*\n"
                     .."`/welcome Bienvenue $name, profite du groupe!`\nÉcris après \"/welcome\" ton message de bienvenue. Tu peux utiliser des codes spéciaux pour inclure le nom/le pseudonyme (@username)/l'ID du nouveau membre\n"
                     .."Codes: _$username_ (sera remplacé par le pseudonyme [@username]); _$name_ (sera remplacé par le nom); _$id_ (sera remplacé par son ID); _$title_ (sera remplacé par le nom du groupe).\n\n"
                     .."*GIF/sticker comme message de bienvenue*\n"
-                    .."Tu peux utiliser un gif/sticker particulier comme message de bienvenue. Pour le paramètrer, répondez au gif/sticker avec '/welcome'\n\n",
+                    .."Tu peux utiliser un gif/sticker particulier comme message de bienvenue. Pour le paramètrer, répondez au gif/sticker avec '/welcome'\n\n"
+					.."*Goodbye message*\n"
+					.."Also you can set the custom goodbye message:\n"
+					.."`/goodbye` _message_\n"
+					.."Same placeholders and media are available",
             },
             all = [[*Commandes pour tous*:
 `/dashboard` : voir toutes les infos du groupe en privé
@@ -3256,7 +3367,8 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             welcome = "Salut &&&1, et bienvenue dans *&&&2*!",
             welcome_abt = "Pas de description dans ce groupe.",
             welcome_modlist = "\n\n*Créateur*:\n&&&1\n*Admins*:\n&&&2",
-            welcome_rls = "Anarchie totale!"
+            welcome_rls = "Anarchie totale!",
+            goodbye = 'Goodbye, &&&1!',
         },
         setabout = {
             about_setted = "Nouvelle description *sauvée avec succès*!",
@@ -3284,6 +3396,7 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             Flood = "Anti-spamm",
             Rtl = "RTL (droite à gauche)",
             Welcome = "Message de bienvenue",
+			Goodbye = 'Goodbye message',
             char = {
                 arab_allow = "Langue arabe permise",
                 arab_ban = "Les envoyeurs de messages arabe seront banni",
@@ -3311,6 +3424,13 @@ How to change the max. number of warnings allowed for media: `/config` command, 
                 w_media = "*Type de bienvenue*: `gif/sticker`\n",
                 w_default = '*Welcome type*: `default message`\n',
             },
+			goodbye = {
+				no_input = 'No goodbye message',
+				media_setted = 'New media setted as goodbye message: ',
+				reply_media = 'Reply to a `sticker` or a `gif` to set them as *goodbye message*',
+				custom = '*Custom goodbye message* setted!\n\n&&&1',
+				custom_setted = '*Custom goodbye message saved!*',
+			},
             welcome = {
                 custom_setted = "*Message de bienvenue personnalisé sauvé!*",
                 media_setted = "Nouveau média comme message de bienvenue ajouté: ",
@@ -3535,9 +3655,13 @@ How to change the max. number of warnings allowed for media: `/config` command, 
 
 支援的媒體︰圖像、音訊、影片、貼圖、Gif、錄音、聯絡人、檔案、連結, telegram.me links]],
                 welcome = "【歡迎訊息】\n\n"
-                    .."`/menu` = 透過私訊接收到控制面板，可以選擇開啓／關閉歡迎訊息\n\n．自訂歡迎訊息︰\n"
+					.."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.\n"
                     .."`/welcome Welcome $name, enjoy the group!`\n在 \"/welcome\" 之後打上你想要的訊息，你可以使用代碼來指出新用戶的 䁥稱／用戶名稱／用戶ＩＤ\n"
-                    .."代碼︰_$username_（用戶名稱戶）；_$name_（䁥稱）；_$id_（用戶ＩＤ）；_$title_（群組名字）\n\n．GIF/貼圖作為歡迎訊息︰\n用 '/welcome' 指令來回覆Gif／貼圖便可設定成歡迎圖\n\n．",
+                    .."代碼︰_$username_（用戶名稱戶）；_$name_（䁥稱）；_$id_（用戶ＩＤ）；_$title_（群組名字）\n\n．GIF/貼圖作為歡迎訊息︰\n用 '/welcome' 指令來回覆Gif／貼圖便可設定成歡迎圖\n\n．\n"
+					.."*Goodbye message*\n"
+					.."Also you can set the custom goodbye message:\n"
+					.."`/goodbye` _message_\n"
+					.."Same placeholders and media are available",
                 extra = "【選項︰自訂指令】\n\n"
                     .."`/extra [#發動文字] [預設回覆內容]` = 當發動文字出現，會自動回覆預設內容\n例子︰「/extra #謝謝 不用客氣」，當「#謝謝」出現時，人機會自動回覆「不用客氣」\n"
                     .."`/extra list` = 獲取自訂指令列表\n"
@@ -3619,7 +3743,8 @@ The inline keyboard has three sub-menus:
             welcome = "你好 &&&1，歡迎來到 *&&&2*！",
             welcome_abt = "此群組沒有設定簡介。",
             welcome_modlist = "\n\n創群者︰\n&&&1\n管理員︰\n&&&2",
-            welcome_rls = "為所欲為！"
+            welcome_rls = "為所欲為！",
+            goodbye = 'Goodbye, &&&1!',
         },
         setabout = {
             about_setted = "已成功儲存新的簡介！",
@@ -3647,6 +3772,7 @@ The inline keyboard has three sub-menus:
             Flood = "防洗版",
             Rtl = "右至左文字",
             Welcome = "歡迎訊息",
+			Goodbye = 'Goodbye message',
             char = {
                 arab_allow = "已允許阿拉伯文字",
                 arab_ban = "使用阿拉伯文字將會被封鎖",
@@ -3674,6 +3800,13 @@ The inline keyboard has three sub-menus:
                 w_media = "歡迎訊息組合︰「Gif／貼圖」\n",
                 w_default = '*Welcome type*: `default message`\n',
             },
+			goodbye = {
+				no_input = 'No goodbye message',
+				media_setted = 'New media setted as goodbye message: ',
+				reply_media = 'Reply to a `sticker` or a `gif` to set them as *goodbye message*',
+				custom = '*Custom goodbye message* setted!\n\n&&&1',
+				custom_setted = '*Custom goodbye message saved!*',
+			},
             welcome = {
                 custom_setted = "已更新歡迎訊息。",
                 media_setted = "新媒體被設定成歡迎訊息︰",
@@ -3892,13 +4025,17 @@ The inline keyboard has three sub-menus:
 
 *لیست رسانه های قابل تنظیم*: _image, audio, video, sticker, gif, voice, contact, file, link, telegram.me links_]],
                 welcome = "*مدیزیت: تنظیمات پیام خوش آمدگویی*\n\n"
-                            .."`/menu` = فعال و غیر فعال کردن پیام خوش آمدگویی توسط صفحه کلید \n"
+							.."`/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.\n"
                             .."\n*شخصی سازی پیام خوش آمد گویی:*\n"
                             .."`/welcome سلام $name به گروه ما خوش آمدید`\n"
                             .."بعد از دستور `/welcome` متن خوش آمدگویی خود رابنویسید.\n"
                             .." _$username_ (نمایش یوزرنیم کاربر); _$name_ (نمایش نام کاربر); _$id_ (نمایش شناسه کاربری); _$title_ (نمایش نام گروه شما).\n"
                             .."\nارسال استیکر و گیف بعنوان پیام خوش آمدگویی\n"
-                            .."ابتدا استکیر و یا گیف مورد نظر را ارسال نمایید سپس به دستور `/welcome` استیکر و گیف مورد نظر را ریپلای کنید\n",
+                            .."ابتدا استکیر و یا گیف مورد نظر را ارسال نمایید سپس به دستور `/welcome` استیکر و گیف مورد نظر را ریپلای کنید\n\n"
+							.."*Goodbye message*\n"
+							.."Also you can set the custom goodbye message:\n"
+							.."`/goodbye` _message_\n"
+							.."Same placeholders and media are available",
                 extra = "*مدیریت: ذخیره دستورها*\n\n"
                         .."`/extra [#trigger] [reply]` = با ریپلای ذخیره خواهد شد و زمانی که کاربران trigger بنویسند ربات پاسخ خواهد داد.\n"
                         .."_مثال_ : با \"`/extra #hello Good morning!`\", ربات جواب خواهد داد \"Good morning!\" اگر کاربری #hello بنویسد.\n"
@@ -3987,6 +4124,7 @@ The inline keyboard has three sub-menus:
             welcome_modlist = '\n\n*سازنده گروه*:\n&&&1\n*مدیران*:\n&&&2',
             abt = '\n\n*توضییحات*:\n',
             rls = '\n\n*قوانین*:\n',
+            goodbye = 'Goodbye, &&&1!',
         },
         setabout = {
             no_bio = 'توضییحاتی برای این گروه ذخیره نشده',
@@ -4033,6 +4171,13 @@ The inline keyboard has three sub-menus:
                 w_default = '*Welcome type*: `default message`\n',
                 legenda = '✅ = _فعال_\n🚫 = _غیرفعال_\n👥 = _ارسال در گروه_\n👤 = _ارسال به خصوصی کاربران_',
             },
+			goodbye = {
+				no_input = 'No goodbye message',
+				media_setted = 'New media setted as goodbye message: ',
+				reply_media = 'Reply to a `sticker` or a `gif` to set them as *goodbye message*',
+				custom = '*Custom goodbye message* setted!\n\n&&&1',
+				custom_setted = '*Custom goodbye message saved!*',
+			},
             char = {
                 arab_kick = 'Senders of arab messages will be kicked',
                 arab_ban = 'Senders of arab messages will be banned',
@@ -4042,6 +4187,7 @@ The inline keyboard has three sub-menus:
                 rtl_allow = 'RTL character allowed',
             },
             Welcome = 'Welcome message',
+			Goodbye = 'Goodbye message',
             Rules = '/rules',
             Extra = 'Extra',
             Flood = 'Anti-flood',

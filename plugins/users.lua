@@ -211,6 +211,53 @@ local action = function(msg, blocks)
             end
         end
     end
+    if blocks[1] == 'goodbye' then
+        if msg.chat.type == 'private' or not roles.is_admin_cached(msg) then return end
+
+        local input = blocks[2]
+        local hash = 'chat:'..msg.chat.id..':goodbye'
+
+        -- ignore if not input text and not reply
+        if not input and not msg.reply then
+            api.sendReply(msg, make_text(lang[msg.ln].settings.goodbye.no_input), false)
+            return
+        end
+
+        if not input and msg.reply then
+            local replied_to = misc.get_media_type(msg.reply)
+            if replied_to == 'sticker' or replied_to == 'gif' then
+                local file_id
+                if replied_to == 'sticker' then
+                    file_id = msg.reply.sticker.file_id
+                else
+                    file_id = msg.reply.document.file_id
+                end
+                db:hset(hash, 'type', 'media')
+                db:hset(hash, 'content', file_id)
+                api.sendReply(msg, lang[msg.ln].settings.goodbye.media_setted..'`'..replied_to..'`', true)
+            else
+                api.sendReply(msg, lang[msg.ln].settings.goodbye.reply_media, true)
+            end
+            return
+        end
+
+		input = input:gsub('^%s*(.-)%s*$', '%1') -- trim spaces
+		db:hset(hash, 'type', 'custom')
+		db:hset(hash, 'content', input)
+		local res, code = api.sendReply(msg, make_text(lang[msg.ln].settings.goodbye.custom, input), true)
+		if not res then
+			db:hset(hash, 'type', 'composed') --if wrong markdown, remove 'custom' again
+			db:hset(hash, 'content', 'no')
+			if code == 118 then
+				api.sendMessage(msg.chat.id, lang[msg.ln].bonus.too_long)
+			else
+				api.sendMessage(msg.chat.id, lang[msg.ln].breaks_markdown, true)
+			end
+		else
+			local id = res.result.message_id
+			api.editMessageText(msg.chat.id, id, lang[msg.ln].settings.goodbye.custom_setted, false, true)
+		end
+    end
 	if blocks[1] == 'user' then
 		if msg.chat.type == 'private' or not roles.is_admin_cached(msg) then return end
 		
@@ -315,6 +362,8 @@ return {
 		config.cmd..'(status) (%d+)$',
 		config.cmd..'(welcome) (.*)$',
 		config.cmd..'(welcome)$',
+		config.cmd..'(goodbye) (.*)$',
+		config.cmd..'(goodbye)$',
 		config.cmd..'(cache)$',
 		config.cmd..'(msglink)$',
 		
