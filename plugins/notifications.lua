@@ -20,20 +20,11 @@ end
 
 -- Examines for the presence of mentions
 local function scan_mentions(msg)
-	if msg.chat.type == 'private' then return msg end
-
-	if not msg.entities then return msg end
-	for i, v in pairs(msg.entities) do
-		if v.type == 'mention' then
-			local username = msg.text:sub(v.offset + 1, v.offset + v.length)
-			print('Name detected: '..username)
-			local hash = string.format('bot:usernames:%d', msg.chat.id)
-			local user_id = db:hget(hash, username)
-			if user_id then
-				hash = string.format('chat:%d:subscribtions', msg.chat.id)
-				if db:hget(hash, user_id) == 'on' then
-					notify(user_id, msg, msg.ln)
-				end
+	if msg.chat.type ~= 'private' and msg.mentions then
+		for user_id in pairs(msg.mentions) do
+			local hash = string.format('chat:%d:subscribtions', msg.chat.id)
+			if msg.from.id ~= user_id and db:hget(hash, user_id) == 'on' then
+				notify(user_id, msg, msg.ln)
 			end
 		end
 	end

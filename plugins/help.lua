@@ -1,8 +1,9 @@
 local function make_keyboard(mod, mod_current_position)
 	local keyboard = {}
 	keyboard.inline_keyboard = {}
+	local list
 	if mod then --extra options for the mod
-	    local list = {
+	    list = {
 	        ['Banhammer'] = 'banhammer',
 	        ['Group info'] = 'info',
 	        ['Flood manager'] = 'flood',
@@ -15,28 +16,34 @@ local function make_keyboard(mod, mod_current_position)
 	        ['Links'] = 'links',
 	        ['Languages'] = 'lang'
         }
-        local line = {}
-        for k,v in pairs(list) do
-            --if mod_current_position ~= v:gsub('!', '') then --(to remove the current tab button)
-            if next(line) then
-                local button = {text = '📍'..k, callback_data = v}
-                --change emoji if it's the current position button
-                if mod_current_position == v then button.text = '💡 '..k end
-                table.insert(line, button)
-                table.insert(keyboard.inline_keyboard, line)
-                line = {}
-            else
-                local button = {text = '📍'..k, callback_data = v}
-                --change emoji if it's the current position button
-                if mod_current_position == v:gsub('!', '') then button.text = '💡 '..k end
-                table.insert(line, button)
-            end
-            --end --(to remove the current tab button)
-        end
-        if next(line) then --if the numer of buttons is odd, then add the last button alone
-            table.insert(keyboard.inline_keyboard, line)
-        end
-    end
+	else
+		list = {
+			['Subscriptions'] = 'subscribe',
+		}
+	end
+
+	local line = {}
+	for k, v in pairs(list) do
+		--if mod_current_position ~= v:gsub('!', '') then --(to remove the current tab button)
+		if next(line) then
+			local button = {text = '📍'..k, callback_data = v}
+			--change emoji if it's the current position button
+			if mod_current_position == v then button.text = '💡 '..k end
+			table.insert(line, button)
+			table.insert(keyboard.inline_keyboard, line)
+			line = {}
+		else
+			local button = {text = '📍'..k, callback_data = v}
+			--change emoji if it's the current position button
+			if mod_current_position == v:gsub('!', '') then button.text = '💡 '..k end
+			table.insert(line, button)
+		end
+		--end --(to remove the current tab button)
+	end
+	if next(line) then --if the numer of buttons is odd, then add the last button alone
+		table.insert(keyboard.inline_keyboard, line)
+	end
+
     local bottom_bar
     if mod then
 		bottom_bar = {{text = '🔰 User commands', callback_data = 'user'}}
@@ -98,10 +105,12 @@ local action = function(msg, blocks)
         if query == 'user' then
             text = lang[msg.ln].help.all
             with_mods_lines = false
+		elseif query == 'subscribe' then
+			text = lang[msg.ln].help.subscribe
+			with_mods_lines = false
         elseif query == 'mod' then
             text = lang[msg.ln].help.kb_header
-        end
-        if query == 'info' then
+		elseif query == 'info' then
         	text = lang[msg.ln].help.mods[query]
         elseif query == 'banhammer' then
         	text = lang[msg.ln].help.mods[query]
@@ -128,7 +137,7 @@ local action = function(msg, blocks)
         local res, code = api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
         if not res and code and code == 111 then
             api.answerCallbackQuery(msg.cb_id, '❗️ Already on this tab')
-        elseif query ~= 'user' and query ~= 'mod' and query ~= 'info_button' then
+        elseif query ~= 'user' and query ~= 'mod' and query ~= 'info_button' and query ~= 'subscribe' then
             api.answerCallbackQuery(msg.cb_id, '💡 '..lang[msg.ln].help.mods[query]:sub(1, string.find(lang[msg.ln].help.mods[query], '\n')):mEscape_hard())
         end
     end
@@ -153,5 +162,6 @@ return {
 	    '^###cb:(warns)$',
 	    '^###cb:(char)$',
 	    '^###cb:(settings)$',
+	    '^###cb:(subscribe)$',
     }
 }

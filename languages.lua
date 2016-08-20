@@ -171,6 +171,12 @@ The inline keyboard has three sub-menus:
 `/help` : show this message.'
 
 If you like this bot, please leave the vote you think it deserves [here](https://telegram.me/storebot?start=groupbutler_bot)']],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
 		    private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -576,6 +582,12 @@ La tastiera ha 3 sub-menu:
 `/groups` : mostra la lista dei gruppi di discussione riguardo al bot
 `/help` : show this message.'
 \n\nSe ti piace questo bot, per favore lascia il voto che credi si meriti [qui](https://telegram.me/storebot?start=groupbutler_bot)]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
 		    private = [[Ciao *&&&1* '..emoji.shaking_hand..', piacere di conoscerti!
 Sono Group Butler, il primo bot per amministrare gruppi che utilizza la Bot API ufficiale.
 
@@ -997,6 +1009,12 @@ The inline keyboard has three sub-menus:
 `/info` : ver informacion sobre el bot
 `/groups` : get the list of the discussion groups
 `/help` : ver este mensaje]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
 		    private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -1397,6 +1415,12 @@ The inline keyboard has three sub-menus:
 `/info` : mostra algumas informações úteis sobre o bot
 `/groups` : get the list of the discussion groups
 `/help` : exibe esta mensagem]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -1795,12 +1819,18 @@ The inline keyboard has three sub-menus:
 `/rules` : показать правила группы (via pm)
 `/about` : показать описание группы (via pm)
 `/adminlist` : показать модераторов этой группы (via pm)
-`/kickme` : get kicked by the bot
+`/kickme` : попросить бота кинуть тебя
 `/id` : show the chat id, or the id of an user if by reply
 `/echo [text]` : the bot will send the text back (with markdown, available only in private for non-admin users)
 `/info` : показать информацию о боте
-`/groups` : get the list of the discussion groups
-`/help` : show this message]],
+`/groups` : показать список групп обсуждения бота
+`/help` : показать это сообщение]],
+			subscribe = [[
+*Команды управления подпиской*:
+Если ты часто пропускаешь обращения к себе в шумных чатах, можешь подписаться на уведомления от меня. Отправь в нужную группу команду `/subscribe`, если хочешь получать такие уведомления. Используй команду `/unscribe`, чтобы отписаться.
+Даже если ты покинешь группу с подпиской, уведомления об упоминаниях всё равно будут продолжать приходить, и ты сможешь ответить на него.
+Если у тебя нет возможности снова вступить в группу, чтобы отписаться, просто ответь на очередное уведомление командой `/unscribe`.
+]],
 		    private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -2122,10 +2152,22 @@ The inline keyboard has three sub-menus:
                 .."_JEDER VORSCHLAG UND JEDE FUNKTIONSERWEITERUNGSANFRAGE (FEATURE REQUEST) IST GERNE GESEHEN_ Der Entwickler wird SBWM (so bald wie möglich ^^ ; ASAP - as soon as possible) antworten\n"
                 .."`/help` : Zeige diese Nachricht an\n\n"
                 .."Wenn dir der Bot gefällt, bewerte ihn [hier](https://telegram.me/storebot?start=groupbutler_bot) bitte so wie du es für richtig hälst",
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             group_not_success = "_Schreibe zuerst mir, damit ich dann dir schreiben kann>_",
             group_success = "_Ich habe dir das Hilfsmenü als Direktnachricht geschickt_",
             initial = 'You can surf this keyboard to see *all the available commands*',
             kb_header = "Klicke auf ein Feld (button) um die *damit verbundenen Befehle (related commands)* anzuzeigen",
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             mods = {
                 banhammer = "*Moderatoren: Die Macht des Sperrschlägers (banhammer powers):*\n\n"
                     .."`/kick [per Antworten (reply) | Nutzername (username)]` = entferne einen Nutzer (user) aus der Gruppe (er kann wieder hinzugefügt (readded) werden.\n"
@@ -2524,6 +2566,12 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             .."`/info` : visa användbar information om botten\n"
             ..'`/groups` : get the list of the discussion groups\n'
             .."`/help` : visa detta meddelande.\n\nOm du gillar den här botten, lämna gärna den röst du tycker botten förtjänar [här](https://telegram.me/storebot?start=groupbutler_bot)",
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             group_not_success = "_Skicka mig ett meddelande först, så kan jag därefter skicka meddelanden till dig_",
             group_success = "_Jag har skickat dig hjälpen privat_",
             initial = 'You can surf this keyboard to see *all the available commands*',
@@ -3007,6 +3055,12 @@ The inline keyboard has three sub-menus:
 `/info` : أظهر بعض المعلومات المفيدة حول البوت
 `/groups` : get the list of the discussion groups
 `/help` : أظهر هذه الرسالة']],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
 		    private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -3421,6 +3475,12 @@ How to change the max. number of warnings allowed for media: `/config` command, 
 `/info` : montrer quelques informations à propos du bot
 `/groups` : get the list of the discussion groups
 `/help` : montrer ce message]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -3808,6 +3868,12 @@ The inline keyboard has three sub-menus:
 `/echo [訊息內容]`︰人機會向你重複訊息內容（會實施字型符號，只在私訊有用）
 `/info`︰顯示關於人機的有用資訊\n`/group`︰獲取討論（人機）群組的連結
 如果你喜歡本人機，請在[here](https://telegram.me/storebot?start=groupbutler_bot)表達你的想法（也是英文）\n（中文內容由 @Firewood\\_LoKi 翻譯）]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
             private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
@@ -4199,6 +4265,12 @@ The inline keyboard has three sub-menus:
 /info` : نمایش برخی اطلاعات مربوط به ربات
 /groups` : get the list of the discussion groups
 /help` : نمایش این پیام]],
+			subscribe = [[
+*Commands for manage subscription*:
+If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
+Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
+If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
+]],
 		    private = 'Hello *&&&1* '..emoji.shaking_hand..', nice to meet you!\n'
                     ..'I\'m Group Butler, the first administration bot using the official Bot API.\n'
                     ..'\n*I can do a lot of cool stuffs*, here\'s a short list:\n'
