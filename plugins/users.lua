@@ -118,13 +118,11 @@ end
 local action = function(msg, blocks)
     if blocks[1] == 'adminlist' then
     	if msg.chat.type == 'private' then return end
-    	local out
-        local creator, adminlist = misc.getAdminlist(msg.chat.id)
-        out = lang[msg.ln].mod.modlist:compose(creator, adminlist)
-        if not roles.is_admin_cached(msg) then
-        	api.sendMessage(msg.from.id, out, true)
+		local text = misc.format_adminlist(msg.chat.id, msg.from.id, msg.ln, msg)
+		if misc.is_silentmode_on(msg.chat.id) then
+			api.sendMessage(msg.from.id, text, true)
         else
-            api.sendReply(msg, out, true)
+			api.sendMessage(msg.chat.id, text, true)
         end
     end
     if blocks[1] == 'status' then

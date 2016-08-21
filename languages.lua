@@ -42,7 +42,6 @@ return {
             general_pm = '_I\'ve sent you the message in private_',
             no_user = 'I\'ve never seen this user before.\nIf you want to teach me who is he, forward me a message from him',
             the_group = 'the group',
-            adminlist_admin_required = 'I\'m not a group Admin.\n*Only an Admin can see the administrators list*',
             settings_header = 'Current settings for *the group*:\n\n*Language*: `&&&1`\n',
             reply = '*Reply to someone* to use this command, or write a *username*',
             too_long = 'This text is too long, I can\'t send it',
@@ -204,7 +203,12 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
             link_unsetted = 'Link *unsetted*',
         },
         mod = {
-            modlist = '*Creator*:\n&&&1\n\n*Admins*:\n&&&2'
+			creator = '*Creator*:',
+			admins = '*Admins*:',
+			no_manages = '_There are no administrators_',
+			i_am_only_admin = '_I\'m the only administrator here_',
+			i_am_not_admin = '*I\'m not an admin* 😞',
+			i_am_not_admin_with_tip = '*I\'m not an admin*. I can\'t fully perform my functions until group creator hasn\'t made me admin. See [this post](https://telegram.me/GroupButler_ch/104) for to learn how to make a bot administrator.',
         },
         service = {
             welcome = 'Hi &&&1, and welcome to *&&&2*!',
@@ -467,7 +471,6 @@ The number is not related the the normal `/warn` command']],
             settings_header = 'Impostazioni correnti per *il gruppo*:\n\n*Lingua*: `&&&1`\n',
             no_user = 'Non ho mai visto questo utente prima.\nSe vuoi insegnarmi dirmi chi è, inoltrami un suo messaggio',
             reply = '*Rispondi a qualcuno* per usare questo comando, o scrivi lo *username*',
-            adminlist_admin_required = 'Non sono un Admin del gruppo.\n*Solo un Admin puà vedere la lista degli amministratori*',
             too_long = 'Questo testo è troppo lungo, non posso inviarlo',
             msg_me = '_Scrivimi prima tu, in modo che io possa scriverti_',
             menu_cb_settings = 'Tocca le icone sulla destra!',
@@ -617,7 +620,12 @@ funziono meglio se mi aggiungi agli amministratori del gruppo (altrimenti non po
             link_unsetted = 'Link *rimosso*',
         },
         mod = {
-            modlist = '*Creatore*:\n&&&1\n\n*Admin*:\n&&&2',
+			creator = '*Creator*:',
+			admins = '*Admins*:',
+			no_manages = '_There are no administrators_',
+			i_am_only_admin = '_I\'m the only administrator here_',
+			i_am_not_admin = '*I\'m not an admin* 😞',
+			i_am_not_admin_with_tip = '*I\'m not an admin*. I can\'t fully perform my functions until group creator hasn\'t made me admin. See [this post](https://telegram.me/GroupButler_ch/104) for to learn how to make a bot administrator.',
         },
         service = {
             welcome = 'Ciao &&&1, e benvenuto/a in *&&&2*!',
@@ -1042,7 +1050,12 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
             link_unsetted = 'Enlace *sin establecer*',
         },
         mod = {
-            modlist = '*Creador*:\n&&&1\n\n*Admins*:\n&&&2'
+			creator = '*Creator*:',
+			admins = '*Admins*:',
+			no_manages = '_There are no administrators_',
+			i_am_only_admin = '_I\'m the only administrator here_',
+			i_am_not_admin = '*I\'m not an admin* 😞',
+			i_am_not_admin_with_tip = '*I\'m not an admin*. I can\'t fully perform my functions until group creator hasn\'t made me admin. See [this post](https://telegram.me/GroupButler_ch/104) for to learn how to make a bot administrator.',
         },
         service = {
             welcome = 'Hola &&&1, bienvenido a *&&&2*!',
@@ -1300,7 +1313,6 @@ Los iconos junto al comando mostrarán el estado actual:
             general_pm = '_Enviei a mensagem em privado a você_',
             no_user = 'Eu nunca vi este usuário antes.\nSe você deseja me ensinar quem ele é; me encaminhe uma mensagem dele',
             the_group = 'o grupo',
-            adminlist_admin_required = 'Eu não sou administrador do grupo. Somente um administrador pode ver a lista de administradores*',
             mods_list = '*Moderadores do grupo*:\n&&&1',
             settings_header = 'Configurações atuais para *o grupo*:\n\n*Linguagem*: `&&&1`\n',
             reply = '*Responda alguém!* Não reconheci o *username*',
@@ -1448,7 +1460,12 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
             link_unsetted = 'Link *desativado*',
         },
         mod = {
-            modlist = '*Criador*:\n&&&1\n\n*Admins*:\n&&&2'
+			creator = '*Creator*:',
+			admins = '*Admins*:',
+			no_manages = '_There are no administrators_',
+			i_am_only_admin = '_I\'m the only administrator here_',
+			i_am_not_admin = '*I\'m not an admin* 😞',
+			i_am_not_admin_with_tip = '*I\'m not an admin*. I can\'t fully perform my functions until group creator hasn\'t made me admin. See [this post](https://telegram.me/GroupButler_ch/104) for to learn how to make a bot administrator.',
         },
         service = {
             welcome = 'Olá, &&&1, e seja bem-vindo(a) ao *&&&2*!',
@@ -1712,7 +1729,6 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
 			general_pm = '_Я отправил тебе личное сообщение_',
             no_user = 'Я не видел этого человека раньше.\nЕсли ты хочешь объяснить мне, кто он, сделай мне forward его сообщения',
             the_group = 'Группа',
-            adminlist_admin_required = 'Я не администратор группы\n*Только админы могут видеть список администраторов*',
             settings_header = 'Текущие настройки *группы*:\n\n*Язык*: `&&&1`\n',
             reply = '*Reply to someone* to use this command, or write a *username*',
             too_long = 'This text is too long, I can\'t send it',
@@ -1858,7 +1874,12 @@ The inline keyboard has three sub-menus:
             link_unsetted = 'Ссылка *удалена*',
         },
         mod = {
-			modlist = '*Создатель*:\n&&&1\n\n*Администраторы*:\n&&&2',
+			creator = '*Создатель*:',
+			admins = '*Администраторы*:',
+			no_manages = '_Тут нет администраторов_',
+			i_am_only_admin = '_Я здесь единственный администратор_',
+			i_am_not_admin = '*Я не администратор* 😞',
+			i_am_not_admin_with_tip = '*Я не администратор*. Я не смогу полноценно выполнять функции банхаммера, пока создатель группы не сделает меня админом. См. [этот пост](https://telegram.me/GroupButler_ch/104), чтобы узнать, как сделать бота администратором.',
         },
         service = {
             welcome = 'Привет, &&&1! Добро пожаловать в *&&&2*!',
@@ -2049,7 +2070,7 @@ The inline keyboard has three sub-menus:
                 first = 'Navigate this message to see *all the info* about this group!',
                 antiflood = '- *Status*: `&&&1`\n- *Action* when an user floods: `&&&2`\n- Number of messages *every 5 seconds* allowed: `&&&3`\n- *Ignored media*:\n&&&4',
                 settings = 'Настройки',
-                admins = 'Админы',
+                admins = 'Администрация',
                 rules = 'Правила',
                 about = 'Описание',
                 welcome = 'Приветствие',
@@ -2119,7 +2140,6 @@ The inline keyboard has three sub-menus:
             general_pm = '_Ich habe dir die Nachricht als Direktnachricht geschickt_',
             no_user = 'Ich habe den Nutzer (user) noch nicht kennen gelernt.\nWenn du ihn mir vorstellen möchtest damit ich weiß wen du meinst, leite eine seiner Nachrichten an mich weiter',
             the_group = 'die Gruppe',
-            adminlist_admin_required = 'I\'m not a group Admin.\n*Only an Admin can see the administrators list*',
             settings_header = 'Current settings for *the group*:\n\n*Language*: `&&&1`\n',
             reply = '*Antworte (reply) jemandem* um diesen Befehl (command) zu nutzen oder schreibe einen *Nutzernamen (username)*',
             too_long = 'This text is too long, I can\'t send it',
@@ -2272,7 +2292,12 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             no_link = "Es existiert *kein Link* für diese Gruppe. Bitte den Besitzer (owner) einen zu generieren",
         },
         mod = {
-            modlist = '*Creator*:\n&&&1\n\n*Admins*:\n&&&2'
+			creator = '*Creator*:',
+			admins = '*Admins*:',
+			no_manages = '_There are no administrators_',
+			i_am_only_admin = '_I\'m the only administrator here_',
+			i_am_not_admin = '*I\'m not an admin* 😞',
+			i_am_not_admin_with_tip = '*I\'m not an admin*. I can\'t fully perform my functions until group creator hasn\'t made me admin. See [this post](https://telegram.me/GroupButler_ch/104) for to learn how to make a bot administrator.',
         },
         service = {
             abt = "\n\n*Beschreibung*:\n",
@@ -2534,7 +2559,6 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             general_pm = '_Jag har skickat dig meddelandet privat_',
             no_user = 'Jag har inte sett den användaren förut.\nOm du vill lära mig vem det är så kan du vidarebefordra ett meddelande från användaren till mig.',
             the_group = 'gruppen',
-            adminlist_admin_required = 'I\'m not a group Admin.\n*Only an Admin can see the administrators list*',
             settings_header = 'Nuvarande inställningar för *gruppen*:\n\n*Språk*: `&&&1`\n',
             reply = '*Skicka som meddelandesvar* för att använda detta kommando eller skriv ett *användarnamn*',
             too_long = 'This text is too long, I can\'t send it',
@@ -2678,7 +2702,12 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             no_link = "*Ingen länk* för den här gruppen. Be gruppägaren generera en",
         },
         mod = {
-            modlist = '*Creator*:\n&&&1\n\n*Admins*:\n&&&2',
+			creator = '*Creator*:',
+			admins = '*Admins*:',
+			no_manages = '_There are no administrators_',
+			i_am_only_admin = '_I\'m the only administrator here_',
+			i_am_not_admin = '*I\'m not an admin* 😞',
+			i_am_not_admin_with_tip = '*I\'m not an admin*. I can\'t fully perform my functions until group creator hasn\'t made me admin. See [this post](https://telegram.me/GroupButler_ch/104) for to learn how to make a bot administrator.',
         },
         service = {
             abt = "\n\n*Beskrivning*:\n",
@@ -2939,7 +2968,6 @@ How to change the max. number of warnings allowed for media: `/config` command, 
             general_pm = '_لقد أرسلت لك الرسالة بواسطة رسالة خاصة_',
             no_user = 'لم أرى هذا المستخدم من قبل.\nإذا رغبت تخبرني عن هويته، عليك تحويل رسالة منه إلي.',
             the_group = 'المجموعة',
-            adminlist_admin_required = 'أنا لست مشرف مجموعة.\n*فقط يمكن للمشرف أن يرى قائمة المشرفون.*',
             settings_header = 'الإعدادات الحالية *للمجموعة*:\n\n*لغة*: `&&&1`\n',
             reply = '*رد على شخص ما* لاستخدام هذا الأمر، أم اكتب *اسم مستخدم*',
             too_long = 'إن هذا النص طويل جداً، ليس بإمكاني إرساله',
@@ -3086,17 +3114,12 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
             link_unsetted = 'تم *حذف* الرابط',
         },
         mod = {
-            not_owner = 'إنك لست مالك هذه المجموعة.',
-            reply_promote = 'رد على شخص ما لتعزيزه',
-            reply_demote = 'رد على شحص ما لإنزاله',
-            reply_owner = 'رد على شخص ما لعطائه دور المالك',
-            already_mod = 'إن &&&1 بالقعل مشرف في مجموعة *&&&2*',
-            already_owner = 'إنك بالفعل مالك هذه المجموعة',
-            not_mod = '&&&1 ليس مشرفا في مجموعة *&&&2*',
-            promoted = 'تم تعزيز &&&1 كمشرف في مجموعة *&&&2*',
-            demoted = 'تم إنزال &&&1 ',
-            new_owner = 'إن &&&1 المالك الجديد ل *&&&2*',
-            modlist = '*خالق*:\n&&&1\n\n*مشرفون*:\n&&&2'
+			creator = '*Creator*:',
+			admins = '*Admins*:',
+			no_manages = '_There are no administrators_',
+			i_am_only_admin = '_I\'m the only administrator here_',
+			i_am_not_admin = '*I\'m not an admin* 😞',
+			i_am_not_admin_with_tip = '*I\'m not an admin*. I can\'t fully perform my functions until group creator hasn\'t made me admin. See [this post](https://telegram.me/GroupButler_ch/104) for to learn how to make a bot administrator.',
         },
         service = {
             welcome = 'السلام عليكم يا &&&1, ومرحباً بكم في *&&&2*!',
@@ -3360,7 +3383,6 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
             reply_or_mention = 'Reply to an user or mention him (works by id too)'
         },
         bonus = {
-            adminlist_admin_required = "Je ne suis pas un admin du groupe.\n*Seul les admins peuvent voir la liste des administrateurs*",
             general_pm = "_Je t'ai envoyé un message en privé_",
             menu_cb_settings = "Tape sur une icône!",
             menu_cb_warns = "Utilise la ligne ci-dessous pour modifier les paramètres d'avertissement!",
@@ -3506,7 +3528,12 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
             no_link = "*Pas de lien* pour ce groupe. Demande au créateur d'en générer un",
         },
         mod = {
-            modlist = "*Créateur*:\n&&&1\n\n*Admins*:\n&&&2"
+			creator = '*Creator*:',
+			admins = '*Admins*:',
+			no_manages = '_There are no administrators_',
+			i_am_only_admin = '_I\'m the only administrator here_',
+			i_am_not_admin = '*I\'m not an admin* 😞',
+			i_am_not_admin_with_tip = '*I\'m not an admin*. I can\'t fully perform my functions until group creator hasn\'t made me admin. See [this post](https://telegram.me/GroupButler_ch/104) for to learn how to make a bot administrator.',
         },
         service = {
             abt = "\n\n*Description*:\n",
@@ -3760,7 +3787,6 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
             warn = "因警告太多，已驅逐︰"
         },
         bonus = {
-            adminlist_admin_required = "我不是群組管理員。\n只有群組管理員可以查看管理員名單。",
             general_pm = "〝我已經私下向你傳送了訊息內容。〞",
             menu_cb_settings = "點擊圖宗變更設定！",
             menu_cb_warns = "使用下面的橫列變更警告設定",
@@ -3899,7 +3925,12 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
             no_link = "此群組沒有連結，請向群組管理員查詢。",
         },
         mod = {
-            modlist = "創群者︰\n&&&1\n\n管理員︰\n&&&2"
+			creator = '*Creator*:',
+			admins = '*Admins*:',
+			no_manages = '_There are no administrators_',
+			i_am_only_admin = '_I\'m the only administrator here_',
+			i_am_not_admin = '*I\'m not an admin* 😞',
+			i_am_not_admin_with_tip = '*I\'m not an admin*. I can\'t fully perform my functions until group creator hasn\'t made me admin. See [this post](https://telegram.me/GroupButler_ch/104) for to learn how to make a bot administrator.',
         },
         service = {
             abt = "\n\n簡介︰\n",
@@ -4149,7 +4180,6 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
             general_pm = '_در پیام خصوصی شما ارسال شد_',
             no_user = 'من این کاربر را در گروه ندیدم\n اگر میخواهید این کاربر را به من معرفی کنید لطفا یکی از پیام های ارسال شده توسط ایشان را برای من ریپلای کنید.',
             the_group = 'گروه',
-            adminlist_admin_required = 'من مدیر نیستم.\n*فقط درصورت مدیر بودن میتوان لیست میدارن را دریافت کرد*',
             settings_header = 'وضعیت فعلی گروه:\n\n*زبان*: `&&&1`\n',
             reply = 'یک نفر را ریپلای کنید یا یوزرنیم شخصی را بنویسید',
             too_long = 'این پیام خیلی طولانیست و من قادر به ارسال این پیام نیستم',
@@ -4296,7 +4326,12 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
             link_unsetted = 'لینک حذف شد',
         },
         mod = {
-            modlist = '*سازنده گروه*:\n&&&1\n\n*مدیران*:\n&&&2'
+			creator = '*Creator*:',
+			admins = '*Admins*:',
+			no_manages = '_There are no administrators_',
+			i_am_only_admin = '_I\'m the only administrator here_',
+			i_am_not_admin = '*I\'m not an admin* 😞',
+			i_am_not_admin_with_tip = '*I\'m not an admin*. I can\'t fully perform my functions until group creator hasn\'t made me admin. See [this post](https://telegram.me/GroupButler_ch/104) for to learn how to make a bot administrator.',
         },
         service = {
             welcome = 'Hi &&&1, and welcome to *&&&2*!',

@@ -116,12 +116,7 @@ local action = function(msg, blocks)
             text = misc.getAbout(chat_id, msg.ln)
         end
         if request == 'adminlist' then
-            local creator, admins = misc.getAdminlist(chat_id)
-            if not creator then
-                text = lang[msg.ln].bonus.adminlist_admin_required --creator is false, admins is the error code
-            else
-                text = make_text(lang[msg.ln].mod.modlist, creator, admins)
-            end
+            text = misc.format_adminlist(chat_id, msg.from.id, msg.ln, msg)
         end
         if request == 'extra' then
             text = misc.getExtraList(chat_id, msg.ln)

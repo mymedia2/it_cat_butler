@@ -26,7 +26,7 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 		print(clr.red..error)
 		return
 	end
-	misc, roles = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
+	misc, roles, users = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
 	lang = dofile(config.languages) -- All the languages available
 	api = require('methods')
 	

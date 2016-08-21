@@ -1,8 +1,7 @@
 -- utilities.lua
 -- Functions shared among plugins.
 
-local misc = {}
-local roles = {}
+local misc, roles, users = {}, {}, {}
 
 function misc.get_word(s, i) -- get the indexed word in a string
 
@@ -541,47 +540,75 @@ function misc.getRules(chat_id, ln)
     end
 end
 
-function misc.getAdminlist(chat_id)
+function users.get_link(user)
+	if user.username then
+		return string.format('https://telegram.me/%s', user.username)
+	end
+	return false
+end
+
+function users.full_name(user, without_link)
+	local result = user.first_name:mEscape_hard()
+	if user.last_name then
+		result = result .. ' ' .. user.last_name:mEscape_hard()
+	end
+	if not without_link and user.username then
+		result = string.format('[%s](%s)', result, users.get_link(user))
+	end
+	return result
+end
+
+function misc.format_adminlist(chat_id, from_id, ln, msg)
+	--- ???
 	local list, code = api.getChatAdministrators(chat_id)
 	if not list then
 		if code == 107 then
+			--- what is it?
 			return false, code
 		else
 			return false, false
 		end
 	end
-	local creator = ''
-	local adminlist = ''
-	local count = 1
-	for i,admin in pairs(list.result) do
-		local name
-		if admin.status == 'administrator' then
-			name = admin.user.first_name
-			if admin.user.username then
-				if name:find('%]') or name:find('%[') then
-					name = name:gsub('%]', ')'):gsub('%[', '(')
-				end
-				name = '['..name..'](https://telegram.me/'..admin.user.username..')'
-			else
-				name = name:mEscape()
-			end
-			adminlist = adminlist..'*'..count..'* - '..name..'\n'
-			count = count + 1
-		elseif admin.status == 'creator' then
-			creator = admin.user.first_name
-			if admin.user.username then
-				if creator:find('%]') or creator:find('%[') then
-					creator = creator:gsub('%]', ')'):gsub('%[', '(')
-				end
-				creator = '['..creator..'](https://telegram.me/'..admin.user.username..')'
-			else
-				creator = creator:mEscape()
-			end
+
+	local creator, adminlist = nil, {}
+	for i, admin in pairs(list.result) do
+		if admin.status == 'administrator' and admin.user.id ~= bot.id then
+			table.insert(adminlist, users.full_name(admin.user))
+		end
+		if admin.status == 'creator' then
+			creator = users.full_name(admin.user)
 		end
 	end
-	if adminlist == '' then adminlist = '-' end
-	if creator == '' then creator = '-' end
-	return creator, adminlist
+
+	local lines, count = {}, 1
+	if creator then
+		table.insert(lines, lang[ln].mod.creator)
+		table.insert(lines, string.format('*1*. %s', creator))
+		count = count + 1
+	end
+	if #adminlist ~= 0 then
+		table.insert(lines, lang[ln].mod.admins)
+		for i, admin in pairs(adminlist) do
+			table.insert(lines, string.format('*%d*. %s', count, admin))
+			count = count + 1
+		end
+	end
+
+	if not roles.bot_is_admin(chat_id) then
+		if #lines == 0 then
+			assert(#list.result == 0)
+			return lang[ln].mod.no_manages
+		elseif roles.is_admin_cached(msg) then
+			table.insert(lines, lang[ln].mod.i_am_not_admin_with_tip)
+		else
+			table.insert(lines, lang[ln].mod.i_am_not_admin)
+		end
+	elseif #lines == 0 then
+		assert(#list.result == 1)
+		return lang[ln].mod.i_am_only_admin
+	end
+
+	return table.concat(lines, '\n')
 end
 
 function misc.getExtraList(chat_id, ln)
@@ -808,4 +835,4 @@ function misc.table2keyboard(t)
     return keyboard
 end
 
-return misc, roles
+return misc, roles, users
