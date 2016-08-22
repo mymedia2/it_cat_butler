@@ -29,7 +29,7 @@ return {
 		['ИТ-кот'] = 'https://telegram.me/it_cat_encrypted',
 	},
 	source_code = 'https://github.com/mymedia2/it_cat_butler',
-	languages = 'languages.lua',
+	languages = 'languages.lua~',
 	plugins = {
 		'onmessage.lua', --THIS MUST BE THE FIRST: IF AN USER IS SPAMMING/IS BLOCKED, THE BOT WON'T GO THROUGH PLUGINS
 		'notifications.lua',
