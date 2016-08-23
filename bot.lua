@@ -201,9 +201,7 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
       					end
 						
 						--execute the plugin
-						local success, result = pcall(function()
-							return plugin.action(msg, blocks)
-						end)
+						local success, result = xpcall(plugin.action, debug.traceback, msg, blocks)
 						
 						--if bugs
 						if not success then

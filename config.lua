@@ -61,7 +61,7 @@ return {
 		['en'] = 'English 🇬🇧',
 		['it'] = 'Italiano 🇮🇹',
 		['es'] = 'Español 🇪🇸',
-		['br'] = 'Português 🇧🇷',
+		['pt'] = 'Português 🇧🇷',
 		['ru'] = 'Русский 🇷🇺',
 		['de'] = 'Deutschland 🇩🇪',
 		['sv'] = 'Svensk 🇸🇪',
