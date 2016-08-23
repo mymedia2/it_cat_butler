@@ -188,7 +188,11 @@ local action = function(msg, blocks, ln)
    				if not res and msg.chat.type == 'group' then
    					text = lang[msg.ln].banhammer.not_banned
    				else
-   					misc.remBanList(msg.chat.id, user_id)
+					-- Somewhere this function has been lost. I don't know what
+					-- it was doing :(  Seems it was deleting unbanned user
+					-- from bot database. I hope that removal of this call
+					-- isn't breaking something else.
+   					--remBanList(msg.chat.id, user_id)
    					text = lang[msg.ln].banhammer.unbanned:compose(misc.getname_link(msg.from.first_name, msg.from.username) or msg.from.first_name:mEscape())
    				end
    				--send reply if normal message, edit message if callback
