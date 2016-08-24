@@ -29,11 +29,11 @@ local function parse(filename)
 		elseif state == 'msgstr' and input == '' then
 			msgstr = msgstr .. eval(argument)
 		elseif state == 'msgstr' and input == 'msgid' then
-			if msgstr ~= '' then result[msgid] = msgstr end
+			if msgstr ~= '' then result[msgid:gsub('^\n', '')] = msgstr end
 			msgid = eval(argument)
 			state = 'msgid'
 		elseif state == 'msgstr' and input == 'fuzzy' then
-			if msgstr ~= '' then result[msgid] = msgstr end
+			if msgstr ~= '' then result[msgid:gsub('^\n', '')] = msgstr end
 			state = 'ign_msgid'
 		elseif state == 'ign_msgid' and input == 'msgstr' then
 			state = 'ign_msgstr'
@@ -45,7 +45,7 @@ local function parse(filename)
 		end
 	end
 	if state == 'msgstr' and msgstr ~= '' then
-		result[msgid] = msgstr
+		result[msgid:gsub('^\n', '')] = msgstr
 	end
 
 	return result
@@ -60,7 +60,7 @@ function langs.init(directory)
 end
 
 function langs.translate(msgid, language)
-	return strings[language][msgid] or msgid
+	return strings[language][msgid:gsub('^\n', '')] or msgid
 end
 
 _ = langs.translate

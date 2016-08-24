@@ -195,7 +195,7 @@ local action = function(msg, blocks, ln)
    				if not res and msg.chat.type == 'group' then
    					text = _("The user is not banned", msg.ln)
    				else
-   					misc.remBanList(msg.chat.id, user_id)
+   					--misc.remBanList(msg.chat.id, user_id)
    					text = _("User unbanned by %s!", msg.ln):format(misc.getname_link(msg.from.first_name, msg.from.username) or msg.from.first_name:mEscape())
    				end
    				--send reply if normal message, edit message if callback

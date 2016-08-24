@@ -184,26 +184,6 @@ local function per_away(text)
 	return text
 end
 
-function make_text(text, par1, par2, par3, par4, par5)
-	if par1 then text = text:gsub('&&&1', per_away(par1)) end
-	if par2 then text = text:gsub('&&&2', per_away(par2)) end
-	if par3 then text = text:gsub('&&&3', per_away(par3)) end
-	if par4 then text = text:gsub('&&&4', per_away(par4)) end
-	if par5 then text = text:gsub('&&&5', per_away(par5)) end
-	text = text:gsub('£&£', '%%')
-	return text
-end
-
-function string:compose(par1, par2, par3, par4, par5)
-	if par1 then self = self:gsub('&&&1', per_away(par1)) end
-	if par2 then self = self:gsub('&&&2', per_away(par2)) end
-	if par3 then self = self:gsub('&&&3', per_away(par3)) end
-	if par4 then self = self:gsub('&&&4', per_away(par4)) end
-	if par5 then self = self:gsub('&&&5', per_away(par5)) end
-	self = self:gsub('£&£', '%%')
-	return self
-end
-
 local function create_folder(name)
 	local cmd = io.popen('sudo mkdir '..name)
     cmd:read('*all')
@@ -614,7 +594,7 @@ function misc.getExtraList(chat_id, ln)
 	local commands = db:hkeys(hash)
 	local text = ''
 	if commands[1] == nil then
-		return make_text(_("No commands set!", ln))
+		return _("No commands set!", ln)
 	else
 	    for k,v in pairs(commands) do
 	    	text = text..v..'\n'
