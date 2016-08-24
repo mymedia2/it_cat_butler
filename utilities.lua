@@ -688,8 +688,8 @@ function misc.getSettings(chat_id, ln)
     
     return message .. _("`Warn (standard)`: *%s*\n", ln):format(warnmax_std)
 			.. _("`Warn (media)`: *%s*\n\n", ln):format(warnmax_media)
-			.. _("✅ = _enabled/allowed_\n", ln)
-			.. _("🚫 = _disabled/not allowed_\n", ln)
+			.. _("✅ = _enabled / allowed_\n", ln)
+			.. _("🚫 = _disabled / not allowed_\n", ln)
 			.. _("👥 = _sent in group (always for admins)_\n", ln)
 			.. _("👤 = _sent in private_", ln)
 end

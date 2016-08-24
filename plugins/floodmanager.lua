@@ -34,7 +34,7 @@ local function do_keyboard_flood(chat_id, ln)
 		text = _("Texts", ln),
 		forward = _("Forward", ln),
 		image = _("Images", ln),
-		gif = _("GIF", ln),
+		gif = _("GIFs", ln),
 		sticker = _("Stickers", ln),
 		video = _("Videos", ln),
     }

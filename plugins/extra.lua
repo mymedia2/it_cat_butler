@@ -61,7 +61,7 @@ local action = function(msg, blocks)
 	        for k,v in pairs(commands) do
 	            text = text..v..'\n'
 	        end
-	        local out = make_text(_("List of *custom commands*:\n&&&1", msg.ln), text)
+	        local out = _("List of *custom commands*:\n", msg.ln) .. text
 	        api.sendReply(msg, out, true)
 	    end
     elseif blocks[1] == 'extra del' then

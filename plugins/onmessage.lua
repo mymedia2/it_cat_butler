@@ -59,9 +59,9 @@ local pre_process = function(msg)
         	    if res then
         	        misc.saveBan(msg.from.id, 'flood') --save ban
         	        if action == 'ban' then
-        	            message = name..lang[msg.ln].preprocess.flood_ban 
+        	            message = _("%s *banned* for flood!", msg.ln):format(name)
         	        else
-        	            message = name..lang[msg.ln].preprocess.flood_kick
+        	            message = _("%s *kicked* for flood!", msg.ln):format(name)
         	        end
         	        if msgs == (max_msgs + 1) or msgs == max_msgs + 5 then --send the message only if it's the message after the first message flood. Repeat after 5
         	            api.sendMessage(msg.chat.id, message, true)
@@ -99,14 +99,14 @@ local pre_process = function(msg)
     	            db:hdel('chat:'..msg.chat.id..':mediawarn', msg.from.id) --remove media warns
     	            local message
     	            if status == 'ban' then
-    	                message = name..' '..lang[msg.ln].preprocess.media_ban..'\n❗️`'..n..'/'..max..'`'
+						message = _("%s *banned*: media sent not allowed!\n❗️ `%d` / `%d`", msg.ln):format(name, n, max)
     	            else
-    	                message = name..' '..lang[msg.ln].preprocess.media_kick..'\n❗️`'..n..'/'..max..'`'
+						message = _("%s *kicked*: media sent not allowed!\n❗️ `%d` / `%d`", msg.ln):format(name, n, max)
     	            end
     	            api.sendMessage(msg.chat.id, message, true)
     	        end
 	        else --max num not reached -> warn
-	            local message = name..', '..lang[msg.ln].preprocess.first_warn..'\n*('..n..'/'..max..')*'
+				local message = _("%s, this type of media is *not allowed* in this chat.\n(%d / %d)", msg.ln):format(name, n, max)
 	            api.sendReply(msg, message, true)
 	        end
     	end
@@ -128,9 +128,9 @@ local pre_process = function(msg)
             end
     	    if res then
     	        misc.saveBan(msg.from.id, 'rtl') --save ban
-    	        local message = name..lang[msg.ln].preprocess.rtl_kicked
+    	        local message = _("%s *kicked*: RTL character in names / messages not allowed!", msg.ln):format(name)
     	        if rtl_status == 'ban' then
-    	            message = name..lang[msg.ln].preprocess.rtl_banned
+					message = _("%s *banned*: RTL character in names / messages not allowed!", msg.ln):format(name)
     	        end
     	        api.sendMessage(msg.chat.id, message, true)
     	    end
@@ -150,9 +150,9 @@ local pre_process = function(msg)
     	        end
     	        if res then
     	            misc.saveBan(msg.from.id, 'arab') --save ban
-    	            local message = name..lang[msg.ln].preprocess.arab_kicked
+    	            local message = _("%s *kicked*: arab message detected!", msg.ln):format(name)
     	            if arab_status == 'ban' then
-    	                message = name..lang[msg.ln].preprocess.arab_banned
+						message = _("%s *banned*: arab message detected!", msg.ln):format(name)
     	            end
     	            api.sendMessage(msg.chat.id, message, true)
     	        end

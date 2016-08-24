@@ -29,9 +29,10 @@ local function getFloodSettings_text(chat_id, ln)
     local num = (db:hget(hash, 'MaxFlood')) or 5
     local exceptions = {
         ['text'] = _("Texts", ln),
+        ['forward'] = _("Forward", ln),
         ['sticker'] = _("Stickers", ln),
         ['image'] = _("Images", ln),
-        ['gif'] = _("GIF", ln),
+        ['gif'] = _("GIFs", ln),
         ['video'] = _("Videos", ln),
     }
     hash = 'chat:'..chat_id..':floodexceptions'
