@@ -1,4 +1,4 @@
-# Spanish translations for GroupButler package.
+# Chinese translations for GroupButler package.
 # Copyright (C) 2016 THE GroupButler'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the GroupButler package.
 # Nicholas Guriev <guriev-ns@ya.ru>, 2016.
@@ -8,19 +8,18 @@ msgstr ""
 "Project-Id-Version: GroupButler 4.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-24 20:57+0300\n"
-"PO-Revision-Date: 2016-08-24 21:35+0300\n"
+"PO-Revision-Date: 2016-08-24 21:47+0300\n"
 "Last-Translator: Nicholas Guriev <guriev-ns@ya.ru>\n"
-"Language-Team: Spanish\n"
-"Language: es\n"
+"Language-Team: Chinese\n"
+"Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: plugins/about.lua:21 plugins/rules.lua:28
 #, fuzzy
 msgid "Please write something next this poor `/addabout`"
-msgstr "Por favor, escribe algo despues de \"/addabout\""
+msgstr "請在可憐的 \"/addabout\" 後方加入內容。"
 
 #: plugins/about.lua:28
 #, fuzzy
@@ -28,8 +27,8 @@ msgid ""
 "*No description for this group*.\n"
 "Use `/setabout [bio]` to set-up a new description"
 msgstr ""
-"*No hay descripcion* de este grupo.\n"
-"Usa /setabout [bio] para añadir una descripcion"
+"此群組沒有設定簡介。\n"
+"使用「/setabout [簡介內容]」來設定新的簡介。"
 
 #: plugins/about.lua:34
 #, fuzzy, lua-format
@@ -37,8 +36,8 @@ msgid ""
 "*Description added:*\n"
 "\"%s\""
 msgstr ""
-"*Descripcion añadida:*\n"
-"\"%s\""
+"已加上新的簡介︰\n"
+"「%s」"
 
 #: plugins/about.lua:37 plugins/about.lua:68 plugins/extra.lua:42
 #: plugins/private.lua:46 plugins/users.lua:214 plugins/users.lua:264
@@ -49,38 +48,38 @@ msgid ""
 "More info about a proper use of markdown [here](https://telegram.me/"
 "GroupButler_ch/46)."
 msgstr ""
-"Este texto no puede ser reducido.\n"
-"Más información sobre un uso adecuado [aquí](https://telegram.me/"
-"GroupButler_ch/46)."
+"字型符號（Markdown）使用不當。\n"
+"關於字型符號的詳細解說請點擊[這裏](https://telegram.me/GroupButler_ch/46)。"
 
 #: plugins/about.lua:52
 #, fuzzy
 msgid "Please write something next this poor `/setabout`"
-msgstr "Por favor, escribe algo despues de \"/setabout\""
+msgstr "請在可憐的 \"/setabout\" 後方加入內容。"
 
 #: plugins/about.lua:58
 #, fuzzy
 msgid "The bio has been cleaned."
-msgstr "La descripcion ha sido eliminada."
+msgstr "已清空簡介內容。"
 
 #: plugins/about.lua:66 plugins/extra.lua:40 plugins/private.lua:44
 #: plugins/users.lua:212 plugins/users.lua:262 plugins/rules.lua:70
 #, fuzzy
 msgid "This text is too long, I can't send it"
-msgstr "El texto es demasiado largo, no puedo enviarlo"
+msgstr "內容太長，無法傳送。"
 
 #: plugins/about.lua:75
 #, fuzzy
 msgid "New description *saved successfully*!"
-msgstr "¡Nueva descripción *guardada satisfactoriamente*!"
+msgstr "已成功儲存新的簡介！"
 
 #: plugins/configure.lua:4
 msgid "🛠 Menu"
 msgstr ""
 
 #: plugins/configure.lua:5
+#, fuzzy
 msgid "⚡️ Antiflood"
-msgstr ""
+msgstr "防洗版"
 
 #: plugins/configure.lua:6
 msgid "🌈 Media"
@@ -89,23 +88,22 @@ msgstr ""
 #: plugins/configure.lua:20 plugins/configure.lua:23
 #, fuzzy
 msgid "Surf this keyboard to change the group settings"
-msgstr "Usa la fila de debajo para cambiar los ajustes de advertencias"
+msgstr "使用下面的橫列變更警告設定"
 
 #: plugins/configure.lua:26
 #, fuzzy
 msgid "_I've sent you the settings keyboard in private_"
-msgstr "_Te he enviado el panel del grupo por privado_"
+msgstr "〝我已經私下向你傳送了訊息內容。〞"
 
 #: plugins/configure.lua:28 plugins/help.lua:262 plugins/dashboard.lua:104
 #, fuzzy
 msgid "_Please message me first so I can message you_"
-msgstr ""
-"_Por favor, envíame un mensaje primero para que yo pueda enviarte un mensaje_"
+msgstr "〝你必須先對我私訊（PM），我才能向你私訊（PM）。〞"
 
 #: plugins/help.lua:3
 #, fuzzy
 msgid "Tap on a button to see the *related commands*"
-msgstr "Pulsa sobre un botón para ver los *comandos relacionados*"
+msgstr "點擊選項來查看相關指令。"
 
 #: plugins/help.lua:4
 #, lua-format
@@ -146,19 +144,20 @@ msgid ""
 "`/groups` : show the list of the discussion groups\n"
 "`/help` : show this message'\n"
 msgstr ""
-"*Comandos para todos*:\n"
-"`/dashboard` : ve toda la información sobre el grupo por privado\n"
-"`/rules` : ver reglas del grupo  (via pm)\n"
-"`/about` : ver descripcion de grupo  (via pm)\n"
-"`/adminlist` : ver los moderadores del grupo  (via pm)\n"
-"`/kickme` : ser expulsado por el bot\n"
-"`/id` : muestra el id del chat, o el id de un usuario si se responde a un "
-"mensaje suyo\n"
-"`/echo [text]` : the bot will send the text back (with markdown, available "
-"only in private for non-admin users)\n"
-"`/info` : ver informacion sobre el bot\n"
+"任何人皆可使用的指令︰\n"
+"`/dashboard`︰透過私訊查看所有群組資訊\n"
+"`/rules`︰顯示群組規矩\n"
+"`/about`︰顯示群組簡介\n"
+"`/adminlist`︰顯示管理員名單\n"
+"`/kickme`︰將自己驅逐出群組\n"
 "`/groups` : get the list of the discussion groups\n"
-"`/help` : ver este mensaje"
+"`/id`︰獲取群組ＩＤ，或是玩家ＩＤ（透過回覆）\n"
+"`/echo [訊息內容]`︰人機會向你重複訊息內容（會實施字型符號，只在私訊有用）\n"
+"`/info`︰顯示關於人機的有用資訊\n"
+"`/group`︰獲取討論（人機）群組的連結\n"
+"如果你喜歡本人機，請在[here](https://telegram.me/storebot?"
+"start=groupbutler_bot)表達你的想法（也是英文）\n"
+"（中文內容由 @Firewood\\_LoKi 翻譯）"
 
 #: plugins/help.lua:31
 #, lua-format
@@ -201,23 +200,21 @@ msgid ""
 "For a correct use of the markdown, check [this post](https://telegram.me/"
 "GroupButler_ch/46) in the channel\n"
 msgstr ""
-"*Moderators: info about the group*\n"
+"【選項︰群組簡介】\n"
 "\n"
-"`/setrules [group rules]` = set the new regulation for the group (the old "
-"will be overwritten).\n"
+"`/setrules [群組規矩]` = 建立群組規矩（舊規矩會被捨棄）\n"
 "`/setrules -` = delete the current rules.\n"
-"`/addrules [text]` = add some text at the end of the existing rules.\n"
-"`/setabout [group description]` = set a new description for the group (the "
-"old will be overwritten).\n"
+"`/addrules [新規矩]` = 在原有的規矩的最後加上新規矩\n"
+"`/setabout [群組簡介]` = 建立群組簡介（舊簡介會被捨棄）.\n"
 "`/setabout -` = delete the current description.\n"
-"`/addabout [text]` = add some text at the end of the existing description.\n"
+"`/addabout [新簡介]` = 在原有的簡介的最後加上新簡介\n"
 "\n"
-"*Note:* the markdown is supported. If the text sent breaks the markdown, the "
-"bot will notify that something is wrong.\n"
-"For a correct use of the markdown, check [this post](https://telegram.me/"
-"GroupButler_ch/46) in the channel"
+"備註︰可使用字型符號（Markdown），如果使用不當，人機會告知訊息出錯\n"
+"正確的使用方法請參考[這裏](https://telegram.me/GroupButler_ch/46) in the "
+"channel"
 
 #: plugins/help.lua:51
+#, fuzzy
 msgid ""
 "\n"
 "*Moderators: banhammer powers*\n"
@@ -234,6 +231,16 @@ msgid ""
 "`/status [username|id]` = show the current status of the user `(member|"
 "kicked/left the chat|banned|admin/creator|never seen)`\n"
 msgstr ""
+"【選項︰驅逐及封鎖】\n"
+"\n"
+"`/kick [透過回覆|用戶名稱]` = 驅逐用戶（他能重新加入群組）\n"
+"`/ban [透過回覆|用戶名稱]` = 封鎖（在普通群組中也可以）用戶\n"
+"`/tempban [分鐘]` = 暫時封鎖用戶（最多 10,080 分鐘，相當於一星期），只能透過"
+"回覆使用\n"
+"`/unban [透過回覆|用戶名稱]` = 解除封鎖\n"
+"`/getban [透過回覆|用戶名稱]` = 獲取用戶的總被封鎖次數，按類別排列\n"
+"`/status [用戶名稱]` = 顯示用戶目前的狀況 `(會藉|驅逐/離群|封鎖|管理員/創群"
+"者|從未出現)`"
 
 #: plugins/help.lua:61
 #, fuzzy
@@ -248,17 +255,17 @@ msgid ""
 "seconds.\n"
 "_Note_ : the number must be higher than 3 and lower than 26.\n"
 msgstr ""
-"*Moderators: flood settings*\n"
-"\n"
-"`/antiflood` = manage the flood settings in private, with an inline "
-"keyboard. You can change the sensitivity, the action (kick/ban), and even "
-"set some exceptions.\n"
-"`/antiflood [number]` = set how many messages a user can write in 5 "
-"seconds.\n"
-"\n"
-"_Note_ : the number must be higher than 3 and lower than 26."
+"【選項︰防洗版】\n"
+"                    ..\"`/antiflood` = 透過私訊變更防洗版設定﹐可更改洗版的定"
+"義、應對方法和排除某種形式。\n"
+"\"\n"
+"                    ..\"`/antiflood [數值]` = 設定用戶在 5 秒內可以傳送的最大"
+"訊息數量\n"
+"備註︰數值必須介乎 4 到 25 之間\n"
+"\""
 
 #: plugins/help.lua:68
+#, fuzzy
 msgid ""
 "\n"
 "*Moderators: media settings*\n"
@@ -273,6 +280,14 @@ msgid ""
 "*List of supported media*: _image, audio, video, sticker, gif, voice, "
 "contact, file, link, telegram.me links_\n"
 msgstr ""
+"【選項︰媒體設定】\n"
+"\n"
+"`/config` command, then `media` button = 透過私訊接收到媒體控制面板\n"
+"`/warnmax media [數值]` = 關於媒體的警告上限，超過便會被驅逐或封鎖\n"
+"`/nowarns (透過回覆)` = 清空用戶的警告（同時清空媒體和普通警告）\n"
+"\n"
+"支援的媒體︰圖像、音訊、影片、貼圖、Gif、錄音、聯絡人、檔案、連結, telegram."
+"me links"
 
 #: plugins/help.lua:77
 #, fuzzy
@@ -300,23 +315,20 @@ msgid ""
 "`/goodbye` _message_\n"
 "Same placeholders and media are available\n"
 msgstr ""
-"*Moderators: welcome settings*\n"
+"【歡迎訊息】\n"
 "\n"
 "`/menu` = receive in private the menu keyboard. You will find an option to "
 "enable/disable welcome and goodbye messages.\n"
-"\n"
-"*Custom welcome message:*\n"
 "`/welcome Welcome $name, enjoy the group!`\n"
-"Write after \"/welcome\" your welcome message. You can use some placeholders "
-"to include the name/username/id of the new member of the group\n"
-"Placeholders: _$username_ (will be replaced with the username); _$name_ "
-"(will be replaced with the name); _$id_ (will be replaced with the id); _"
-"$title_ (will be replaced with the group title).\n"
+"在 \"/welcome\" 之後打上你想要的訊息，你可以使用代碼來指出新用戶的 䁥稱／用戶"
+"名稱／用戶ＩＤ\n"
+"代碼︰_$username_（用戶名稱戶）；_$name_（䁥稱）；_$id_（用戶ＩＤ）；_"
+"$title_（群組名字）\n"
 "\n"
-"*GIF/sticker as welcome message*\n"
-"You can use a particular gif/sticker as welcome message. To set it, reply to "
-"a gif/sticker with '/welcome'\n"
+"．GIF/貼圖作為歡迎訊息︰\n"
+"用 '/welcome' 指令來回覆Gif／貼圖便可設定成歡迎圖\n"
 "\n"
+"．\n"
 "*Goodbye message*\n"
 "Also you can set the custom goodbye message:\n"
 "`/goodbye` _message_\n"
@@ -343,21 +355,20 @@ msgid ""
 "For a correct use of the markdown, check [this post](https://telegram.me/"
 "GroupButler_ch/46) in the channel\n"
 msgstr ""
-"*Moderators: info about the group*\n"
+"【選項︰自訂指令】\n"
 "\n"
-"`/setrules [group rules]` = set the new regulation for the group (the old "
-"will be overwritten).\n"
-"`/setrules -` = delete the current rules.\n"
-"`/addrules [text]` = add some text at the end of the existing rules.\n"
-"`/setabout [group description]` = set a new description for the group (the "
-"old will be overwritten).\n"
-"`/setabout -` = delete the current description.\n"
-"`/addabout [text]` = add some text at the end of the existing description.\n"
+"`/extra [#發動文字] [預設回覆內容]` = 當發動文字出現，會自動回覆預設內容\n"
+"例子︰「/extra #謝謝 不用客氣」，當「#謝謝」出現時，人機會自動回覆「不用客"
+"氣」\n"
+"`/extra list` = 獲取自訂指令列表\n"
+"`/extra del [#發動文字]` = 移除發動文字及預設回覆\n"
+"`/disable extra` = 只有管理員可使用自訂指令；其他人使用時，人機會透過私訊回"
+"覆。\n"
+"`/enable extra` = 所有人都可以在群組內使用自訂指令\n"
 "\n"
-"*Note:* the markdown is supported. If the text sent breaks the markdown, the "
-"bot will notify that something is wrong.\n"
-"For a correct use of the markdown, check [this post](https://telegram.me/"
-"GroupButler_ch/46) in the channel"
+"備註︰可使用字型符號（Markdown），如果使用不當，人機會告知訊息出錯\n"
+"正確的使用方法請參考[這裏](https://telegram.me/GroupButler_ch/46) in the "
+"channel"
 
 #: plugins/help.lua:107
 msgid ""
@@ -379,6 +390,7 @@ msgid ""
 msgstr ""
 
 #: plugins/help.lua:118
+#, fuzzy
 msgid ""
 "\n"
 "*Moderators: special characters*\n"
@@ -394,6 +406,14 @@ msgid ""
 "When Rtl is not allowed (🚫), everyone that writes this character (or that "
 "has it in his name) will be kicked.\n"
 msgstr ""
+"【選項︰特殊字元】\n"
+"\n"
+"`/config` command, then `menu` button = 透過私訊接收到控制面板\n"
+"可以針對阿拉伯文字和右至左文字進行設定。\n"
+"\n"
+"阿拉伯文字︰若被禁止（🚫），使用阿拉伯文字的人，將被驅逐。\n"
+"右至左文字︰若被禁止（🚫），使用右至左文字的人，或名字帶有右至左文字的人，將被"
+"驅逐。"
 
 #: plugins/help.lua:128
 #, fuzzy
@@ -408,14 +428,10 @@ msgid ""
 "*Note*: the bot can recognize valid group links. If a link is not valid, you "
 "won't receive a reply.\n"
 msgstr ""
-"*Moderators: links*\n"
+"【選項︰連結】\n"
 "\n"
-"`/setlink [link|'no']` : set the group link, so it can be re-called by other "
-"admins, or unset it\n"
-"`/link` = get the group link, if already setted by the owner\n"
-"\n"
-"*Note*: the bot can recognize valid group links/poll links. If a link is not "
-"valid, you won't receive a reply."
+"`/setlink [連結|-]` : 設定一條連結，讓其他管理員能隨時使用；或是移除它\n"
+"`/link` = 獲取連結（必須先設定連結）\n"
 
 #: plugins/help.lua:136
 #, fuzzy
@@ -435,19 +451,16 @@ msgid ""
 "In the file you will find all the instructions: follow them, and as soon as "
 "possible your language will be available\n"
 msgstr ""
-"*Moderators: group language*\n"
+"【選項︰群組語言】\n"
 "\n"
-"`/lang` = choose the group language (can be changed in private too).\n"
+"`/lang` = 選擇群組語言（也可在私訊中設定）\n"
 "\n"
-"*Note*: translators are volunteers, so I can't ensure the correctness of all "
-"the translations. And I can't force them to translate the new strings after "
-"each update (not translated strings are in english).\n"
-"Anyway, translations are open to everyone. Use `/strings` command to receive "
-"a _.lua_ file with all the strings (in english).\n"
-"Use `/strings [lang code]` to receive the file for that specific language "
-"(example: _/strings es_ ).\n"
-"In the file you will find all the instructions: follow them, and as soon as "
-"possible your language will be available ;)"
+"備註︰翻譯人員都是志願義工，無法保證翻譯絕對正確，我也不能確保他們能即時配合"
+"更新。\n"
+"任何人都可以幫忙翻譯，利用 `/strings` 指令來獲取一個包含所有文串的 _.lua_ 檔"
+"（英文）\n"
+"使用 `/strings [語言代號]` 來獲取特定語言的檔案（例子: _/strings es_ ）\n"
+"在檔案裏面你會找到足夠的指引，請盡量跟從那些指引"
 
 #: plugins/help.lua:146
 msgid ""
@@ -466,19 +479,20 @@ msgid ""
 msgstr ""
 
 #: plugins/help.lua:161
-#, fuzzy
 msgid "Common settings"
-msgstr "Ajustes Anti-flood"
+msgstr ""
 
 #: plugins/help.lua:162
 #, fuzzy
 msgid "Subscriptions"
-msgstr "Descripción"
+msgstr ""
+"\n"
+"\n"
+"簡介︰\n"
 
 #: plugins/help.lua:163
-#, fuzzy
 msgid "General settings"
-msgstr "Ajustes multimedia"
+msgstr ""
 
 #: plugins/help.lua:164
 msgid "Warns"
@@ -489,9 +503,8 @@ msgid "Banhammer"
 msgstr ""
 
 #: plugins/help.lua:166 plugins/dashboard.lua:73
-#, fuzzy
 msgid "Media settings"
-msgstr "Ajustes multimedia"
+msgstr ""
 
 #: plugins/help.lua:167
 msgid "Flood manager"
@@ -508,7 +521,7 @@ msgstr ""
 #: plugins/help.lua:170
 #, fuzzy
 msgid "Welcome settings"
-msgstr "Ajustes Anti-flood"
+msgstr "歡迎訊息"
 
 #: plugins/help.lua:171 plugins/mediasettings.lua:21
 msgid "Links"
@@ -521,12 +534,11 @@ msgstr ""
 #: plugins/help.lua:173 plugins/dashboard.lua:69
 #, fuzzy
 msgid "Extra commands"
-msgstr "Comandos Extra"
+msgstr "不存在自訂指令！"
 
 #: plugins/help.lua:217
-#, fuzzy
 msgid "🔰 User commands"
-msgstr "Comandos Extra"
+msgstr ""
 
 #: plugins/help.lua:219
 msgid "🔰 Admin commands"
@@ -549,14 +561,13 @@ msgid "📕 All the commands"
 msgstr ""
 
 #: plugins/help.lua:255 plugins/help.lua:272
-#, fuzzy
 msgid "You can surf this keyboard to see *all the available commands*"
-msgstr "Escoge el *rol* para ver los comandos disponibles:"
+msgstr ""
 
 #: plugins/help.lua:259
 #, fuzzy
 msgid "_I've sent you the help message in private_"
-msgstr "_Te he enviado el mensaje por privado_"
+msgstr "〝我已經私下向你傳送了說明訊息。〞"
 
 #: plugins/help.lua:309
 msgid "❗️ Already on this tab"
@@ -575,7 +586,7 @@ msgstr ""
 #: plugins/notifications.lua:40
 #, fuzzy
 msgid "_The subscribe to your mentions has activated successfully_"
-msgstr "¡Nueva descripción *guardada satisfactoriamente*!"
+msgstr "已成功儲存新的簡介！"
 
 #: plugins/notifications.lua:42
 msgid "_Your subscribe already activated_"
@@ -588,7 +599,7 @@ msgstr ""
 #: plugins/notifications.lua:55
 #, fuzzy
 msgid "_The subscribe has deactivated successfully_"
-msgstr "¡Nueva descripción *guardada satisfactoriamente*!"
+msgstr "已成功儲存新的簡介！"
 
 #: plugins/notifications.lua:57
 msgid "_Your subscribe already deactivated_"
@@ -602,17 +613,17 @@ msgstr ""
 #: plugins/dashboard.lua:6 utilities.lua:683
 #, fuzzy
 msgid "*Welcome type*: `default message`\n"
-msgstr "*Tipo de Bienvenida*: `custom message`\n"
+msgstr "歡迎訊息組合︰「自訂歡迎訊息」\n"
 
 #: plugins/dashboard.lua:8 utilities.lua:679
 #, fuzzy
 msgid "*Welcome type*: `gif/sticker`\n"
-msgstr "*Tipo de Bienvenida*: `gif/sticker`\n"
+msgstr "歡迎訊息組合︰「Gif／貼圖」\n"
 
 #: plugins/dashboard.lua:31 plugins/floodmanager.lua:34
 #, fuzzy
 msgid "Texts"
-msgstr "Textos"
+msgstr "文字"
 
 #: plugins/dashboard.lua:32 plugins/floodmanager.lua:35
 #: plugins/mediasettings.lua:14
@@ -621,14 +632,15 @@ msgstr ""
 
 #: plugins/dashboard.lua:33 plugins/floodmanager.lua:38
 #: plugins/mediasettings.lua:23
+#, fuzzy
 msgid "Stickers"
-msgstr ""
+msgstr "貼圖（Stickers）"
 
 #: plugins/dashboard.lua:34 plugins/floodmanager.lua:36
 #: plugins/mediasettings.lua:15
 #, fuzzy
 msgid "Images"
-msgstr "Imágenes"
+msgstr "圖像"
 
 #: plugins/dashboard.lua:35 plugins/floodmanager.lua:37
 #: plugins/mediasettings.lua:16
@@ -637,8 +649,9 @@ msgstr ""
 
 #: plugins/dashboard.lua:36 plugins/floodmanager.lua:39
 #: plugins/mediasettings.lua:17
+#, fuzzy
 msgid "Videos"
-msgstr ""
+msgstr "影片"
 
 #: plugins/dashboard.lua:50
 #, lua-format
@@ -663,9 +676,8 @@ msgid ""
 msgstr ""
 
 #: plugins/dashboard.lua:60
-#, fuzzy
 msgid "Settings"
-msgstr "Ajustes"
+msgstr ""
 
 #: plugins/dashboard.lua:61
 msgid "Admins"
@@ -674,33 +686,36 @@ msgstr ""
 #: plugins/dashboard.lua:64
 #, fuzzy
 msgid "Rules"
-msgstr "Reglas"
+msgstr ""
+"\n"
+"\n"
+"規矩︰\n"
 
 #: plugins/dashboard.lua:65
 #, fuzzy
 msgid "Description"
-msgstr "Descripción"
+msgstr ""
+"\n"
+"\n"
+"簡介︰\n"
 
 #: plugins/dashboard.lua:68 plugins/menu.lua:111 utilities.lua:634
 #, fuzzy
 msgid "Welcome message"
-msgstr "Mensaje de bienvenida"
+msgstr "歡迎訊息"
 
 #: plugins/dashboard.lua:72
-#, fuzzy
 msgid "Flood settings"
-msgstr "Ajustes Anti-flood"
+msgstr ""
 
 #: plugins/dashboard.lua:99
-#, fuzzy
 msgid "Navigate this message to see *all the info* about this group!"
 msgstr ""
-"Navega por este mensaje para ver *toda la información* sobre este grupo."
 
 #: plugins/dashboard.lua:102
 #, fuzzy
 msgid "_I've sent you the group dashboard in private_"
-msgstr "_Te he enviado el panel del grupo por privado_"
+msgstr "〝我已經私下向你傳送了說明訊息。〞"
 
 #: plugins/dashboard.lua:135
 #, fuzzy
@@ -708,35 +723,36 @@ msgid ""
 "*Current settings for media*:\n"
 "\n"
 msgstr ""
-"*Ajustes actuales de multimedia*:\n"
+"*%s* 目前的設定︰\n"
 "\n"
+"語言︰`%s`\n"
 
 #: plugins/extra.lua:49
 #, fuzzy, lua-format
 msgid "%s command saved!"
-msgstr "¡El comando %s ha sido guardado!"
+msgstr "%s 指令已更新！"
 
 #: plugins/extra.lua:59 utilities.lua:617
 #, fuzzy
 msgid "No commands set!"
-msgstr "No hay comandos programados!"
+msgstr "不存在自訂指令！"
 
 #: plugins/extra.lua:64 utilities.lua:622
 #, fuzzy
 msgid "List of *custom commands*:\n"
 msgstr ""
-"Lista de *comandos personalizados*:\n"
+"自訂指令列表︰\n"
 "%s"
 
 #: plugins/extra.lua:73
 #, fuzzy, lua-format
 msgid "%s command has been deleted"
-msgstr "El comando %s ha sido eliminado"
+msgstr "%s 指令已被刪除。"
 
 #: plugins/extra.lua:76
 #, fuzzy, lua-format
 msgid "%s command does not exist"
-msgstr "El comando %s no existe"
+msgstr "%s 指令不存在"
 
 #: plugins/floodmanager.lua:5
 msgid "✅ | ON"
@@ -778,25 +794,22 @@ msgid ""
 "• *Note*: in \"_texts_\" are included all the other types of media (file, "
 "audio...)\n"
 msgstr ""
-"Puedes administrar los ajustes flood del grupo desde aquí.\n"
+"你可以在這裏變更洗版設定。\n"
 "\n"
-"*1ª fila*\n"
-"• *ACTIVADO/DESACTIVADO*: el estado actual del anti-flood\n"
-"• *Expulsar/Banear*: qué hacer cuando alguien está haciendo flood\n"
+"【第一列】\n"
+"．開關︰防洗版的目前狀況\n"
+"．驅逐（Kick）／封鎖（Ban）︰如何對付洗版的人\n"
 "\n"
-"*2ª fila*\n"
-"• puedes usar *+/-* para cambiar la sensibilidad actual del sistema anti-"
-"flood\n"
-"• el número es el máximo permitido de mensajes que pueden ser enviados en _5 "
-"segundos_\n"
-"• valor máximo: _25_ - valor mínimo: _4_\n"
+"【第二列】\n"
+"．你可以用加減號來調整洗版的定義\n"
+"．數字代表用戶在 5 秒內可以傳送的最大訊息數量\n"
+"．上限為 25，下限為 4\n"
 "\n"
-"*3ª fila* y debajo\n"
-"Puedes establecer algunas excepciones para el anti-flood:\n"
-"• ✅: multimedia será ignorada por el anti-flood\n"
-"• ❌: multimedia no será ignorada por el anti-flood\n"
-"• *Nota*: en \"_textos_\" están incluidos el resto de tipos de multimedia "
-"(archivo, audio...)"
+"【第三列及以下】\n"
+"你可以排除某些形式的洗版︰\n"
+"．✅︰會被無視的洗版形式\n"
+"．❌︰會被封鎖的洗版形式\n"
+"．備註︰「文字」 包含各種其他的媒體（如檔案、音訊…)"
 
 #: plugins/floodmanager.lua:96
 #, fuzzy, lua-format
@@ -804,47 +817,44 @@ msgid ""
 "`%s` is not a valid value!\n"
 "The value should be *higher* than `3` and *lower* then `26`"
 msgstr ""
-"`%s` no es un valor valido!\n"
-"el valor tiene que ser *mayor* que `3` y *menor* que `26`"
+"〝%s〞不是有效數值。\n"
+"數值應介乎 4 至 25 之間。"
 
 #: plugins/floodmanager.lua:102
 #, fuzzy, lua-format
 msgid "The max number of messages is already %d"
-msgstr ""
-"El numero maximo de mensajes que pueden ser enviados en 5 segundos es %s"
+msgstr "傳送訊息的上限維持在 %s 條。"
 
 #: plugins/floodmanager.lua:105
 #, fuzzy, lua-format
 msgid ""
 "The *max number* of messages (in *5 seconds*) changed _from_  %d _to_  %d"
-msgstr ""
-"El numero maximo de mensajes que pueden ser enviados en 5 segundos por %s a "
-"%s"
+msgstr "（五秒內的）最大傳送訊息上限由 %s 條變為 %s 條。"
 
 #: plugins/floodmanager.lua:122
 #, fuzzy
 msgid "⚖ Current sensitivity. Tap on the + or the -"
-msgstr "Sensibilidad actual. Pulsa sobre + o sobre -"
+msgstr "目前定義。使用加減號變更設定。"
 
 #: plugins/floodmanager.lua:124 plugins/menu.lua:191
 #, fuzzy
 msgid "⚠️ Tap on an icon!"
-msgstr "¡Pulsa sobre un icono!"
+msgstr "點擊圖宗變更設定！"
 
 #: plugins/floodmanager.lua:136
 #, fuzzy, lua-format
 msgid "❎ [%s] will be ignored by the anti-flood"
-msgstr "[%s] será ignorado por el anti-flood"
+msgstr "﹝%s﹞不會被視作洗版。"
 
 #: plugins/floodmanager.lua:139
 #, fuzzy
 msgid "🚫 [&&&1] won't be ignored by the anti-flood"
-msgstr "[%s] no será ignorado por el anti-flood"
+msgstr "﹝%s﹞會被視作洗版。"
 
 #: plugins/links.lua:15
 #, fuzzy
 msgid "*No link* for this group. Ask the owner to generate one"
-msgstr "*No hay enlace* para este grupo. Pidele al admin que lo añada"
+msgstr "此群組沒有連結，請向群組管理員查詢。"
 
 #: plugins/links.lua:30
 #, fuzzy
@@ -852,18 +862,17 @@ msgid ""
 "This is not a *public supergroup*, so you need to write the link near /"
 "setlink"
 msgstr ""
-"Este no es un *supergrupo público*, por lo que necesitas escribir el enlace "
-"usando /setlink"
+"這不是公開的超級群組（Public Supergroup）你需要在 /setlink 後補上連結。"
 
 #: plugins/links.lua:36
 #, fuzzy
 msgid "This link is *not valid!*"
-msgstr "Este enlace *no* es valido."
+msgstr "連結無效！"
 
 #: plugins/links.lua:47
 #, fuzzy
 msgid "Link *unsetted*"
-msgstr "Enlace *sin establecer*"
+msgstr "已刪除連結！"
 
 #: plugins/links.lua:53
 #, fuzzy, lua-format
@@ -871,8 +880,8 @@ msgid ""
 "The link has been updated.\n"
 "*Here's the new link*: %s"
 msgstr ""
-"El enlace ha sido actualizado.\n"
-"*Este es el nuevo enlace*: [%s](%s)"
+"已更新連結。\n"
+"這是新的連結︰[%s](%s)"
 
 #: plugins/links.lua:55
 #, fuzzy, lua-format
@@ -880,81 +889,86 @@ msgid ""
 "The link has been setted.\n"
 "*Here's the link*: %s"
 msgstr ""
-"El link ha sido configurado.\n"
-"*Este es el enlace*: [%s](%s)"
+"已儲存連結。\n"
+"這就是連結︰[%s](%s)"
 
 #: plugins/menu.lua:6 plugins/mediasettings.lua:86
 #, fuzzy
 msgid "The new value is too high ( > 12)"
-msgstr "El nuevo valor es demasiado grande (>12)"
+msgstr "新的數值太高（>12）"
 
 #: plugins/menu.lua:13 plugins/mediasettings.lua:79
 #, fuzzy
 msgid "The new value is too low ( < 1)"
-msgstr "El nuevo valor es demasiado pequeño (<1)"
+msgstr "新的數值太低（<1）"
 
 #: plugins/menu.lua:22
 #, fuzzy
 msgid "New action on max number of warns received: *ban*"
-msgstr "Nueva consecuencia al alcanzar el numero max de advertencias: *%s*"
+msgstr "警告次數上限設置為︰*%s*"
 
 #: plugins/menu.lua:25
 #, fuzzy
 msgid "New action on max number of warns received: *kick*"
-msgstr "Nueva consecuencia al alcanzar el numero max de advertencias: *%s*"
+msgstr "警告次數上限設置為︰*%s*"
 
 #: plugins/menu.lua:32
 #, fuzzy
 msgid "Senders of arab messages will be kicked"
-msgstr "El mensaje de bienvenida sera mostrado"
+msgstr "使用阿拉伯文字將會被驅逐"
 
 #: plugins/menu.lua:33
 #, fuzzy
 msgid "Senders of arab messages will be banned"
-msgstr "El mensaje de bienvenida sera mostrado"
+msgstr "使用阿拉伯文字將會被封鎖"
 
 #: plugins/menu.lua:34
+#, fuzzy
 msgid "Arab language allowed"
-msgstr ""
+msgstr "已允許阿拉伯文字"
 
 #: plugins/menu.lua:35
+#, fuzzy
 msgid "The use of the RTL character will lead to a kick"
-msgstr ""
+msgstr "使用右至左文字將會被驅逐"
 
 #: plugins/menu.lua:36
+#, fuzzy
 msgid "The use of the RTL character will lead to a ban"
-msgstr ""
+msgstr "使用右至左文字將會被封鎖"
 
 #: plugins/menu.lua:37
+#, fuzzy
 msgid "RTL character allowed"
-msgstr ""
+msgstr "已允許右至左文字"
 
 #: plugins/menu.lua:112 utilities.lua:635
 #, fuzzy
 msgid "Goodbye message"
-msgstr "Mensaje de bienvenida"
+msgstr "歡迎訊息"
 
 #: plugins/menu.lua:113 utilities.lua:636
+#, fuzzy
 msgid "Extra"
-msgstr ""
+msgstr "自訂指令"
 
 #: plugins/menu.lua:114 utilities.lua:637
+#, fuzzy
 msgid "Anti-flood"
-msgstr ""
+msgstr "防洗版"
 
 #: plugins/menu.lua:115 utilities.lua:638
 msgid "Silent mode"
 msgstr ""
 
 #: plugins/menu.lua:116 utilities.lua:639
-#, fuzzy
 msgid "/rules"
-msgstr "Reglas"
+msgstr ""
 
 #: plugins/menu.lua:117 utilities.lua:640
 #, fuzzy
 msgid "Arab"
-msgstr "Arabe"
+msgstr "阿拉伯文字"
 
 #: plugins/menu.lua:118 utilities.lua:641
 msgid "RTL"
@@ -991,28 +1005,28 @@ msgid ""
 "soemone use /config, /dashboard or /help commands.\n"
 "It will just send the message in private.\n"
 msgstr ""
-"\"Administra los ajustes del grupo.\n"
-"            \n"
-"Algunos comandos (_/rules, /about, /adminlist, comandos #extra_) pueden ser "
-"*desactivados para usuarios no administradores*\n"
-"Qué ocurre si un comando es desactivado para los que no son "
-"administradores:\n"
-"• Si el comando es ejecutado por un admin, el bot responderá *en el grupo*\n"
-"• Si el comando es ejecutado por un usuario normal, el bot responderá *en el "
-"chat privado con ese usuario* (obviamente, sólo si el usuario ha iniciado "
-"antes el bot)\n"
+"Manage the settings of the group.\n"
 "\n"
-"Los iconos junto al comando mostrarán el estado actual:\n"
-"• 👥: el bot responderá *en el grupo*, podrán verlo todos\n"
-"• 👤: el bot responderá *por privado* con usuarios normales y por el grupo "
-"con admins\n"
+"Some commands (_/rules, /about, /adminlist, #extra commands_) can be "
+"*disabled for non-admin users*\n"
+"What happens if a command is disabled for non-admins:\n"
+"• If the command is triggered by an admin, the bot will reply *in the "
+"group*\n"
+"• If the command is triggered by a normal user, the bot will reply *in the "
+"private chat with the user* (obviously, only if the user has already started "
+"the bot)\n"
 "\n"
-"*Otros ajustes*: para los otros ajustes, los iconos se explican por sí solos"
+"The icons near the command will show the current status:\n"
+"• 👥: the bot will reply *in the group*, with everyone\n"
+"• 👤: the bot will reply *in private* with normal users and in the group with "
+"admins\n"
+"\n"
+"*Other settings*: for the other settings, icon are self explanatory\n"
 
 #: plugins/menu.lua:193
 #, fuzzy
 msgid "⚠️ Use the row below to change the warns settings!"
-msgstr "Usa la fila de debajo para cambiar los ajustes de advertencias"
+msgstr "使用下面的橫列變更警告設定"
 
 #: plugins/private.lua:5 plugins/users.lua:5
 msgid "Channel"
@@ -1052,13 +1066,13 @@ msgid ""
 "I've never seen this user before.\n"
 "If you want to teach me who is he, forward me a message from him"
 msgstr ""
-"No había visto antes a este usuario.\n"
-"Si quieres hacerme saber quién es, reenvíame un mensaje de él"
+"我從未見過這用戶。\n"
+"如若你想告訴我他是誰，請向我轉發（Forward）一條他的訊息。"
 
 #: plugins/users.lua:74
-#, lua-format
+#, fuzzy, lua-format
 msgid "Kicked: *%d*"
-msgstr ""
+msgstr "已驅逐︰"
 
 #: plugins/users.lua:75
 #, lua-format
@@ -1073,32 +1087,32 @@ msgstr ""
 #: plugins/users.lua:77
 #, fuzzy, lua-format
 msgid "Removed for flood: *%d*"
-msgstr "Eliminado por flood: "
+msgstr "因洗版，已移除︰"
 
 #: plugins/users.lua:78
 #, fuzzy, lua-format
 msgid "Removed for forbidden media: *%d*"
-msgstr "Eliminado por multimedia prohibida: "
+msgstr "因使用被禁止的媒體，已驅逐︰"
 
 #: plugins/users.lua:79
 #, fuzzy, lua-format
 msgid "Removed for warns: *%d*"
-msgstr "Eliminado por advertencias: "
+msgstr "因警告太多，已驅逐︰"
 
 #: plugins/users.lua:80
 #, fuzzy, lua-format
 msgid "Removed for arab chars: *%d*"
-msgstr "Eliminado por caracteres árabes: "
+msgstr "因使用阿拉伯文字，已驅逐︰"
 
 #: plugins/users.lua:81
 #, fuzzy, lua-format
 msgid "Removed for RTL char: *%d*"
-msgstr "Eliminado por caracter RTL: "
+msgstr "因使用右至左的文字，已驅逐"
 
 #: plugins/users.lua:91
 #, fuzzy
 msgid "_No bans to display_"
-msgstr "`Nada para mostrar`"
+msgstr "沒有內容可以顯示。"
 
 #: plugins/users.lua:96
 #, lua-format
@@ -1113,102 +1127,98 @@ msgstr ""
 #: plugins/users.lua:108
 #, fuzzy
 msgid "Remove warns"
-msgstr "Eliminar advertencias"
+msgstr "因警告太多，已驅逐︰"
 
 #: plugins/users.lua:109
 msgid "🔨 Ban"
 msgstr ""
 
 #: plugins/users.lua:117
-#, fuzzy
 msgid "*Ban info* (globals):\n"
-msgstr "*Información del ban (globales)*:\n"
+msgstr ""
 
 #: plugins/users.lua:145
 #, fuzzy
 msgid "This user has nothing to do with this chat"
-msgstr "Este usuario no tiene nada que ver con este chat"
+msgstr "此用戶沒有參與聊天"
 
 #: plugins/users.lua:155
 #, fuzzy, lua-format
 msgid "%s is banned from this group"
-msgstr "%s está baneado del grupo"
+msgstr "%s 已被驅逐出群組"
 
 #: plugins/users.lua:156
 #, fuzzy, lua-format
 msgid "%s left the group or has been kicked and unbanned"
-msgstr "%s dejó el grupo o ha sido expulsado y desbaneado"
+msgstr "%s 離開了群組／被驅逐／被解除封鎖"
 
 #: plugins/users.lua:157
 #, fuzzy, lua-format
 msgid "%s is an admin"
-msgstr "%s es un admin"
+msgstr "%s 是管理員"
 
 #: plugins/users.lua:158
 #, fuzzy, lua-format
 msgid "%s is the group creator"
-msgstr "%s es el creador del grupo"
+msgstr "%s 是創群者"
 
 #: plugins/users.lua:159
 #, fuzzy, lua-format
 msgid "%s has nothing to do with this chat"
-msgstr "Este usuario no tiene nada que ver con este chat"
+msgstr "此用戶沒有參與聊天"
 
 #: plugins/users.lua:160
 #, fuzzy, lua-format
 msgid "%s is a chat member"
-msgstr "%s es un miembro del chat"
+msgstr "%s 是聊天成員"
 
 #: plugins/users.lua:184
 #, fuzzy
 msgid "Welcome and...?"
-msgstr "Bienvenida y...?"
+msgstr "歡迎然後……？"
 
 #: plugins/users.lua:200
 #, fuzzy, lua-format
 msgid "New media setted as welcome message: `%s`"
-msgstr "Nuevo multimedia establecido como mensaje de bienvenida: "
+msgstr "新媒體被設定成歡迎訊息︰"
 
 #: plugins/users.lua:202
 #, fuzzy
 msgid "Reply to a `sticker` or a `gif` to set them as *welcome message*"
-msgstr ""
-"Responde a un `sticker` o a un `gif` para establecerlos como *mensaje de "
-"bienvenida*"
+msgstr "對 Gif 或貼圖回覆，將它設定成歡迎訊息"
 
 #: plugins/users.lua:220
 #, fuzzy
 msgid "*Custom welcome message saved!*"
-msgstr "Mensaje de bienvenida"
+msgstr "已更新歡迎訊息。"
 
 #: plugins/users.lua:232
 #, fuzzy
 msgid "No goodbye message"
-msgstr "Mensaje de bienvenida"
+msgstr "歡迎訊息"
 
 #: plugins/users.lua:247
 #, fuzzy, lua-format
 msgid "New media setted as goodbye message: `%s`"
-msgstr "Nuevo multimedia establecido como mensaje de bienvenida: "
+msgstr "新媒體被設定成歡迎訊息︰"
 
 #: plugins/users.lua:249
 #, fuzzy
 msgid "Reply to a `sticker` or a `gif` to set them as *goodbye message*"
-msgstr ""
-"Responde a un `sticker` o a un `gif` para establecerlos como *mensaje de "
-"bienvenida*"
+msgstr "對 Gif 或貼圖回覆，將它設定成歡迎訊息"
 
 #: plugins/users.lua:257
-#, lua-format
+#, fuzzy, lua-format
 msgid ""
 "*Custom goodbye message* setted!\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "已更新歡迎訊息。"
 
 #: plugins/users.lua:270
+#, fuzzy
 msgid "*Custom goodbye message saved!*"
-msgstr ""
+msgstr "已更新歡迎訊息。"
 
 #: plugins/users.lua:277
 msgid "Reply to an user or mention him (works by id too)"
@@ -1218,72 +1228,72 @@ msgstr ""
 #: plugins/setlang.lua:15 plugins/banhammer.lua:213 plugins/warn.lua:19
 #, fuzzy
 msgid "You are *not* an admin"
-msgstr "Tu *no* eres admin"
+msgstr "你不是管理員。"
 
 #: plugins/users.lua:314
 #, fuzzy, lua-format
 msgid ""
 "_Banned!_\n"
 "(Admin: %s)"
-msgstr "_¡Baneado!_"
+msgstr "〝已被封鎖！〞"
 
 #: plugins/users.lua:327
 #, fuzzy, lua-format
 msgid ""
 "The number of warns received by this user has been *reset*\n"
 "(Admin: %s)"
-msgstr "El número de advertencias de este miembro ha sido *reseteado*"
+msgstr "該用戶的警告已歸零"
 
 #: plugins/onmessage.lua:62
 #, fuzzy, lua-format
 msgid "%s *banned* for flood!"
-msgstr " *baneado* por flood"
+msgstr "已封鎖  ，原因︰洗版。"
 
 #: plugins/onmessage.lua:64
 #, fuzzy, lua-format
 msgid "%s *kicked* for flood!"
-msgstr " *expulsado* por flood"
+msgstr "已驅逐  ，原因︰洗版。"
 
 #: plugins/onmessage.lua:102
 #, fuzzy, lua-format
 msgid ""
 "%s *banned*: media sent not allowed!\n"
 "❗️ `%d` / `%d`"
-msgstr " *baneado*: multimedia no permitido"
+msgstr "已封鎖  ，原因︰所發媒體被禁止使用。"
 
 #: plugins/onmessage.lua:104
 #, fuzzy, lua-format
 msgid ""
 "%s *kicked*: media sent not allowed!\n"
 "❗️ `%d` / `%d`"
-msgstr " *expulsado*: multimedia no permitido"
+msgstr "已驅逐  ，原因︰所發媒體被禁止使用。"
 
 #: plugins/onmessage.lua:109
-#, fuzzy, lua-format
+#, lua-format
 msgid ""
 "%s, this type of media is *not allowed* in this chat.\n"
 "(%d / %d)"
-msgstr "Este tipo de multimedia *no está permitido* en este chat."
+msgstr ""
 
 #: plugins/onmessage.lua:131
 #, fuzzy, lua-format
 msgid "%s *kicked*: RTL character in names / messages not allowed!"
-msgstr " *expulsado*: caracter RTL en el nombre/mensage no permitido"
+msgstr "已驅逐  ，原因︰使用右至左文字。"
 
 #: plugins/onmessage.lua:133
 #, fuzzy, lua-format
 msgid "%s *banned*: RTL character in names / messages not allowed!"
-msgstr " *banned*: caracter RTL en el nombre/mensaje no permitido!"
+msgstr "已封鎖  ，原因︰使用右至左文字。"
 
 #: plugins/onmessage.lua:153
 #, fuzzy, lua-format
 msgid "%s *kicked*: arab message detected!"
-msgstr " *expulsado*: mensaje arabe detectado"
+msgstr "已驅逐  ，原因︰使用阿拉伯文字。"
 
 #: plugins/onmessage.lua:155
 #, fuzzy, lua-format
 msgid "%s *banned*: arab message detected!"
-msgstr " *expulsado*: mensaje arabe detectado"
+msgstr "已封鎖  ，原因︰使用阿拉伯文字。"
 
 #: plugins/rules.lua:34
 #, fuzzy
@@ -1291,8 +1301,8 @@ msgid ""
 "*No rules* for this group.\n"
 "Use `/setrules [rules]` to set them"
 msgstr ""
-"*No hay reglas* en este grupo.\n"
-"Usa /setrules [rules] para crear la constitucion"
+"此群組沒有制定規矩。\n"
+"使用「/setrules [規矩內容]」來設定新的規矩。"
 
 #: plugins/rules.lua:40
 #, fuzzy
@@ -1300,28 +1310,28 @@ msgid ""
 "*Rules added:*\n"
 "\n"
 msgstr ""
-"*Reglas añadidas:*\n"
-"\"%s\""
+"已加上新的規矩︰\n"
+"「%s」"
 
 #: plugins/rules.lua:56
 #, fuzzy
 msgid "Please write something next this poor `/setrules`"
-msgstr "Por favor, escribe algo despues de \"/setrules\""
+msgstr "請在可憐的 \"/setrules\" 後方加入內容。"
 
 #: plugins/rules.lua:62
 #, fuzzy
 msgid "Rules has been wiped."
-msgstr "Las reglas han sido eliminadas."
+msgstr "已廢除所有規矩。"
 
 #: plugins/rules.lua:79
 #, fuzzy
 msgid "New rules *saved successfully*!"
-msgstr "¡Nuevas reglas *guardadas satisfactoriamente*!"
+msgstr "已成功儲存新的規矩！"
 
 #: plugins/service.lua:38
 #, fuzzy, lua-format
 msgid "Hi %s, and welcome to *%s*!"
-msgstr "Hola %s, bienvenido a *%s*!"
+msgstr "你好 %s，歡迎來到 *%s*！"
 
 #: plugins/service.lua:58
 #, lua-format
@@ -1331,7 +1341,7 @@ msgstr ""
 #: plugins/setlang.lua:25
 #, fuzzy
 msgid "*List of available languages:*"
-msgstr "*Idiomas disponibles:*"
+msgstr "可使用的語言列表︰"
 
 #. TRANSLATORS: replace word 'English' with name of your language
 #: plugins/setlang.lua:31
@@ -1341,92 +1351,86 @@ msgstr ""
 #: plugins/banhammer.lua:84 methods.lua:115
 #, fuzzy
 msgid "I can't kick or ban an admin"
-msgstr "No puedo expulsar ni banear administradores"
+msgstr "我不能驅逐或封鎖管理員。"
 
 #: plugins/banhammer.lua:91 plugins/banhammer.lua:100
-#, fuzzy
 msgid "Reply to someone"
-msgstr "Responder a alguien"
+msgstr ""
 
 #: plugins/banhammer.lua:107
-#, fuzzy
 msgid "For this, you can directly use /ban"
-msgstr "Para esto, puedes usar directamente /ban"
+msgstr ""
 
 #: plugins/banhammer.lua:109
-#, fuzzy
 msgid "The time limit is one week (10.080 minutes)"
-msgstr "El tiempo límite es una semana (10.080 minutos)"
+msgstr ""
 
 #: plugins/banhammer.lua:120 plugins/banhammer.lua:153
 #: plugins/banhammer.lua:167 plugins/warn.lua:116
-#, fuzzy
 msgid ""
 "I can't kick this user.\n"
 "Probably I'm not an Amdin, or the user is an Admin iself"
 msgstr ""
-"No puedo expulsar a este usuario.\n"
-"Puede que yo no sea admin, o el usuario sea un admin"
 
 #: plugins/banhammer.lua:132
-#, fuzzy, lua-format
+#, lua-format
 msgid "Ban time updated for %s. Ban expiration: %s"
-msgstr "Tiempo del ban actualizado para %s. Vencimiento del ban:"
+msgstr ""
 
 #: plugins/banhammer.lua:134
-#, fuzzy, lua-format
+#, lua-format
 msgid "User %s banned. Ban expiration: %s"
-msgstr "Usuario %s baneado. Vencimiento del ban:"
+msgstr ""
 
 #: plugins/banhammer.lua:160
-#, fuzzy, lua-format
+#, lua-format
 msgid "%s kicked %s!"
-msgstr "¡%s ha expulsado %s! (pero puede volver a entrar)"
+msgstr ""
 
 #: plugins/banhammer.lua:183
 msgid "Unban"
 msgstr ""
 
 #: plugins/banhammer.lua:184
-#, fuzzy, lua-format
+#, lua-format
 msgid "%s banned %s!"
-msgstr "¡%s ha baneado %s!"
+msgstr ""
 
 #: plugins/banhammer.lua:190 plugins/banhammer.lua:196
 #, fuzzy
 msgid "The user is not banned"
-msgstr "El usuario no está baneado"
+msgstr "這用戶沒有參與聊天。"
 
 #: plugins/banhammer.lua:199
-#, fuzzy, lua-format
+#, lua-format
 msgid "User unbanned by %s!"
-msgstr "¡Usuario desbaneado by %s!"
+msgstr ""
 
 #: plugins/warn.lua:5
 #, fuzzy
 msgid "Reset warns"
-msgstr "Eliminar advertencias"
+msgstr "因警告太多，已驅逐︰"
 
 #: plugins/warn.lua:6
 #, fuzzy
 msgid "Remove warn"
-msgstr "Eliminar advertencias"
+msgstr "因警告太多，已驅逐︰"
 
 #: plugins/warn.lua:31
 #, fuzzy
 msgid "Max number of warnings changed (media).\n"
 msgstr ""
-"Numero maximo de advertencias cambiado%s.\n"
-"*Antes*: %s\n"
-"*Ahora*: %s"
+"警告次數上限設置被更改 %s.\n"
+"原有上限︰%s\n"
+"現在上限︰%s"
 
 #: plugins/warn.lua:36
 #, fuzzy
 msgid "Max number of warnings changed.\n"
 msgstr ""
-"Numero maximo de advertencias cambiado%s.\n"
-"*Antes*: %s\n"
-"*Ahora*: %s"
+"警告次數上限設置被更改 %s.\n"
+"原有上限︰%s\n"
+"現在上限︰%s"
 
 #: plugins/warn.lua:40
 #, lua-format
@@ -1440,12 +1444,12 @@ msgstr ""
 msgid ""
 "The number of warns received by this user has been *reset*\n"
 "`(Admin: %s)`"
-msgstr "El número de advertencias de este miembro ha sido *reseteado*"
+msgstr "該用戶的警告已歸零"
 
 #: plugins/warn.lua:62
 #, fuzzy
 msgid "The number of warnings received by this user is already _zero_"
-msgstr "El número de advertencias recibidas por este usuario ya es _cero_"
+msgstr "該用戶的警告已歸零"
 
 #: plugins/warn.lua:67
 #, fuzzy, lua-format
@@ -1454,9 +1458,9 @@ msgid ""
 "_Number of warnings_ *%d*\n"
 "_Max allowed_ *%d*"
 msgstr ""
-"*%s ha sido advertido.*\n"
-"_Numero de advertencias_   *%s*\n"
-"_Maximo_   *%s*"
+"已移除警告\n"
+"警告數量︰%s\n"
+"警告上限︰%s"
 
 #: plugins/warn.lua:72
 #, lua-format
@@ -1468,22 +1472,22 @@ msgstr ""
 #: plugins/warn.lua:79
 #, fuzzy
 msgid "Reply to a message to warn the user"
-msgstr "Menciona el mensaje para advertir al usuario"
+msgstr "透過回覆（Reply）警告該用戶"
 
 #: plugins/warn.lua:84
 #, fuzzy
 msgid "A moderator can't be warned"
-msgstr "Un moderador *no* puede ser advertido"
+msgstr "管理員不能被警告"
 
 #: plugins/warn.lua:105
 #, fuzzy, lua-format
 msgid "User %s *banned*: reached the max number of warnings (%d / %d)"
-msgstr "*%s ha sido baneado*: alcanzado el numero maximo de advertencias"
+msgstr "用戶【%s】被封鎖︰警告次數達上限"
 
 #: plugins/warn.lua:110
 #, fuzzy, lua-format
 msgid "User %s *kicked*: reached the max number of warnings (%d / %d)"
-msgstr "*%s ha sido expulsado*: alcanzado el numero maximo de advertencias"
+msgstr "用戶【%s】被驅逐︰警告次數達上限"
 
 #: plugins/warn.lua:123
 msgid "Too many warnings"
@@ -1496,9 +1500,9 @@ msgid ""
 "_Number of warnings_ *%d*\n"
 "_Max allowed_ *%d*"
 msgstr ""
-"*%s ha sido advertido.*\n"
-"_Numero de advertencias_   *%s*\n"
-"_Maximo_   *%s*"
+"*%s* 已被警告。\n"
+"警告數量︰*%s*\n"
+"警告上限︰*%s*"
 
 #: plugins/mediasettings.lua:18
 msgid "Documents"
@@ -1511,7 +1515,7 @@ msgstr ""
 #: plugins/mediasettings.lua:20
 #, fuzzy
 msgid "Vocal messages"
-msgstr "Mensaje de bienvenida"
+msgstr "歡迎訊息"
 
 #: plugins/mediasettings.lua:22
 msgid "Music"
@@ -1540,10 +1544,10 @@ msgid ""
 "before kick / ban someone for a forbidden media\n"
 "The number is not related the the normal `/warn` command\n"
 msgstr ""
-"Pulsa sobre una voz en el colon correcto para *cambiar el ajuste*\n"
-"Puedes usar la última línea para cambiar cuántas advertencias debería dar el "
-"bot antes de expulsar/banear a alguien por enviar multimedia prohibida\n"
-"El número no está relacionado con el comando normal `/warn`"
+"Tap on a voice in the right colon to *change the setting*\n"
+"You can use the last line to change how many warnings should the bot give "
+"before kick/ban someone for a forbidden media\n"
+"The number is not related the the normal `/warn` command"
 
 #: plugins/mediasettings.lua:72
 msgid "⚠️ Tap on the right column"
@@ -1552,37 +1556,37 @@ msgstr ""
 #: plugins/mediasettings.lua:99
 #, fuzzy
 msgid "🔨 New status is kick"
-msgstr "Nuevo estado = %s"
+msgstr "New status= %s"
 
 #: plugins/mediasettings.lua:102
 #, fuzzy
 msgid "🔨 New status is ban"
-msgstr "Nuevo estado = %s"
+msgstr "New status= %s"
 
 #: methods.lua:113
 #, fuzzy
 msgid "I'm not an admin, I can't kick people"
-msgstr "No soy administrador, no puedo expulsar miembros"
+msgstr "我不是群組管理員，不能驅逐用戶。"
 
 #: methods.lua:117
 #, fuzzy
 msgid "There is no need to unban in a normal group"
-msgstr "No hay necesidad de desbanear en un grupo normal"
+msgstr "普通群組不需要解除封鎖（Unban）。"
 
 #: methods.lua:119
 #, fuzzy
 msgid "This user is not a chat member"
-msgstr "Este usuario no es un miembro del chat"
+msgstr "這用戶沒有參與聊天。"
 
 #: utilities.lua:522
 #, fuzzy
 msgid "*No description* for this group."
-msgstr "*NO hay descripcion* de este grupo."
+msgstr "此群組沒有設定簡介。"
 
 #: utilities.lua:532
 #, fuzzy
 msgid "*-empty-*"
-msgstr "*¡Anarquia total*!"
+msgstr "為所欲為！"
 
 #: utilities.lua:580
 msgid "*Creator*:"
@@ -1617,19 +1621,19 @@ msgid ""
 "Current settings for *the group*:\n"
 "\n"
 msgstr ""
-"Ajustes actuales para *el grupo*:\n"
+"目前群組設定︰\n"
 "\n"
-"*Idioma*: `%s`\n"
+"語言︰%s\n"
 
 #: utilities.lua:630
 #, fuzzy, lua-format
 msgid "*Language*: `%s`\n"
-msgstr "*Nuevo idioma establecido:* %s"
+msgstr "已採用語言︰%s"
 
 #: utilities.lua:681
 #, fuzzy
 msgid "*Welcome type*: `custom message`\n"
-msgstr "*Tipo de Bienvenida*: `custom message`\n"
+msgstr "歡迎訊息組合︰「自訂歡迎訊息」\n"
 
 #: utilities.lua:689
 #, lua-format
@@ -1662,16 +1666,17 @@ msgstr ""
 #: utilities.lua:699
 #, fuzzy
 msgid "Welcome message won't be displayed from now"
-msgstr "Mensaje de bienvenida no sera mostrado"
+msgstr "歡迎訊息將不會被展示"
 
 #: utilities.lua:700
 #, fuzzy
 msgid "#extra commands are now available only for moderator"
-msgstr "Comandos #extra solo para moderadores"
+msgstr "只有管理員可使用自訂指令"
 
 #: utilities.lua:701
+#, fuzzy
 msgid "Anti-flood is now off"
-msgstr ""
+msgstr "防洗版設定︰關閉"
 
 #: utilities.lua:702
 msgid "`/rules` will reply in private (for users)"
@@ -1680,16 +1685,17 @@ msgstr ""
 #: utilities.lua:705
 #, fuzzy
 msgid "Welcome message will be displayed"
-msgstr "El mensaje de bienvenida sera mostrado"
+msgstr "歡迎訊息將會被展示"
 
 #: utilities.lua:706
 #, fuzzy
 msgid "Extra # commands are now available for all"
-msgstr "Comandos #extra disponibles para todos"
+msgstr "所有人皆可以使用自訂指令"
 
 #: utilities.lua:707
+#, fuzzy
 msgid "Anti-flood is now on"
-msgstr ""
+msgstr "防洗版設定︰關閉"
 
 #: utilities.lua:708
 msgid "`/rules` will reply in the group (with everyone)"
@@ -1698,12 +1704,12 @@ msgstr ""
 #: utilities.lua:727
 #, fuzzy
 msgid "Now flooders will be banned"
-msgstr "Los flooders seran baneados"
+msgstr "洗版者將會被封鎖！"
 
 #: utilities.lua:730
 #, fuzzy
 msgid "Now flooders will be kicked"
-msgstr "Los flooders seran expulsados"
+msgstr "洗版者將會被驅逐！"
 
 #: utilities.lua:739 utilities.lua:746
 #, lua-format
@@ -1713,7 +1719,7 @@ msgstr ""
 #: utilities.lua:770
 #, fuzzy, lua-format
 msgid "New status = %s"
-msgstr "Nuevo estado = %s"
+msgstr "New status= %s"
 
 #: utilities.lua:777
 msgid "Start me"
@@ -1724,53 +1730,94 @@ msgid "Sorry, a *bug* occurred"
 msgstr ""
 
 #, fuzzy
-#~ msgid "*Some useful links:*"
-#~ msgstr "*Algunos enlaces de interés:*"
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "*Creator*:\n"
+#~ "%s\n"
+#~ "*Admins*:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "創群者︰\n"
+#~ "%s\n"
+#~ "管理員︰\n"
+#~ "%s"
 
 #, fuzzy
-#~ msgid "%s is *already banned*!"
-#~ msgstr "¡%s *ya estaba baneado*!"
+#~ msgid "Tempban: "
+#~ msgstr "暫時封鎖︰"
 
 #, fuzzy
-#~ msgid "*Global stats* for "
-#~ msgstr "*Estadísticas globales* para "
+#~ msgid "Total anarchy!"
+#~ msgstr "為所欲為！"
 
 #, fuzzy
 #~ msgid ""
-#~ "Current settings for *%s*:\n"
-#~ "\n"
-#~ "*Language*: `%s`\n"
+#~ "_Not setted_ : I can't send you back this message, probably the markdown "
+#~ "is *wrong*.\n"
+#~ "Please check the text sent"
 #~ msgstr ""
-#~ "Ajustes actuales de *%s*:\n"
-#~ "\n"
-#~ "*Idioma*: `%s`\n"
+#~ "〝未能設定︰我不能向你傳送此訊息，可能是字型符號出錯\n"
+#~ "請檢查訊息內容"
 
 #, fuzzy
-#~ msgid "_Kicked!_"
-#~ msgstr "_¡Expulsado!_"
+#~ msgid "No description for this group."
+#~ msgstr "此群組沒有設定簡介。"
 
 #, fuzzy
-#~ msgid "*Reply to someone* to use this command, or write a *username*"
+#~ msgid ""
+#~ "✅ = _enabled/allowed_\n"
+#~ "🚫 = _disabled/not allowed_\n"
+#~ "👥 = _sent in group (always for admins)_\n"
+#~ "👤 = _sent in private_"
 #~ msgstr ""
-#~ "*Responde a alguien* para usar ese comando, o escribe un *nombre de "
-#~ "usuario*"
+#~ "✅ = 開啟／允許\n"
+#~ "🚫 = 關閉／禁止\n"
+#~ "👥 = 在群組內回覆（只影響普通用戶）\n"
+#~ "👤 = 透過私訊回覆（只影響普通用戶）���"
 
 #, fuzzy
-#~ msgid "the group"
-#~ msgstr "el grupo"
-
-#, fuzzy
-#~ msgid "_I've sent you the message in private_"
-#~ msgstr "_Te he enviado el mensaje por privado_"
-
-#, fuzzy
-#~ msgid "_Message me first so I can message you_"
-#~ msgstr "_Envíame un mensaje primero para que yo pueda enviarte un mensaje_"
+#~ msgid "*Global stats* for "
+#~ msgstr "全面數據關於"
 
 #, fuzzy
 #~ msgid "Please write something next this poor \"/addrules\""
-#~ msgstr "Por favor, escribe algo despues de \"/addrules\""
+#~ msgstr "請在可憐的 \"/addrules\" 後方加入內容。"
+
+#, fuzzy
+#~ msgid "%s -> %s"
+#~ msgstr "%s → %s"
+
+#, fuzzy
+#~ msgid "the group"
+#~ msgstr "該群組"
+
+#, fuzzy
+#~ msgid "*Reply to someone* to use this command, or write a *username*"
+#~ msgstr "必須透過回覆（Reply）使用該指令，或是在指令後加上用戶名稱"
+
+#, fuzzy
+#~ msgid "*Some useful links:*"
+#~ msgstr "有用連結︰"
+
+#, fuzzy
+#~ msgid "_Kicked!_"
+#~ msgstr "〝已被驅逐！〞"
+
+#, fuzzy
+#~ msgid "Ban: "
+#~ msgstr "已封鎖︰"
+
+#, fuzzy
+#~ msgid "Rtl"
+#~ msgstr "右至左文字"
+
+#, fuzzy
+#~ msgid "_Message me first so I can message you_"
+#~ msgstr "〝你必須先對我私訊（PM），我才能向你私訊（PM）。〞"
 
 #, fuzzy
 #~ msgid "_I've sent you the anti-flood menu in private_"
-#~ msgstr "_Te he enviado el menú anti-flood por privado_"
+#~ msgstr "〝我已經私下向你傳送了洗版設定目錄。〞"
