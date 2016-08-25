@@ -93,8 +93,6 @@ local function get_what(msg)
 		return 'audio'
 	elseif msg.video then
 		return 'video'
-	elseif msg.voice then
-		return 'voice'
 	elseif msg.contact then
 		return 'contact'
 	elseif msg.location then
