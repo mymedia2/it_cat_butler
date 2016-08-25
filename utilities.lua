@@ -656,7 +656,7 @@ function misc.getSettings(chat_id, ln)
     hash = 'chat:'..chat_id..':welcome'
     local type = db:hget(hash, 'type')
     if type == 'media' then
-		message = message .. _("*Welcome type*: `gif/sticker`\n", ln)
+		message = message .. _("*Welcome type*: `GIF / sticker`\n", ln)
 	elseif type == 'custom' then
 		message = message .. _("*Welcome type*: `custom message`\n", ln)
 	elseif type == 'no' then

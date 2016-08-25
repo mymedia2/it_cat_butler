@@ -136,7 +136,7 @@ You can set some exceptions for the antiflood:
                 text = _("❎ [%s] will be ignored by the anti-flood", msg.ln):format(media)
             else
                 db:hset(hash, media, 'no')
-                text = _("🚫 [&&&1] won't be ignored by the anti-flood", msg.ln):format(media)
+                text = _("🚫 [%s] won't be ignored by the anti-flood", msg.ln):format(media)
             end
         end
         

@@ -5,7 +5,7 @@ local function getWelcomeMessage(chat_id, ln)
     if type == 'no' then
     	message = message .. _("*Welcome type*: `default message`\n", ln)
 	elseif type == 'media' then
-		message = message .. _("*Welcome type*: `gif/sticker`\n", ln)
+		message = message .. _("*Welcome type*: `GIF / sticker`\n", ln)
 	elseif type == 'custom' then
 		message = db:hget(hash, 'content')
 	end

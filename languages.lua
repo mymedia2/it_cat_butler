@@ -1,11 +1,17 @@
-local langs = {} -- table with module functions
+local langs = {} -- table with exported functions
 
 local strings = {} -- internal array with translated strings
 
+-- Evaluates the Lua's expression
 local function eval(str)
 	return load('return ' .. str)()
 end
 
+-- Parses the file with translation and returns a table with English strings as
+-- keys and translated strings as values. The keys are stored without a leading
+-- linebreak for crawling bugs of xgettext. It adds needless linebreak to
+-- string literals with long brackets. Fuzzy translations are ignored if flag
+-- config.allow_fuzzy_translations isn't set.
 local function parse(filename)
 	local state = 'ign_msgstr' -- states of finite state machine
 	local msgid, msgstr
@@ -34,7 +40,9 @@ local function parse(filename)
 			state = 'msgid'
 		elseif state == 'msgstr' and input == 'fuzzy' then
 			if msgstr ~= '' then result[msgid:gsub('^\n', '')] = msgstr end
-			state = 'ign_msgid'
+			if not config.allow_fuzzy_translations then
+				state = 'ign_msgid'
+			end
 		elseif state == 'ign_msgid' and input == 'msgstr' then
 			state = 'ign_msgstr'
 		elseif state == 'ign_msgstr' and input == 'msgid' then

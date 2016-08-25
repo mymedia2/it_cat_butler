@@ -106,7 +106,7 @@ local action = function(msg, blocks, ln)
 					if code == 1 then
 						api.sendReply(msg, _("For this, you can directly use /ban", msg.ln))
 					else
-						api.sendReply(msg, _("The time limit is one week (10.080 minutes)", msg.ln))
+						api.sendReply(msg, _("The time limit is one week (10 080 minutes)", msg.ln))
 					end
 					return
 				end
