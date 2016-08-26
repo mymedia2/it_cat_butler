@@ -293,7 +293,7 @@ function misc.resolve_user(username, chat_id)
 end
 
 function misc.is_lang_supported(code)
-	return config.avaliable_languages[code:lower()] ~= nil
+	return config.available_languages[code:lower()] ~= nil
 end
 
 function misc.create_folder(name)
