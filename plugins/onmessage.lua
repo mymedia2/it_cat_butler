@@ -51,17 +51,17 @@ local pre_process = function(msg)
                 --try to kick or ban
                 if action == 'ban' then
                     if msg.chat.type == 'group' then is_normal_group = true end
-        	        res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group, msg.ln)
+        	        res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group)
         	    else
-        	        res = api.kickUser(msg.chat.id, msg.from.id, msg.ln)
+        	        res = api.kickUser(msg.chat.id, msg.from.id)
         	    end
         	    --if kicked/banned, send a message
         	    if res then
         	        misc.saveBan(msg.from.id, 'flood') --save ban
         	        if action == 'ban' then
-        	            message = _("%s *banned* for flood!", msg.ln):format(name)
+        	            message = _("%s *banned* for flood!"):format(name)
         	        else
-        	            message = _("%s *kicked* for flood!", msg.ln):format(name)
+        	            message = _("%s *kicked* for flood!"):format(name)
         	        end
         	        if msgs == (max_msgs + 1) or msgs == max_msgs + 5 then --send the message only if it's the message after the first message flood. Repeat after 5
         	            api.sendMessage(msg.chat.id, message, true)
@@ -89,24 +89,24 @@ local pre_process = function(msg)
     	        local status = (db:hget('chat:'..msg.chat.id..':warnsettings', 'mediatype')) or config.chat_settings['warnsettings']['mediatype']
     	        --try to kick/ban
     	        if status == 'kick' then
-                    res = api.kickUser(msg.chat.id, msg.from.id, msg.ln)
+                    res = api.kickUser(msg.chat.id, msg.from.id)
                 elseif status == 'ban' then
                     if msg.chat.type == 'group' then is_normal_group = true end
-                    res = api.banUser(msg.chat.id, msg.from.id, is_normal_group, msg.ln)
+                    res = api.banUser(msg.chat.id, msg.from.id, is_normal_group)
     	        end
     	        if res then --kick worked
     	            misc.saveBan(msg.from.id, 'media') --save ban
     	            db:hdel('chat:'..msg.chat.id..':mediawarn', msg.from.id) --remove media warns
     	            local message
     	            if status == 'ban' then
-						message = _("%s *banned*: media sent not allowed!\n❗️ `%d` / `%d`", msg.ln):format(name, n, max)
+						message = _("%s *banned*: media sent not allowed!\n❗️ `%d` / `%d`"):format(name, n, max)
     	            else
-						message = _("%s *kicked*: media sent not allowed!\n❗️ `%d` / `%d`", msg.ln):format(name, n, max)
+						message = _("%s *kicked*: media sent not allowed!\n❗️ `%d` / `%d`"):format(name, n, max)
     	            end
     	            api.sendMessage(msg.chat.id, message, true)
     	        end
 	        else --max num not reached -> warn
-				local message = _("%s, this type of media is *not allowed* in this chat.\n(%d / %d)", msg.ln):format(name, n, max)
+				local message = _("%s, this type of media is *not allowed* in this chat.\n(%d / %d)"):format(name, n, max)
 	            api.sendReply(msg, message, true)
 	        end
     	end
@@ -122,15 +122,15 @@ local pre_process = function(msg)
             local name = misc.getname_link(msg.from.first_name, msg.from.username) or misc.getname_id(msg):mEscape()
             local res
             if rtl_status == 'kick' then
-                res = api.kickUser(msg.chat.id, msg.from.id, msg.ln)
+                res = api.kickUser(msg.chat.id, msg.from.id)
             elseif status == 'ban' then
-                res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group, msg.ln)
+                res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group)
             end
     	    if res then
     	        misc.saveBan(msg.from.id, 'rtl') --save ban
-    	        local message = _("%s *kicked*: RTL character in names / messages not allowed!", msg.ln):format(name)
+    	        local message = _("%s *kicked*: RTL character in names / messages not allowed!"):format(name)
     	        if rtl_status == 'ban' then
-					message = _("%s *banned*: RTL character in names / messages not allowed!", msg.ln):format(name)
+					message = _("%s *banned*: RTL character in names / messages not allowed!"):format(name)
     	        end
     	        api.sendMessage(msg.chat.id, message, true)
     	    end
@@ -144,15 +144,15 @@ local pre_process = function(msg)
     	        local name = misc.getname_link(msg.from.first_name, msg.from.username) or misc.getname_id(msg):mEscape()
     	        local res
     	        if arab_status == 'kick' then
-    	            res = api.kickUser(msg.chat.id, msg.from.id, msg.ln)
+    	            res = api.kickUser(msg.chat.id, msg.from.id)
     	        elseif arab_status == 'ban' then
-    	            res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group, msg.ln)
+    	            res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group)
     	        end
     	        if res then
     	            misc.saveBan(msg.from.id, 'arab') --save ban
-    	            local message = _("%s *kicked*: arab message detected!", msg.ln):format(name)
+    	            local message = _("%s *kicked*: arab message detected!"):format(name)
     	            if arab_status == 'ban' then
-						message = _("%s *banned*: arab message detected!", msg.ln):format(name)
+						message = _("%s *banned*: arab message detected!"):format(name)
     	            end
     	            api.sendMessage(msg.chat.id, message, true)
     	        end

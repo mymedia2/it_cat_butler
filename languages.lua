@@ -1,5 +1,3 @@
-local langs = {} -- table with exported functions
-
 local strings = {} -- internal array with translated strings
 
 -- Evaluates the Lua's expression
@@ -59,7 +57,11 @@ local function parse(filename)
 	return result
 end
 
-function langs.init(directory)
+local locale = {} -- table with exported functions
+
+locale.language = 'en' -- default language
+
+function locale.init(directory)
 	directory = directory or "locales"
 
 	for lang_code in pairs(config.available_languages) do
@@ -67,10 +69,10 @@ function langs.init(directory)
 	end
 end
 
-function langs.translate(msgid, language)
-	return strings[language][msgid:gsub('^\n', '')] or msgid
+function locale.translate(msgid)
+	return strings[locale.language][msgid:gsub('^\n', '')] or msgid
 end
 
-_ = langs.translate
+_ = locale.translate
 
-return langs
+return locale

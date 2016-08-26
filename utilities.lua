@@ -495,21 +495,21 @@ function misc.is_silentmode_on(chat_id)
 	end
 end
 
-function misc.getAbout(chat_id, ln)
+function misc.getAbout(chat_id)
 	local hash = 'chat:'..chat_id..':info'
 	local about = db:hget(hash, 'about')
     if not about then
-        return _("*No description* for this group.", ln)
+        return _("*No description* for this group.")
     else
        	return about
     end
 end
 
-function misc.getRules(chat_id, ln)
+function misc.getRules(chat_id)
 	local hash = 'chat:'..chat_id..':info'
 	local rules = db:hget(hash, 'rules')
     if not rules then
-        return _("*-empty-*", ln)
+        return _("*-empty-*")
     else
        	return rules
     end
@@ -557,12 +557,12 @@ function misc.format_adminlist(chat_id, from_id, ln, msg)
 
 	local lines, count = {}, 1
 	if creator then
-		table.insert(lines, _("*Creator*:", ln))
+		table.insert(lines, _("*Creator*:"))
 		table.insert(lines, string.format('*1*. %s', creator))
 		count = count + 1
 	end
 	if #adminlist ~= 0 then
-		table.insert(lines, _("*Admins*:", ln))
+		table.insert(lines, _("*Admins*:"))
 		for i, admin in pairs(adminlist) do
 			table.insert(lines, string.format('*%d*. %s', count, admin))
 			count = count + 1
@@ -572,53 +572,53 @@ function misc.format_adminlist(chat_id, from_id, ln, msg)
 	if not roles.bot_is_admin(chat_id) then
 		if #lines == 0 then
 			assert(#list.result == 0)
-			return _("_No administrators in the group_", ln)
+			return _("_No administrators in the group_")
 		elseif roles.is_admin_cached(msg) then
 			table.insert(lines, _("*I'm not an admin*. I can't fully perform "
 					.. "my functions until group creator hasn't made me admin. "
 					.. "See [this post](https://telegram.me/GroupButler_ch/104) "
-					.. "for to learn how to make a bot administrator.", ln))
+					.. "for to learn how to make a bot administrator."))
 		else
-			table.insert(lines, _("*I'm not an admin* 😞", ln))
+			table.insert(lines, _("*I'm not an admin* 😞"))
 		end
 	elseif #lines == 0 then
 		assert(#list.result == 1)
-		return _("_I'm the only administrator in the group_", ln)
+		return _("_I'm the only administrator in the group_")
 	end
 
 	return table.concat(lines, '\n')
 end
 
-function misc.getExtraList(chat_id, ln)
+function misc.getExtraList(chat_id)
 	local hash = 'chat:'..chat_id..':extra'
 	local commands = db:hkeys(hash)
 	local text = ''
 	if commands[1] == nil then
-		return _("No commands set!", ln)
+		return _("No commands set!")
 	else
 	    for k,v in pairs(commands) do
 	    	text = text..v..'\n'
 	    end
-		return _("List of *custom commands*:\n", ln) .. text
+		return _("List of *custom commands*:\n") .. text
 	end
 end
 
-function misc.getSettings(chat_id, ln)
+function misc.getSettings(chat_id)
     local hash = 'chat:'..chat_id..':settings'
         
-    local message = _("Current settings for *the group*:\n\n", ln)
-			.. _("*Language*: `%s`\n", ln):format(ln)
+    local message = _("Current settings for *the group*:\n\n")
+			.. _("*Language*: `%s`\n"):format(ln)
         
     --build the message
 	local strings = {
-		Welcome = _("Welcome message", ln),
-		Goodbye = _("Goodbye message", ln),
-		Extra = _("Extra", ln),
-		Flood = _("Anti-flood", ln),
-		Silent = _("Silent mode", ln),
-		Rules = _("/rules", ln),
-		Arab = _("Arab", ln),
-		Rtl = _("RTL", ln),
+		Welcome = _("Welcome message"),
+		Goodbye = _("Goodbye message"),
+		Extra = _("Extra"),
+		Flood = _("Anti-flood"),
+		Silent = _("Silent mode"),
+		Rules = _("/rules"),
+		Arab = _("Arab"),
+		Rtl = _("RTL"),
 	}
     for key, default in pairs(config.chat_settings['settings']) do
         
@@ -656,36 +656,36 @@ function misc.getSettings(chat_id, ln)
     hash = 'chat:'..chat_id..':welcome'
     local type = db:hget(hash, 'type')
     if type == 'media' then
-		message = message .. _("*Welcome type*: `GIF / sticker`\n", ln)
+		message = message .. _("*Welcome type*: `GIF / sticker`\n")
 	elseif type == 'custom' then
-		message = message .. _("*Welcome type*: `custom message`\n", ln)
+		message = message .. _("*Welcome type*: `custom message`\n")
 	elseif type == 'no' then
-		message = message .. _("*Welcome type*: `default message`\n", ln)
+		message = message .. _("*Welcome type*: `default message`\n")
 	end
     
     local warnmax_std = (db:hget('chat:'..chat_id..':warnsettings', 'max')) or config.chat_settings['warnsettings']['max']
     local warnmax_media = (db:hget('chat:'..chat_id..':warnsettings', 'mediamax')) or config.chat_settings['warnsettings']['mediamax']
     
-    return message .. _("`Warn (standard)`: *%s*\n", ln):format(warnmax_std)
-			.. _("`Warn (media)`: *%s*\n\n", ln):format(warnmax_media)
-			.. _("✅ = _enabled / allowed_\n", ln)
-			.. _("🚫 = _disabled / not allowed_\n", ln)
-			.. _("👥 = _sent in group (always for admins)_\n", ln)
-			.. _("👤 = _sent in private_", ln)
+    return message .. _("`Warn (standard)`: *%s*\n"):format(warnmax_std)
+			.. _("`Warn (media)`: *%s*\n\n"):format(warnmax_media)
+			.. _("✅ = _enabled / allowed_\n")
+			.. _("🚫 = _disabled / not allowed_\n")
+			.. _("👥 = _sent in group (always for admins)_\n")
+			.. _("👤 = _sent in private_")
 end
 
-function misc.changeSettingStatus(chat_id, field, ln)
+function misc.changeSettingStatus(chat_id, field)
 	local disabled = {
-		welcome = _("Welcome message won't be displayed from now", ln),
-		extra = _("#extra commands are now available only for moderator", ln),
-		flood = _("Anti-flood is now off", ln),
-		rules = _("`/rules` will reply in private (for users)", ln),
+		welcome = _("Welcome message won't be displayed from now"),
+		extra = _("#extra commands are now available only for moderator"),
+		flood = _("Anti-flood is now off"),
+		rules = _("`/rules` will reply in private (for users)"),
 	}
 	local enabled = {
-		welcome = _("Welcome message will be displayed", ln),
-		extra = _("Extra # commands are now available for all", ln),
-		flood = _("Anti-flood is now on", ln),
-		rules = _("`/rules` will reply in the group (with everyone)", ln),
+		welcome = _("Welcome message will be displayed"),
+		extra = _("Extra # commands are now available for all"),
+		flood = _("Anti-flood is now on"),
+		rules = _("`/rules` will reply in the group (with everyone)"),
 	}
 
 	local hash = 'chat:'..chat_id..':settings'
@@ -699,15 +699,15 @@ function misc.changeSettingStatus(chat_id, field, ln)
 	end
 end
 
-function misc.changeFloodSettings(chat_id, screm, ln)
+function misc.changeFloodSettings(chat_id, screm)
 	local hash = 'chat:'..chat_id..':flood'
 	if type(screm) == 'string' then
 		if screm == 'kick' then
 			db:hset(hash, 'ActionFlood', 'ban')
-			return _("Now flooders will be banned", ln)
+			return _("Now flooders will be banned")
         elseif screm == 'ban' then
         	db:hset(hash, 'ActionFlood', 'kick')
-			return _("Now flooders will be kicked", ln)
+			return _("Now flooders will be kicked")
         end
     elseif type(screm) == 'number' then
     	local old = tonumber(db:hget(hash, 'MaxFlood')) or 5
@@ -716,14 +716,14 @@ function misc.changeFloodSettings(chat_id, screm, ln)
     		new = db:hincrby(hash, 'MaxFlood', 1)
     		if new > 25 then
     			db:hincrby(hash, 'MaxFlood', -1)
-				return _("%d is not a valid value!\n", ln):format(new)
+				return _("%d is not a valid value!\n"):format(new)
 						.. ("The value should be *higher* than 3 and *lower* then 26")
     		end
     	elseif screm < 0 then
     		new = db:hincrby(hash, 'MaxFlood', -1)
     		if new < 4 then
     			db:hincrby(hash, 'MaxFlood', 1)
-				return _("%d is not a valid value!\n", ln):format(new)
+				return _("%d is not a valid value!\n"):format(new)
 						.. ("The value should be *higher* than 3 and *lower* then 26")
     		end
     	end
@@ -731,7 +731,7 @@ function misc.changeFloodSettings(chat_id, screm, ln)
     end 	
 end
 
-function misc.changeMediaStatus(chat_id, media, new_status, ln)
+function misc.changeMediaStatus(chat_id, media, new_status)
 	local old_status = db:hget('chat:'..chat_id..':media', media)
 	local new_status_icon
 	if new_status == 'next' then
@@ -747,14 +747,14 @@ function misc.changeMediaStatus(chat_id, media, new_status, ln)
 		end
 	end
 	db:hset('chat:'..chat_id..':media', media, new_status)
-	return _("New status = %s", ln):format(new_status_icon), true
+	return _("New status = %s"):format(new_status_icon), true
 end
 
-function misc.sendStartMe(chat_id, text, ln)
+function misc.sendStartMe(chat_id, text)
     local keyboard = {}
     keyboard.inline_keyboard = {
     	{
-			{text = _("Start me", ln), url = 'https://telegram.me/'..bot.username}
+			{text = _("Start me"), url = 'https://telegram.me/'..bot.username}
 	    }
     }
 	api.sendKeyboard(chat_id, text, keyboard, true)

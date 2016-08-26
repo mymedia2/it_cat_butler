@@ -6,6 +6,7 @@ make_template() {
 			--add-comments=TRANSLATORS \
 			--package-name=GroupButler \
 			--package-version=4.0 \
+			--msgid-bugs-address=https://telegram.me/baconnn \
 			--files-from=/dev/stdin \
 			--output=/dev/stdout
 }

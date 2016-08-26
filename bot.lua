@@ -28,8 +28,8 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	end
 	misc, roles, users = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
 	api = require('methods')
-	langs = dofile('languages.lua')
-	langs.init()
+	locale = dofile('languages.lua')
+	locale.init()
 	
 	current_m = 0
 	last_m = 0
@@ -160,7 +160,7 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 	end]]
 	
 	--Group language
-	msg.ln = (db:get('lang:'..msg.chat.id)) or 'en'
+	locale.language = db:get('lang:'..msg.chat.id) or 'en'
 	
 	collect_stats(msg) --resolve_username support, chat stats
 	
@@ -203,7 +203,7 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 							vardump(msg)
 							print(result)
 							if config.bot_settings.notify_bug then
-								api.sendReply(msg, _('Sorry, a *bug* occurred', msg.ln), true)
+								api.sendReply(msg, _("Sorry, a *bug* occurred"), true)
 							end
 							--misc.save_log('errors', result, msg.from.id or false, msg.chat.id or false, msg.text or false)
           					api.sendAdmin('An #error occurred.\n'..result..'\n'..msg.ln..'\n'..msg.text)

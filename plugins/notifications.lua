@@ -1,11 +1,11 @@
 -- Sends to the mentioned user the notification with message
-local function notify(recipient, msg, ln)
+local function notify(recipient, msg)
 	local text
 	if msg.chat.username then
 		local link = string.format('https://telegram.me/%s/%d', msg.chat.username, msg.message_id)
-		text = _('%s [mentioned](%s) you in the group "%s"', ln):format(msg.from.first_name:mEscape(), link, msg.chat.title:mEscape())
+		text = _('%s [mentioned](%s) you in the group "%s"'):format(msg.from.first_name:mEscape(), link, msg.chat.title:mEscape())
 	else
-		text = _('%s mentioned you in the group "%s"', ln):format(msg.from.first_name:mEscape(), msg.chat.title:mEscape())
+		text = _('%s mentioned you in the group "%s"'):format(msg.from.first_name:mEscape(), msg.chat.title:mEscape())
 	end
 	local clue1 = api.sendMessage(recipient, text, true, nil, true)
 	local clue2 = api.forwardMessage(recipient, msg.chat.id, msg.message_id, true)
@@ -24,7 +24,7 @@ local function scan_mentions(msg)
 		for user_id in pairs(msg.mentions) do
 			local hash = string.format('chat:%d:subscribtions', msg.chat.id)
 			if msg.from.id ~= user_id and db:hget(hash, user_id) == 'on' then
-				notify(user_id, msg, msg.ln)
+				notify(user_id, msg)
 			end
 		end
 	end
@@ -32,29 +32,29 @@ local function scan_mentions(msg)
 end
 
 -- Subscribes the user and returns message text and flag of button "start me"
-local function subscribe(mentions_source, customer, ln)
+local function subscribe(mentions_source, customer)
 	local hash = string.format('chat:%d:subscribtions', mentions_source)
 	local previous_state = db:hget(hash, customer)
 	db:hset(hash, customer, 'on')
 
-	local result = _('_The subscribe to your mentions has activated successfully_', ln)
+	local result = _('_The subscribe to your mentions has activated successfully_')
 	if previous_state == 'on' then
-		result = _('_Your subscribe already activated_', ln)
+		result = _('_Your subscribe already activated_')
 	elseif true then -- if user block the bot
-		result = result .. '\n' .. _('Notifications will not come until you message me', ln)
+		result = result .. '\n' .. _('Notifications will not come until you message me')
 		return result, true
 	end
 	return result, false
 end
 
 -- Unsubscribes the user and returns the text for answer
-local function unsubscribe(mentions_source, customer, ln)
+local function unsubscribe(mentions_source, customer)
 	local hash = string.format('chat:%d:subscribtions', mentions_source)
 	local previous_state = db:hget(hash, customer)
 	db:hset(hash, customer, 'off')
-	local result = _('_The subscribe has deactivated successfully_', ln)
+	local result = _('_The subscribe has deactivated successfully_')
 	if previous_state ~= 'on' then
-		result = _('_Your subscribe already deactivated_', ln)
+		result = _('_Your subscribe already deactivated_')
 	end
 	return result
 end
@@ -72,10 +72,10 @@ end
 local function control(msg, blocks)
 	if blocks[1] == 'subscribe' then
 		if msg.chat.type == 'private' then return end
-		local text, start_me = subscribe(msg.chat.id, msg.from.id, msg.ln)
+		local text, start_me = subscribe(msg.chat.id, msg.from.id)
 		-- Button "start me" still isn't implemented
 		--if start_me then
-		--	misc.sendStartMe(msg.chat.id, text, msg.ln)
+		--	misc.sendStartMe(msg.chat.id, text)
 		--else
 			api.sendMessage(msg.chat.id, text, true)
 		--end
@@ -86,13 +86,13 @@ local function control(msg, blocks)
 			local mentions_source = find_source(msg)
 			local text
 			if mentions_source then
-				text = unsubscribe(mentions_source, msg.chat.id, msg.ln)
+				text = unsubscribe(mentions_source, msg.chat.id)
 			else
-				text = _('To unsubscribe, answer me to unwanted notification with command `/unscribe`', msg.ln)
+				text = _('To unsubscribe, answer me to unwanted notification with command `/unscribe`')
 			end
 			api.sendMessage(msg.chat.id, text, true)
 		else
-			local text = unsubscribe(msg.chat.id, msg.from.id, msg.ln)
+			local text = unsubscribe(msg.chat.id, msg.from.id)
 			api.sendMessage(msg.chat.id, text, true)
 		end
 	end
