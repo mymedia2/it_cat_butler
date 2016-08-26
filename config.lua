@@ -59,7 +59,7 @@ return {
 		['en'] = 'English 🇬🇧',
 		['it'] = 'Italiano 🇮🇹',
 		['es'] = 'Español 🇪🇸',
-		['pt'] = 'Português 🇧🇷',
+		['pt_BR'] = 'Português 🇧🇷',
 		['ru'] = 'Русский 🇷🇺',
 		['de'] = 'Deutschland 🇩🇪',
 		['sv'] = 'Svensk 🇸🇪',
@@ -69,7 +69,7 @@ return {
 		['fa'] = 'فارسی 🇮🇷'
 		--more to come
 	},
-	allow_fuzzy_translations = true,
+	allow_fuzzy_translations = false,
 	media_list = {
 		'image',
 		'audio',

@@ -1,6 +1,6 @@
 local function get_helper(ln)
 	return {
-		kb_header = _("Tap on a button to see the *related commands*", ln),
+		kb_header = _("Tap on a button to see the *related commands*"),
 		started = _([[
 Hello *%s* 👋🏼, nice to meet you!
 I'm Group Butler, the first administration bot using the official Bot API.
@@ -15,7 +15,7 @@ I'm Group Butler, the first administration bot using the official Bot API.
 …and more, below you can find the "all commands" button to get the whole list!
 
 I work better if you add me to the group administrators (otherwise I won't be able to kick or ban)!
-]], ln),
+]]),
 		all = _([[
 *Commands for all*:
 `/dashboard` : see all the group info from private
@@ -27,14 +27,14 @@ I work better if you add me to the group administrators (otherwise I won't be ab
 `/info` : show some useful informations about the bot
 `/groups` : show the list of the discussion groups
 `/help` : show this message'
-]], ln)
-.. _("If you like this bot, please leave the vote you think it deserves [here](%s).", ln):format('https://telegram.me/storebot?start='..bot.username),
+]])
+.. _("If you like this bot, please leave the vote you think it deserves [here](%s)."):format('https://telegram.me/storebot?start='..bot.username),
 		subscribe = _([[
 *Commands for manage subscription*:
 If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
 Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
 If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
-]], ln),
+]]),
 		mods_info = _([[
 *Moderators: info about the group*
 
@@ -47,7 +47,7 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
 
 *Note:* the markdown is supported. If the text sent breaks the markdown, the bot will notify that something is wrong.
 For a correct use of the markdown, check [this post](https://telegram.me/GroupButler_ch/46) in the channel
-]], ln),
+]]),
 		mods_banhammer = _([[
 *Moderators: banhammer powers*
 
@@ -57,14 +57,14 @@ For a correct use of the markdown, check [this post](https://telegram.me/GroupBu
 `/unban [by reply|username]` = unban the user from the group.
 `/user [by reply|username|text mention|id]` = shows how many times the user has been banned *in all the groups*, and the warns received.
 `/status [username|id]` = show the current status of the user `(member|kicked/left the chat|banned|admin/creator|never seen)`
-]], ln),
+]]),
 		mods_flood = _([[
 *Moderators: flood settings*
 
 `/antiflood` = manage the flood settings in private, with an inline keyboard. You can change the sensitivity, the action (kick/ban), and even set some exceptions.
 `/antiflood [number]` = set how many messages a user can write in 5 seconds.
 _Note_ : the number must be higher than 3 and lower than 26.
-]], ln),
+]]),
 		mods_media = _([[
 *Moderators: media settings*
 
@@ -73,7 +73,7 @@ _Note_ : the number must be higher than 3 and lower than 26.
 `/nowarns (by reply)` = reset the number of warnings for the users (*NOTE: both regular warnings and media warnings*).
 
 *List of supported media*: _image, audio, video, sticker, gif, voice, contact, file, link, telegram.me links_
-]], ln),
+]]),
 		mods_welcome = _([[
 Moderators: *welcome settings*
 
@@ -91,7 +91,7 @@ You can use a particular gif/sticker as welcome message. To set it, reply to a g
 Also you can set the custom goodbye message:
 `/goodbye` _message_
 Same placeholders and media are available
-]], ln),
+]]),
 		mods_extra = _([[
 *Moderators: extra commands*
 
@@ -103,7 +103,7 @@ You can reply to a media (_photo, file, vocal, video, gif, audio_) with `/extra 
 
 *Note:* the markdown is supported. If the text sent breaks the markdown, the bot will notify that something is wrong.
 For a correct use of the markdown, check [this post](https://telegram.me/GroupButler_ch/46) in the channel
-]], ln),
+]]),
 		mods_warns = _([[
 *Moderators: warns*
 
@@ -114,7 +114,7 @@ For a correct use of the markdown, check [this post](https://telegram.me/GroupBu
 How to see how many warns a user has received (or to reset them): use `/user` command.
 How to change the max. number of warnings allowed: `/config` command, then `menu` button.
 How to change the max. number of warnings allowed for media: `/config` command, then `media` button.
-]], ln),
+]]),
 		mods_chars = _([[
 *Moderators: special characters*
 
@@ -124,7 +124,7 @@ Here you will find two particular options: _Arab and RTL_.
 *Arab*: when Arab it's not allowed (🚫), everyone who will write an arab character will be kicked from the group.
 *Rtl*: it stands for 'Righ To Left' character, and it's the responsible of the weird service messages that are written in the opposite sense.
 When Rtl is not allowed (🚫), everyone that writes this character (or that has it in his name) will be kicked.
-]], ln),
+]]),
 		mods_links = _([[
 *Moderators: links*
 
@@ -132,7 +132,7 @@ When Rtl is not allowed (🚫), everyone that writes this character (or that has
 `/link` = get the group link, if already setted by the owner.
 
 *Note*: the bot can recognize valid group links. If a link is not valid, you won't receive a reply.
-]], ln),
+]]),
 		mods_langs = _([[
 *Moderators: group language*"
 `/lang` = choose the group language (can be changed in private too).
@@ -142,7 +142,7 @@ When Rtl is not allowed (🚫), everyone that writes this character (or that has
 Anyway, translations are open to everyone. Use `/strings` command to receive a _.lua_ file with all the strings (in english).
 Use `/strings [lang code]` to receive the file for that specific language (example: _/strings es_ ).
 In the file you will find all the instructions: follow them, and as soon as possible your language will be available
-]], ln),
+]]),
 		mods_settings = _([[
 *Moderators: group settings*
 
@@ -152,29 +152,29 @@ The inline keyboard has three sub-menus:
 *Menu*: manage the most important group settings
 *Antiflood*: turn on or off the antiflood, set its sensitivity and choose some media to ignore, if you want
 *Media*: choose which media to forbid in your group, and set the number of times that an user will be warned before being kicked/banned
-]], ln),
+]]),
 	}
 end
 
 local function get_list(ln)
 	return {
-		common = _("Common commands", ln),
-		subscribe = _("Subscriptions", ln),
-		settings = _("General settings", ln),
-		warns = _("Warns", ln),
-		banhammer = _("Banhammer", ln),
-		media = _("Media settings", ln),
-		flood = _("Flood manager", ln),
-		char = _("Characters strictness", ln),
-		info = _("Group info", ln),
-		welcome = _("Welcome settings", ln),
-		links = _("Links", ln),
-		lang = _("Languages", ln),
-		extra = _("Extra commands", ln),
+		common = _("Common commands"),
+		subscribe = _("Subscriptions"),
+		settings = _("General settings"),
+		warns = _("Warns"),
+		banhammer = _("Banhammer"),
+		media = _("Media settings"),
+		flood = _("Flood manager"),
+		char = _("Characters strictness"),
+		info = _("Group info"),
+		welcome = _("Welcome settings"),
+		links = _("Links"),
+		lang = _("Languages"),
+		extra = _("Extra commands"),
 	}
 end
 
-local function make_keyboard(mod, mod_current_position, ln)
+local function make_keyboard(mod, mod_current_position)
 	local keyboard = {}
 	keyboard.inline_keyboard = {}
 	local list = get_list(ln)
@@ -214,11 +214,11 @@ local function make_keyboard(mod, mod_current_position, ln)
 
     local bottom_bar
     if mod then
-		bottom_bar = {{text = _("🔰 User commands", ln), callback_data = 'user'}}
+		bottom_bar = {{text = _("🔰 User commands"), callback_data = 'user'}}
 	else
-	    bottom_bar = {{text = _("🔰 Admin commands", ln), callback_data = 'mod'}}
+	    bottom_bar = {{text = _("🔰 Admin commands"), callback_data = 'mod'}}
 	end
-	table.insert(bottom_bar, {text = _("Info", ln), callback_data = 'fromhelp:info'}) --insert the "Info" button
+	table.insert(bottom_bar, {text = _("Info"), callback_data = 'fromhelp:info'}) --insert the "Info" button
 	table.insert(keyboard.inline_keyboard, bottom_bar)
 	return keyboard
 end
@@ -227,11 +227,11 @@ local function do_keyboard_private(ln)
     local keyboard = {}
     keyboard.inline_keyboard = {
     	{
-    		{text = _("👥 Add me to a group", ln), url = 'https://telegram.me/'..bot.username..'?startgroup=new'},
-    		{text = _("📢 Bot channel", ln), url = 'https://telegram.me/'..config.channel:gsub('@', '')},
+    		{text = _("👥 Add me to a group"), url = 'https://telegram.me/'..bot.username..'?startgroup=new'},
+    		{text = _("📢 Bot channel"), url = 'https://telegram.me/'..config.channel:gsub('@', '')},
 	    },
 	    {
-	        {text = _("📕 All the commands", ln), callback_data = 'user'}
+	        {text = _("📕 All the commands"), callback_data = 'user'}
         }
     }
     return keyboard
@@ -250,16 +250,16 @@ local action = function(msg, blocks)
         end
         return
     end
-    local keyboard = make_keyboard(nil, nil, msg.ln)
+    local keyboard = make_keyboard(nil, nil)
     if blocks[1] == 'help' then
-        local res = api.sendKeyboard(msg.from.id, _("You can surf this keyboard to see *all the available commands*", msg.ln), keyboard, true)
+        local res = api.sendKeyboard(msg.from.id, _("You can surf this keyboard to see *all the available commands*"), keyboard, true)
         if not misc.is_silentmode_on(msg.chat.id) then --send the responde in the group only if the silent mode is off
             if res then
                 if msg.chat.type ~= 'private' then
-                    api.sendMessage(msg.chat.id, _("_I've sent you the help message in private_", msg.ln), true)
+                    api.sendMessage(msg.chat.id, _("_I've sent you the help message in private_"), true)
                 end
             else
-				misc.sendStartMe(msg.chat.id, _("_Please message me first so I can message you_", msg.ln), msg.ln)
+				misc.sendStartMe(msg.chat.id, _("_Please message me first so I can message you_"))
             end
         end
     end
@@ -269,7 +269,7 @@ local action = function(msg, blocks)
 
         local with_mods_lines = true
         if query == 'user' then
-            text = _("You can surf this keyboard to see *all the available commands*", msg.ln)
+            text = _("You can surf this keyboard to see *all the available commands*")
             with_mods_lines = false
 		elseif query == 'common' then
 			text = helper.all
@@ -303,10 +303,10 @@ local action = function(msg, blocks)
         	text = helper.mods_settings
         end
 
-        keyboard = make_keyboard(with_mods_lines, query, msg.ln)
+        keyboard = make_keyboard(with_mods_lines, query)
         local res, code = api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
         if not res and code and code == 111 then
-            api.answerCallbackQuery(msg.cb_id, _("❗️ Already on this tab", msg.ln))
+            api.answerCallbackQuery(msg.cb_id, _("❗️ Already on this tab"))
         elseif query ~= 'user' and query ~= 'mod' then
             api.answerCallbackQuery(msg.cb_id, '💡 ' ..get_list(msg.ln)[query])
         end

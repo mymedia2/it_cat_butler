@@ -1,4 +1,4 @@
-local function doKeyboard_media(chat_id, ln)
+local function doKeyboard_media(chat_id)
 	if not ln then ln = 'en' end
     local keyboard = {}
     keyboard.inline_keyboard = {}
@@ -11,17 +11,17 @@ local function doKeyboard_media(chat_id, ln)
         end
 
 		local media_texts = {
-			forward = _("Forward", ln),
-			image = _("Images", ln),
-			gif = _("GIFs", ln),
-			video = _("Videos", ln),
-			file = _("Documents", ln),
-			TGlink = _("telegram.me links", ln),
-			voice = _("Vocal messages", ln),
-			link = _("Links", ln),
-			audio = _("Music", ln),
-			sticker = _("Stickers", ln),
-			contact = _("Contacts", ln),
+			forward = _("Forward"),
+			image = _("Images"),
+			gif = _("GIFs"),
+			video = _("Videos"),
+			file = _("Documents"),
+			TGlink = _("telegram.me links"),
+			voice = _("Vocal messages"),
+			link = _("Links"),
+			audio = _("Music"),
+			sticker = _("Stickers"),
+			contact = _("Contacts"),
 		}
         local media_text = media_texts[media] or media
         local line = {
@@ -37,9 +37,9 @@ local function doKeyboard_media(chat_id, ln)
     local action = (db:hget('chat:'..chat_id..':warnsettings', 'mediatype')) or config.chat_settings['warnsettings']['mediatype']
 	local caption
 	if action == 'kick' then
-		caption = _("Warns (media) 📍 %d | kick", ln):format(tonumber(max))
+		caption = _("Warns (media) 📍 %d | kick"):format(tonumber(max))
 	else
-		caption = _("Warns (media) 📍 %d | ban", ln):format(tonumber(max))
+		caption = _("Warns (media) 📍 %d | ban"):format(tonumber(max))
 	end
     table.insert(keyboard.inline_keyboard, {{text = caption, callback_data = 'mediatype:'..chat_id}})
     --buttons line
@@ -60,30 +60,30 @@ local action = function(msg, blocks)
 Tap on a voice in the right colon to *change the setting*
 You can use the last line to change how many warnings should the bot give before kick / ban someone for a forbidden media
 The number is not related the the normal `/warn` command
-]], msg.ln)
+]])
 	
 	local chat_id = msg.target_id
 	
 	if  blocks[1] == 'config' then
-		local keyboard = doKeyboard_media(chat_id, msg.ln)
+		local keyboard = doKeyboard_media(chat_id)
 	    api.editMessageText(msg.chat.id, msg.message_id, media_first, keyboard, true)
 	else
 		if blocks[1] == 'mediallert' then
-			api.answerCallbackQuery(msg.cb_id, _("⚠️ Tap on the right column", msg.ln)) return
+			api.answerCallbackQuery(msg.cb_id, _("⚠️ Tap on the right column")) return
 		end
 		local cb_text
 		if blocks[1] == 'mediawarn' then
 			local current = tonumber(db:hget('chat:'..chat_id..':warnsettings', 'mediamax')) or 2
 			if blocks[2] == 'dim' then
 				if current < 2 then
-					cb_text = _("The new value is too low ( < 1)", msg.ln)
+					cb_text = _("The new value is too low ( < 1)")
 				else
 					local new = db:hincrby('chat:'..chat_id..':warnsettings', 'mediamax', -1)
 					cb_text = string.format('%d → %d', current, new)
 				end
 			elseif blocks[2] == 'raise' then
 				if current > 11 then
-					cb_text = _("The new value is too high ( > 12)", msg.ln)
+					cb_text = _("The new value is too high ( > 12)")
 				else
 					local new = db:hincrby('chat:'..chat_id..':warnsettings', 'mediamax', 1)
 					cb_text = string.format('%d → %d', current, new)
@@ -96,17 +96,17 @@ The number is not related the the normal `/warn` command
 			local current = (db:hget(hash, 'mediatype')) or config.chat_settings['warnsettings']['mediatype']
 			if current == 'ban' then
 				db:hset(hash, 'mediatype', 'kick')
-				cb_text = _("🔨 New status is kick", msg.ln)
+				cb_text = _("🔨 New status is kick")
 			else
 				db:hset(hash, 'mediatype', 'ban')
-				cb_text = _("🔨 New status is ban", msg.ln)
+				cb_text = _("🔨 New status is ban")
 			end
 		end
 		if blocks[1] == 'media' then
 			local media = blocks[2]
-	    	cb_text = '⚡️ '..misc.changeMediaStatus(chat_id, media, 'next', msg.ln)
+	    	cb_text = '⚡️ '..misc.changeMediaStatus(chat_id, media, 'next')
         end
-        keyboard = doKeyboard_media(chat_id, msg.ln)
+        keyboard = doKeyboard_media(chat_id)
 		api.editMessageText(msg.chat.id, msg.message_id, media_first, keyboard, true)
         api.answerCallbackQuery(msg.cb_id, cb_text)
     end

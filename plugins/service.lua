@@ -22,7 +22,7 @@ local function gsub_custom_inform(msg, custom)
 	return custom:gsub('$name', name):gsub('$username', username):gsub('$id', id):gsub('$title', title)
 end
 
-local function get_welcome(msg, ln)
+local function get_welcome(msg)
 	if is_locked(msg.chat.id, 'Welcome') then
 		return false
 	end
@@ -35,11 +35,11 @@ local function get_welcome(msg, ln)
 	elseif type == 'custom' then
 		return gsub_custom_inform(msg, content)
 	else
-		return _("Hi %s, and welcome to *%s*!", msg.ln):format(msg.added.first_name:mEscape_hard(), msg.chat.title:mEscape_hard())
+		return _("Hi %s, and welcome to *%s*!"):format(msg.added.first_name:mEscape_hard(), msg.chat.title:mEscape_hard())
 	end
 end
 
-local function get_goodbye(msg, ln)
+local function get_goodbye(msg)
 	if is_locked(msg.chat.id, 'Goodbye') then
 		return false
 	end
@@ -55,7 +55,7 @@ local function get_goodbye(msg, ln)
 			if msg.removed.username then
 				name = name..' (@'..msg.removed.username..')'
 			end
-			return _("Goodbye, %s!", msg.ln):format(name:mEscape_hard())
+			return _("Goodbye, %s!"):format(name:mEscape_hard())
 		end
 		return gsub_custom_inform(msg, content)
 	end
@@ -99,7 +99,7 @@ local action = function(msg, blocks)
 			if msg.adder and roles.is_admin_cached(msg) then --if the user is added by a moderator, remove the added user from the prevbans
 				db:srem('chat:'..msg.chat.id..':prevban', msg.added.id)
 			else --if added by a not-mod, ban the user
-				local res = api.banUser(msg.chat.id, msg.added.id, false, msg.ln)
+				local res = api.banUser(msg.chat.id, msg.added.id, false)
 				if res then
 					api.sendMessage(msg.chat.id, make_text(lang[msg.ln].banhammer.was_banned, msg.added.first_name))
 				end
@@ -111,7 +111,7 @@ local action = function(msg, blocks)
 			if username:find('bot', -3) then return end
 		end
 		
-		local text = get_welcome(msg, msg.ln)
+		local text = get_welcome(msg)
 		if text then
 			api.sendMessage(msg.chat.id, text, true)
 		end
@@ -142,7 +142,7 @@ local action = function(msg, blocks)
 		end
 
 		if msg.removed.username and msg.removed.username:lower():find('bot', -3) then return end
-		local text = get_goodbye(msg, msg.ln)
+		local text = get_goodbye(msg)
 		if text then
 			api.sendMessage(msg.chat.id, text, true)
 		end

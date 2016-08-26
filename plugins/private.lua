@@ -2,12 +2,12 @@ local function do_keybaord_credits(ln)
 	local keyboard = {}
     keyboard.inline_keyboard = {
     	{
-    		{text = _("Channel", ln), url = 'https://telegram.me/'..config.channel:gsub('@', '')},
-    		{text = _("GitHub", ln), url = config.source_code},
-    		{text = _("Rate me!", ln), url = 'https://telegram.me/storebot?start='..bot.username},
+    		{text = _("Channel"), url = 'https://telegram.me/'..config.channel:gsub('@', '')},
+    		{text = _("GitHub"), url = config.source_code},
+    		{text = _("Rate me!"), url = 'https://telegram.me/storebot?start='..bot.username},
 		},
 		{
-			{text = _("👥 Groups", ln), callback_data = 'private:groups'}
+			{text = _("👥 Groups"), callback_data = 'private:groups'}
 		}
 	}
 	return keyboard
@@ -33,7 +33,7 @@ local action = function(msg, blocks)
 				if not file_id then return end
 				api.sendDocumentId(msg.chat.id, file_id, msg.message_id)
 			else
-				api.sendReply(msg, _("Language not yet supported", msg.ln), true)
+				api.sendReply(msg, _("Language not yet supported"), true)
 			end
 		end
 	end
@@ -41,18 +41,18 @@ local action = function(msg, blocks)
 		local res, code = api.sendMessage(msg.chat.id, blocks[2], true)
 		if not res then
 			if code == 118 then
-				api.sendMessage(msg.chat.id, _("This text is too long, I can't send it", msg.ln))
+				api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
 			else
 				local message_text = _("This text breaks the markdown.\n"
 						.. "More info about a proper use of markdown "
-						.. "[here](https://telegram.me/GroupButler_ch/46).", msg.ln)
+						.. "[here](https://telegram.me/GroupButler_ch/46).")
 				api.sendMessage(msg.chat.id, message_text, true)
 			end
 		end
 	end
 	if blocks[1] == 'info' then
 		local keyboard = do_keybaord_credits(msg.ln)
-		local text = _("🕔 Bot version: `%s`\n🔗 *Some useful links*:", msg.ln):format(config.version)
+		local text = _("🕔 Bot version: `%s`\n🔗 *Some useful links*:"):format(config.version)
 		if msg.cb then
 			api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
 		else
@@ -70,9 +70,9 @@ local action = function(msg, blocks)
 			end
 			if next(keyboard.inline_keyboard) then
 				if msg.cb then
-					api.editMessageText(msg.chat.id, msg.message_id, _("Select a group:", msg.ln), keyboard, true)
+					api.editMessageText(msg.chat.id, msg.message_id, _("Select a group:"), keyboard, true)
 				else
-					api.sendKeyboard(msg.chat.id, _("Select a group:", msg.ln), keyboard, true)
+					api.sendKeyboard(msg.chat.id, _("Select a group:"), keyboard, true)
 				end
 			end
 		end
@@ -81,7 +81,7 @@ local action = function(msg, blocks)
 		local id = misc.resolve_user(blocks[2], msg.chat.id)
 		if not id then
 			message = _("I've never seen this user before.\n"
-				.. "If you want to teach me who is he, forward me a message from him", msg.ln)
+				.. "If you want to teach me who is he, forward me a message from him")
 		else
 			message = '*'..id..'*'
 		end
