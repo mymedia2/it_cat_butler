@@ -25,24 +25,24 @@ local action = function(msg, blocks)
 	
 	if blocks[1] == 'addrules' then
 		if not blocks[2] then
-			api.sendReply(msg, lang[msg.ln].setabout.no_input_add)
+			api.sendReply(msg, _("Please write something next this poor `/addabout`", msg.ln), true)
 			return
 		end
 	    local rules = db:hget(hash, 'rules')
         --check if rules are empty
         if not rules then
-            api.sendReply(msg, lang[msg.ln].setrules.no_rules_add, true)
+            api.sendReply(msg, _("*No rules* for this group.\n"
+				.. "Use `/setrules [rules]` to set them", msg.ln), true)
         else
             local input = blocks[2]
-            if not input then
-		        api.sendReply(msg, lang[msg.ln].setrules.no_input_add, true)
-		        return
-	        end
 			
 			--add the new string to the rules
-            local res = api.sendReply(msg, make_text(lang[msg.ln].setrules.added, input), true)
+			local message = _("*Rules added:*\n\n", msg.ln) ..  input
+            local res = api.sendReply(msg, message, true)
             if not res then
-            	api.sendReply(msg, lang[msg.ln].breaks_markdown, true)
+            	api.sendReply(msg, _("This text breaks the markdown.\n"
+					.. "More info about a proper use of markdown "
+					.. "[here](https://telegram.me/GroupButler_ch/46).", msg.ln), true)
             else
             	rules = rules..'\n'..input
             	db:hset(hash, 'rules', rules)
@@ -53,13 +53,13 @@ local action = function(msg, blocks)
 		local input = blocks[2]
 		--ignore if not input text
 		if not input then
-			api.sendReply(msg, lang[msg.ln].setrules.no_input_set, true)
+			api.sendReply(msg, _("Please write something next this poor `/setrules`", msg.ln), true)
 			return
 		end
     	--check if a mod want to clean the rules
 		if input == '-' then
 			db:hdel(hash, 'rules')
-			api.sendReply(msg, lang[msg.ln].setrules.clean)
+			api.sendReply(msg, _("Rules has been wiped.", msg.ln))
 			return
 		end
 		
@@ -67,14 +67,16 @@ local action = function(msg, blocks)
 		local res, code = api.sendReply(msg, input, true)
 		if not res then
 			if code == 118 then
-				api.sendMessage(msg.chat.id, lang[msg.ln].bonus.too_long)
+				api.sendMessage(msg.chat.id, _("This text is too long, I can't send it", msg.ln))
 			else
-				api.sendMessage(msg.chat.id, lang[msg.ln].breaks_markdown, true)
+				api.sendMessage(msg.chat.id, _("This text breaks the markdown.\n"
+					.. "More info about a proper use of markdown "
+					.. "[here](https://telegram.me/GroupButler_ch/46).", msg.ln), true)
 			end
 		else
 			db:hset(hash, 'rules', input)
 			local id = res.result.message_id
-			api.editMessageText(msg.chat.id, id, lang[msg.ln].setrules.rules_setted, false, true)
+			api.editMessageText(msg.chat.id, id, _("New rules *saved successfully*!", msg.ln), false, true)
 		end
 	end
 

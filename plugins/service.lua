@@ -35,7 +35,7 @@ local function get_welcome(msg, ln)
 	elseif type == 'custom' then
 		return gsub_custom_inform(msg, content)
 	else
-		return lang[ln].service.welcome:compose(msg.added.first_name:mEscape_hard(), msg.chat.title:mEscape_hard())
+		return _("Hi %s, and welcome to *%s*!", msg.ln):format(msg.added.first_name:mEscape_hard(), msg.chat.title:mEscape_hard())
 	end
 end
 
@@ -55,7 +55,7 @@ local function get_goodbye(msg, ln)
 			if msg.removed.username then
 				name = name..' (@'..msg.removed.username..')'
 			end
-			return lang[ln].service.goodbye:compose(name:mEscape_hard())
+			return _("Goodbye, %s!", msg.ln):format(name:mEscape_hard())
 		end
 		return gsub_custom_inform(msg, content)
 	end

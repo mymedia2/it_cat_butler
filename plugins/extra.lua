@@ -37,14 +37,16 @@ local action = function(msg, blocks)
 	    	local res, code = api.sendReply(msg, blocks[3], true)
 	    	if not res then
 	    		if code == 118 then
-					api.sendMessage(msg.chat.id, lang[msg.ln].bonus.too_long)
+					api.sendMessage(msg.chat.id, _("This text is too long, I can't send it", msg.ln))
 				else
-					api.sendMessage(msg.chat.id, lang[msg.ln].breaks_markdown, true)
+					local text = _("This text breaks the markdown.\n"
+							.. "More info about a proper use of markdown [here](https://telegram.me/GroupButler_ch/46).", msg.ln)
+					api.sendMessage(msg.chat.id, text, true)
 				end
     		else
 	    		db:hset(hash, blocks[2], blocks[3])
 	    		local msg_id = res.result.message_id
-				api.editMessageText(msg.chat.id, msg_id, make_text(lang[msg.ln].extra.setted, blocks[2]), false)
+				api.editMessageText(msg.chat.id, msg_id, _("%s command saved!", msg.ln):format(blocks[2]), false)
     		end
     	end
 	elseif blocks[1] == 'extra list' then
@@ -54,12 +56,12 @@ local action = function(msg, blocks)
 	    local commands = db:hkeys(hash)
 	    local text = ''
 	    if commands[1] == nil then
-	        api.sendReply(msg, lang[msg.ln].extra.no_commands)
+	        api.sendReply(msg, _("No commands set!", msg.ln))
 	    else
 	        for k,v in pairs(commands) do
 	            text = text..v..'\n'
 	        end
-	        local out = make_text(lang[msg.ln].extra.commands_list, text)
+	        local out = _("List of *custom commands*:\n", msg.ln) .. text
 	        api.sendReply(msg, out, true)
 	    end
     elseif blocks[1] == 'extra del' then
@@ -68,10 +70,10 @@ local action = function(msg, blocks)
 	    local hash = 'chat:'..msg.chat.id..':extra'
 	    local success = db:hdel(hash, blocks[2])
 	    if success == 1 then
-	    	local out = make_text(lang[msg.ln].extra.command_deleted, blocks[2])
+	    	local out = _("%s command has been deleted", msg.ln):format(blocks[2])
 	        api.sendReply(msg, out)
 	    else
-	        local out = make_text(lang[msg.ln].extra.command_empty, blocks[2])
+	        local out = _("%s command does not exist", msg.ln):format(blocks[2])
 	        api.sendReply(msg, out)
 	    end
     else
@@ -114,9 +116,9 @@ return {
 	action = action,
 	triggers = {
 		config.cmd..'(extra)$',
-		config.cmd..'(extra) (#[%s_]*)%s(.*)$',
-		config.cmd..'(extra) (#[%s_]*)',
-		config.cmd..'(extra del) (#[%s_]*)$',
+		config.cmd..'(extra) (#[%w_]*)%s(.*)$',
+		config.cmd..'(extra) (#[%w_]*)',
+		config.cmd..'(extra del) (#[%w_]*)$',
 		config.cmd..'(extra list)$',
 		'^(#[%s_]*)$'
 	}

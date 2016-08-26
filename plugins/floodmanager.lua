@@ -2,17 +2,17 @@ local function do_keyboard_flood(chat_id, ln)
     --no: enabled, yes: disabled
     local status = db:hget('chat:'..chat_id..':settings', 'Flood') or config.chat_settings['settings']['Flood'] --check (default: disabled)
     if status == 'on' then
-        status = '✅ | ON'
+        status = _("✅ | ON", ln)
     elseif status == 'off' then
-        status = '❌ | OFF'
+        status = _("❌ | OFF", ln)
     end
     
     local hash = 'chat:'..chat_id..':flood'
     local action = (db:hget(hash, 'ActionFlood')) or config.chat_settings['flood']['ActionFlood']
     if action == 'kick' then
-        action = '⚡️ '..action
+        action = _("⚡️ kick", ln)
     else
-        action = '⛔ ️'..action
+        action = _("⛔ ️ban", ln)
     end
     local num = (db:hget(hash, 'MaxFlood')) or config.chat_settings['flood']['MaxFlood']
     local keyboard = {
@@ -29,16 +29,19 @@ local function do_keyboard_flood(chat_id, ln)
         }
     }
     
+	local order = { 'text', 'forward', 'image', 'gif', 'sticker', 'video' }
     local exceptions = {
-        ['text'] = lang[ln].floodmanager.text,
-        ['forward'] = lang[ln].floodmanager.forward,
-        ['sticker'] = lang[ln].floodmanager.sticker,
-        ['image'] = lang[ln].floodmanager.image,
-        ['gif'] = lang[ln].floodmanager.gif,
-        ['video'] = lang[ln].floodmanager.video
+		text = _("Texts", ln),
+		forward = _("Forward", ln),
+		image = _("Images", ln),
+		gif = _("GIFs", ln),
+		sticker = _("Stickers", ln),
+		video = _("Videos", ln),
     }
-    hash = 'chat:'..chat_id..':floodexceptions'
-    for media, translation in pairs(exceptions) do
+
+	local hash = 'chat:'..chat_id..':floodexceptions'
+    for i, media in pairs(order) do
+		translation = exceptions[media]
         --ignored by the antiflood-> yes, no
         local exc_status = (db:hget(hash, media)) or config.chat_settings['floodexceptions'][media]
         if exc_status == 'yes' then
@@ -60,6 +63,25 @@ local function do_keyboard_flood(chat_id, ln)
 end
 
 local function action(msg, blocks)
+	local header = _([[
+You can manage the group flood settings from here.
+
+*1st row*
+• *ON/OFF*: the current status of the anti-flood
+• *Kick/Ban*: what to do when someone is flooding
+
+*2nd row*
+• you can use *+/-* to change the current sensitivity of the antiflood system
+• the number it's the max number of messages that can be sent in _5 seconds_
+• max value: _25_, min value: _4_
+
+*3rd row* and below
+You can set some exceptions for the antiflood:
+• ✅: the media will be ignored by the anti-flood
+• ❌: the media won\'t be ignored by the anti-flood
+• *Note*: in "_texts_" are included all the other types of media (file, audio...)
+]], msg.ln)
+
     
     if not msg.cb and msg.chat.type == 'private' then return end
     
@@ -71,15 +93,17 @@ local function action(msg, blocks)
         if not roles.is_admin_cached(msg) then return end
         if blocks[2]:match('%d%d?') then
             if tonumber(blocks[2]) < 4 or tonumber(blocks[2]) > 25 then
-				api.sendReply(msg, make_text(lang[msg.ln].floodmanager.number_invalid, blocks[1]), true)
+				local text = _("`%s` is not a valid value!\nThe value should be *higher* than `3` and *lower* then `26`", msg.ln)
+				api.sendReply(msg, text:format(blocks[1]), true)
 			else
 	    	    local new = tonumber(blocks[2])
 	    	    local old = tonumber(db:hget('chat:'..msg.chat.id..':flood', 'MaxFlood')) or config.chat_settings['flood']['MaxFlood']
 	    	    if new == old then
-	            	api.sendReply(msg, make_text(lang[msg.ln].floodmanager.not_changed, new), true)
+	            	api.sendReply(msg, _("The max number of messages is already %d", msg.ln):format(new), true)
 	    	    else
 	            	db:hset('chat:'..msg.chat.id..':flood', 'MaxFlood', new)
-	            	api.sendReply(msg, make_text(lang[msg.ln].floodmanager.changed_plug, old, new), true)
+					local text = _("The *max number* of messages (in *5 seconds*) changed _from_  %d _to_  %d", msg.ln)
+	            	api.sendReply(msg, text:format(old, new), true)
 	    	    end
             end
             return
@@ -88,17 +112,16 @@ local function action(msg, blocks)
         if not msg.cb then return end --avaoid trolls
         
         if blocks[1] == 'config' then
-            text = lang[msg.ln].floodmanager.header
             keyboard = do_keyboard_flood(chat_id, msg.ln)
-            api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
+            api.editMessageText(msg.chat.id, msg.message_id, header, keyboard, true)
             return
         end
         
         if blocks[1] == 'alert' then
             if blocks[2] == 'num' then
-                text = '⚖'..lang[msg.ln].floodmanager.number_cb
+                text = _("⚖ Current sensitivity. Tap on the + or the -", msg.ln)
             elseif blocks[2] == 'voice' then
-                text = '⚠️ '..lang[msg.ln].bonus.menu_cb_settings
+                text = _("⚠️ Tap on an icon!", msg.ln)
             end
             api.answerCallbackQuery(msg.cb_id, text)
             return
@@ -110,10 +133,10 @@ local function action(msg, blocks)
             local status = (db:hget(hash, media)) or 'no'
             if status == 'no' then
                 db:hset(hash, media, 'yes')
-                text = '❎ '..make_text(lang[msg.ln].floodmanager.ignored, media)
+                text = _("❎ [%s] will be ignored by the anti-flood", msg.ln):format(media)
             else
                 db:hset(hash, media, 'no')
-                text = '🚫 '..make_text(lang[msg.ln].floodmanager.not_ignored, media)
+                text = _("🚫 [%s] won't be ignored by the anti-flood", msg.ln):format(media)
             end
         end
         
@@ -135,7 +158,7 @@ local function action(msg, blocks)
         end
         
         keyboard = do_keyboard_flood(chat_id, msg.ln)
-        api.editMessageText(msg.chat.id, msg.message_id, lang[msg.ln].floodmanager.header, keyboard, true)
+        api.editMessageText(msg.chat.id, msg.message_id, header, keyboard, true)
         api.answerCallbackQuery(msg.cb_id, text)
     end
 end

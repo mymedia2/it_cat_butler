@@ -3,9 +3,9 @@ local function notify(recipient, msg, ln)
 	local text
 	if msg.chat.username then
 		local link = string.format('https://telegram.me/%s/%d', msg.chat.username, msg.message_id)
-		text = lang[ln].notifications.mention1:compose(msg.from.first_name:mEscape(), link, msg.chat.title:mEscape())
+		text = _('%s [mentioned](%s) you in the group "%s"', ln):format(msg.from.first_name:mEscape(), link, msg.chat.title:mEscape())
 	else
-		text = lang[ln].notifications.mention2:compose(msg.from.first_name:mEscape(), msg.chat.title:mEscape())
+		text = _('%s mentioned you in the group "%s"', ln):format(msg.from.first_name:mEscape(), msg.chat.title:mEscape())
 	end
 	local clue1 = api.sendMessage(recipient, text, true, nil, true)
 	local clue2 = api.forwardMessage(recipient, msg.chat.id, msg.message_id, true)
@@ -37,11 +37,11 @@ local function subscribe(mentions_source, customer, ln)
 	local previous_state = db:hget(hash, customer)
 	db:hset(hash, customer, 'on')
 
-	local result = lang[ln].notifications.subscribe_success
+	local result = _('_The subscribe to your mentions has activated successfully_', ln)
 	if previous_state == 'on' then
-		result = lang[ln].notifications.subscribe_already
+		result = _('_Your subscribe already activated_', ln)
 	elseif true then -- if user block the bot
-		result = result .. '\n' .. lang[ln].notifications.reminder
+		result = result .. '\n' .. _('Notifications will not come until you message me', ln)
 		return result, true
 	end
 	return result, false
@@ -52,9 +52,9 @@ local function unsubscribe(mentions_source, customer, ln)
 	local hash = string.format('chat:%d:subscribtions', mentions_source)
 	local previous_state = db:hget(hash, customer)
 	db:hset(hash, customer, 'off')
-	local result = lang[ln].notifications.unscribe_already
-	if previous_state == 'on' then
-		result = lang[ln].notifications.unscribe_success
+	local result = _('_The subscribe has deactivated successfully_', ln)
+	if previous_state ~= 'on' then
+		result = _('_Your subscribe already deactivated_', ln)
 	end
 	return result
 end
@@ -88,7 +88,7 @@ local function control(msg, blocks)
 			if mentions_source then
 				text = unsubscribe(mentions_source, msg.chat.id, msg.ln)
 			else
-				text = lang[msg.ln].notifications.help_unsubscribe
+				text = _('To unsubscribe, answer me to unwanted notification with command `/unscribe`', msg.ln)
 			end
 			api.sendMessage(msg.chat.id, text, true)
 		else
