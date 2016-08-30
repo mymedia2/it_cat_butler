@@ -12,7 +12,7 @@ local function notify(recipient, msg)
 
 	-- save IDs messages to allow the user to unsubscribe in private
 	local hash = string.format('chat:%d:mentions', recipient)
-	if clue1.ok and clue2.ok then
+	if clue1 and clue2 then
 		db:hset(hash, clue1.result.message_id, msg.chat.id)
 		db:hset(hash, clue2.result.message_id, msg.chat.id)
 	end
