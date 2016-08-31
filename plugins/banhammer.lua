@@ -84,6 +84,7 @@ local action = function(msg, blocks)
 				api.sendReply(msg, _("I can't kick or ban an admin"), true)
 				return
 			end
+			if blocks[1] == 'fuckme' then return end
 		    
 		    --commands that need a target user
 		    
@@ -213,6 +214,23 @@ local action = function(msg, blocks)
 			if blocks[1] == 'kickme' then
 				api.kickUser(msg.chat.id, msg.from.id)
 			end
+			if blocks[1] == 'fuckme' then
+				local val = string.format('%d:%d', msg.chat.id, msg.from.id)
+				local unban_time = os.time() + 3 * 60 * 60
+
+				local answ = api.sendMessage(msg.chat.id, _("Happy f*cking!")).result
+				local res, motivation = api.banUser(msg.chat.id, msg.from.id, is_normal_group)
+				if not res then
+					if not motivation then
+						motivation = _("I can't kick this user.\n"
+								.. "Probably I'm not an Amdin, or the user is an Admin iself")
+					end
+					api.editMessageText(answ.chat.id, answ.message_id, motivation)
+				else
+					misc.saveBan(msg.from.id, 'tempban') --save the ban
+					db:hset('tempbanned', unban_time, val) --set the hash
+				end
+			end
 			if msg.cb then --if the user tap on 'unban', show the pop-up
 				api.answerCallbackQuery(msg.cb_id, _("You are *not* an admin"):mEscape_hard())
 			end
@@ -224,14 +242,20 @@ return {
 	action = action,
 	cron = cron,
 	triggers = {
-		config.cmd..'(kickme)%s?',
+		config.cmd..'(kickme)$',
+		config.cmd..'(kickme) (.*)$',
+		config.cmd..'(fuckme)$',
+		config.cmd..'(fuckme) (.*)$',
 		config.cmd..'(kick) (@[%w_]+)',
-		config.cmd..'(kick)',
+		config.cmd..'(kick)$',
+		config.cmd..'(kick) (.*)$',
 		config.cmd..'(ban) (@[%w_]+)',
-		config.cmd..'(ban)',
+		config.cmd..'(ban)$',
+		config.cmd..'(ban) (.*)$',
 		config.cmd..'(tempban) (%d+)',
 		config.cmd..'(unban) (@[%w_]+)',
-		config.cmd..'(unban)',
+		config.cmd..'(unban)$',
+		config.cmd..'(unban) (.*)$',
 		
 		'^###cb:(unban):(%d+)$',
 		'^###cb:(banlist)(-)$',
