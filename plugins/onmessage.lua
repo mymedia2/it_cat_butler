@@ -49,7 +49,7 @@ local pre_process = function(msg)
                 local name = misc.getname_link(msg.from.first_name, msg.from.username) or misc.getname_id(msg):mEscape()
                 local res, message
                 --try to kick or ban
-                if action == 'ban' then
+                if action == 'ban' or action == 'tempban' then
                     if msg.chat.type == 'group' then is_normal_group = true end
         	        res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group)
         	    else
@@ -60,6 +60,13 @@ local pre_process = function(msg)
         	        misc.saveBan(msg.from.id, 'flood') --save ban
         	        if action == 'ban' then
         	            message = _("%s *banned* for flood!"):format(name)
+					elseif action == 'tempban' then
+						local hash = string.format('chat:%d:flood', msg.chat.id)
+						local ban_duration = tonumber(db:hget(hash, 'TempBanDuration')) or config.chat_settings.flood['TempBanDuration']
+						local unban_time = os.time() + ban_duration * 60
+						local val = string.format('%d:%d', msg.chat.id, msg.from.id)
+						db:hset('tempbanned', unban_time, val)
+						message = _("%s has been *banned* for flooding for %d minutes"):format(name, ban_duration)
         	        else
         	            message = _("%s *kicked* for flood!"):format(name)
         	        end
@@ -70,7 +77,7 @@ local pre_process = function(msg)
         	end
             
             if msg.cb then
-                api.answerCallbackQuery(msg.cb_id, '‼️ Please don\'t abuse the keyboard, requests will be ignored')
+                api.answerCallbackQuery(msg.cb_id, _("‼️ Please don't abuse the keyboard, requests will be ignored"))
             end
             return msg, true --if an user is spamming, don't go through plugins
         end

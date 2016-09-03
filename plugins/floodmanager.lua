@@ -10,24 +10,51 @@ local function do_keyboard_flood(chat_id)
     local hash = 'chat:'..chat_id..':flood'
     local action = (db:hget(hash, 'ActionFlood')) or config.chat_settings['flood']['ActionFlood']
     if action == 'kick' then
-        action = _("⚡️ kick")
-    else
-        action = _("⛔ ️ban")
+        action_label = _("⚡️ kick")
+    elseif action == 'ban' then
+        action_label = _("⛔ ️ban")
+	elseif action == 'tempban' then
+		action_label = _("🔑 tempban")
     end
     local num = (db:hget(hash, 'MaxFlood')) or config.chat_settings['flood']['MaxFlood']
-    local keyboard = {
-        inline_keyboard = {
-            {
-                {text = status, callback_data = 'flood:status:'..chat_id},
-                {text = action, callback_data = 'flood:action:'..chat_id},
-            },
-            {
-                {text = '➖', callback_data = 'flood:dim:'..chat_id},
-                {text = num, callback_data = 'flood:alert:num'},
-                {text = '➕', callback_data = 'flood:raise:'..chat_id},
-            }
-        }
-    }
+    local keyboard
+	if action ~= 'tempban' then
+		keyboard = {
+			inline_keyboard = {
+				{
+					{text = status, callback_data = 'flood:status:'..chat_id},
+					{text = action_label, callback_data = 'flood:action:'..chat_id},
+				},
+				{
+					{text = '➖', callback_data = 'flood:dim:'..chat_id},
+					{text = num, callback_data = 'flood:alert:num'},
+					{text = '➕', callback_data = 'flood:raise:'..chat_id},
+				},
+			}
+		}
+	else
+		local ban_duration = db:hget(hash, 'TempBanDuration') or tostring(config.chat_settings.flood['TempBanDuration'])
+		keyboard = {
+			inline_keyboard = {
+				{
+					{text = status, callback_data = 'flood:status:'..chat_id},
+					{text = action_label, callback_data = 'flood:action:'..chat_id},
+				},
+				{
+					{text = _("Duration"), callback_data = 'flood:alert:num'},
+					{text = '➖', callback_data = 'flood:reduce:'..chat_id},
+					{text = ban_duration, callback_data = 'flood:alert:num'},
+					{text = '➕', callback_data = 'flood:increase:'..chat_id},
+				},
+				{
+					{text = _("Sensitivity"), callback_data = 'flood:alert:num'},
+					{text = '➖', callback_data = 'flood:dim:'..chat_id},
+					{text = num, callback_data = 'flood:alert:num'},
+					{text = '➕', callback_data = 'flood:raise:'..chat_id},
+				},
+			}
+		}
+	end
     
 	local order = { 'text', 'forward', 'image', 'gif', 'sticker', 'video' }
     local exceptions = {
@@ -60,6 +87,32 @@ local function do_keyboard_flood(chat_id)
     table.insert(keyboard.inline_keyboard, {{text = '🔙', callback_data = 'config:back:'..chat_id}})
     
     return keyboard
+end
+
+function step(count, direction)
+	if 20 < count and count < 60 then
+		return count + 10 * direction
+	elseif 60 < count and count < 240 then
+		return count + 30 * direction
+	elseif 240 < count and count < 720 then
+		return count + 60 * direction
+	elseif 720 < count then
+		return count + 720 * direction
+	else
+		local ex = {1, 2, 3, 5, 7, 10, 15, 20, 30, 50, 60, 90, 210, 240, 300, 660, 720, 1440}
+		local index
+		for i, v in pairs(ex) do
+			if v == count then
+				index = i
+				break
+			end
+		end
+		if index then
+			return ex[index + direction]
+		else
+			return 10
+		end
+	end
 end
 
 local function action(msg, blocks)
@@ -150,6 +203,22 @@ You can set some exceptions for the antiflood:
                 action = 1
             end
             text = misc.changeFloodSettings(chat_id, action):mEscape_hard()
+		elseif blocks[1] == 'increase' then
+			local hash = string.format('chat:%d:flood', chat_id)
+			local old = tonumber(db:hget(hash, 'TempBanDuration')) or config.chat_settings.flood['TempBanDuration']
+			local new = step(old, 1)
+			db:hset(hash, 'TempBanDuration', new)
+			text = string.format('📈 %dm → %dm', old, new)
+		elseif blocks[1] == 'reduce' then
+			local hash = string.format('chat:%d:flood', chat_id)
+			local old = tonumber(db:hget(hash, 'TempBanDuration')) or config.chat_settings.flood['TempBanDuration']
+			if old <= 1 then
+				text = _("⚠️ Value must been positive")
+			else
+				local new = step(old, -1)
+				db:hset(hash, 'TempBanDuration', new)
+				text = string.format('📉 %dm → %dm', old, new)
+			end
         end
         
         if blocks[1] == 'status' then
@@ -173,6 +242,8 @@ return {
         '^###cb:flood:(action):(-%d+)$',
         '^###cb:flood:(dim):(-%d+)$',
         '^###cb:flood:(raise):(-%d+)$',
+		'^###cb:flood:(reduce):(-%d+)$',
+		'^###cb:flood:(increase):(-%d+)$',
         '^###cb:flood:(exc):(%a+):(-%d+)$',
         
         '^###cb:(config):antiflood:'

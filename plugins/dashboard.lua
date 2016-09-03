@@ -22,9 +22,11 @@ local function getFloodSettings_text(chat_id)
     local hash = 'chat:'..chat_id..':flood'
     local action = (db:hget(hash, 'ActionFlood')) or 'kick'
     if action == 'kick' then
-        action = '⚡️ '..action
-    else
-        action = '⛔ ️'..action
+        action = _("⚡️ kick")
+    elseif action == 'ban' then
+        action = _("⛔ ️ban")
+	elseif action == 'tempban' then
+		action = _("🔑 tempban")
     end
     local num = (db:hget(hash, 'MaxFlood')) or 5
     local exceptions = {

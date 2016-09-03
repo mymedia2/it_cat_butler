@@ -92,7 +92,8 @@ return {
 		},
 		['flood'] = {
 			['MaxFlood'] = 5,
-			['ActionFlood'] = 'kick'
+			['ActionFlood'] = 'kick',
+			['TempBanDuration'] = 10,
 		},
 		['char'] = {
 			['Arab'] = 'allowed',

@@ -706,6 +706,9 @@ function misc.changeFloodSettings(chat_id, screm)
 			db:hset(hash, 'ActionFlood', 'ban')
 			return _("Now flooders will be banned")
         elseif screm == 'ban' then
+			db:hset(hash, 'ActionFlood', 'tempban')
+			return _("Now flooders will be temporary banned")
+		elseif screm == 'tempban' then
         	db:hset(hash, 'ActionFlood', 'kick')
 			return _("Now flooders will be kicked")
         end

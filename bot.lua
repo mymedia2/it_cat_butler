@@ -206,7 +206,7 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 								api.sendReply(msg, _("Sorry, a *bug* occurred"), true)
 							end
 							--misc.save_log('errors', result, msg.from.id or false, msg.chat.id or false, msg.text or false)
-          					api.sendAdmin('An #error occurred.\n'..result..'\n'..msg.ln..'\n'..msg.text)
+          					api.sendAdmin('An #error occurred.\n'..result..'\n'..locale.language..'\n'..msg.text)
 							return
 						end
 						
