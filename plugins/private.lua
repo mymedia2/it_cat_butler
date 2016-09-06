@@ -37,19 +37,6 @@ local action = function(msg, blocks)
 			end
 		end
 	end
-	if blocks[1] == 'echo' then
-		local res, code = api.sendMessage(msg.chat.id, blocks[2], true)
-		if not res then
-			if code == 118 then
-				api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
-			else
-				local message_text = _("This text breaks the markdown.\n"
-						.. "More info about a proper use of markdown "
-						.. "[here](https://telegram.me/GroupButler_ch/46).")
-				api.sendMessage(msg.chat.id, message_text, true)
-			end
-		end
-	end
 	if blocks[1] == 'info' then
 		local keyboard = do_keybaord_credits(msg.ln)
 		local text = _("🕔 Bot version: `%s`\n🔗 *Some useful links*:"):format(config.version)
@@ -95,7 +82,6 @@ return {
 		config.cmd..'(ping)$',
 		config.cmd..'(strings)$',
 		config.cmd..'(strings) (%a%a)$',
-		config.cmd..'(echo) (.*)$',
 		config.cmd..'(info)$',
 		config.cmd..'(groups)$',
 		config.cmd..'(resolve) (@[%w_]+)$',

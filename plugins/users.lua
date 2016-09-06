@@ -127,6 +127,19 @@ local action = function(msg, blocks)
 			api.sendMessage(msg.chat.id, text, true)
         end
     end
+	if blocks[1] == 'echo' and (msg.chat.type == 'private' or roles.is_admin_cached(msg)) then
+		local res, code = api.sendMessage(msg.chat.id, blocks[2], true)
+		if not res then
+			if code == 118 then
+				api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
+			else
+				local message_text = _("This text breaks the markdown.\n"
+						.. "More info about a proper use of markdown "
+						.. "[here](https://telegram.me/GroupButler_ch/46).")
+				api.sendMessage(msg.chat.id, message_text, true)
+			end
+		end
+	end
     if blocks[1] == 'status' then
     	if msg.chat.type == 'private' then return end
     	if roles.is_admin_cached(msg) then
@@ -379,6 +392,7 @@ return {
 		config.cmd..'(welcome)$',
 		config.cmd..'(goodbye) (.*)$',
 		config.cmd..'(goodbye)$',
+		config.cmd..'(echo) (.*)$',
 		config.cmd..'(cache)$',
 		config.cmd..'(msglink)$',
 		
