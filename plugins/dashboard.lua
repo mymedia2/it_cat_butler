@@ -15,27 +15,25 @@ end
 local function getFloodSettings_text(chat_id)
     local status = db:hget('chat:'..chat_id..':settings', 'Flood') or 'yes' --check (default: disabled)
     if status == 'no' then
-        status = '✅ | ON'
+        status = _("✅ | ON")
     elseif status == 'yes' then
-        status = '❌ | OFF'
+        status = _("❌ | OFF")
     end
     local hash = 'chat:'..chat_id..':flood'
     local action = (db:hget(hash, 'ActionFlood')) or 'kick'
     if action == 'kick' then
         action = _("⚡️ kick")
-    elseif action == 'ban' then
+    else
         action = _("⛔ ️ban")
-	elseif action == 'tempban' then
-		action = _("🔑 tempban")
     end
     local num = (db:hget(hash, 'MaxFlood')) or 5
     local exceptions = {
-        ['text'] = _("Texts"),
-        ['forward'] = _("Forward"),
-        ['sticker'] = _("Stickers"),
-        ['image'] = _("Images"),
-        ['gif'] = _("GIFs"),
-        ['video'] = _("Videos"),
+        text = _("Texts"),
+        forward = _("Forward"),
+        sticker = _("Stickers"),
+        image = _("Images"),
+        gif = _("GIFs"),
+        video = _("Videos"),
     }
     hash = 'chat:'..chat_id..':floodexceptions'
     local list_exc = ''
@@ -85,7 +83,7 @@ local function get_group_name(text)
         return ''
     end
     name = '\n('..name..')'
-    return name:mEscape()
+    return name:escape()
 end
 
 local action = function(msg, blocks)
@@ -122,7 +120,7 @@ local action = function(msg, blocks)
             text = misc.getAbout(chat_id)
         end
         if request == 'adminlist' then
-            text = misc.format_adminlist(chat_id, msg.from.id, msg.ln, msg)
+            text = misc.getAdminlist(chat_id, msg.from.id)
         end
         if request == 'extra' then
             text = misc.getExtraList(chat_id)

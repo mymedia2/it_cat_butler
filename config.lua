@@ -1,33 +1,30 @@
 return {
 	bot_api_key = os.getenv('BOT_TOKEN'),
-	version = '4.0',
+	version = '4.1.2',
 	cmd = '^[/!#]',
 	db = 2, --default redis db: 0
-	admin = {
-		owner = 119416836,
-		admins = {
-			[119416836] = true,
-			[93158165] = true,
-		}
-	},
+	superadmins = {119416836, 93158165},
+	log_chat = -1001086427803,
+	log_admin = -1001086427803,
 	bot_settings = {
 		cache_time = {
 			adminlist = 18000, --5 hours (18000s)
 		},
-		testing_mode = true,
 		multipurpose_mode = true,
 		notify_bug = true,
-		log_api_errors = false
+		log_api_errors = false,
+		stream_commands = true
 	},
 	channel = '@it_cat_encrypted', --channel username with the '@'
+	source_code = 'https://github.com/mymedia2/it_cat_butler',
 	help_groups = {
-		['Internatonal (English)'] = 'https://telegram.me/joinchat/CHYUej9jFxFN12MQqrLnUg', --group link, not username!
-		['Italian'] = false, --'https://telegram.me/joinchat/CHYUej7oPES-Gdw5hmgAXg',
-		['Persian'] = 'https://telegram.me/joinchat/CHYUej8VRwlY9dzoKMERog',
+		['Internatonal (English)'] = 'https://telegram.me/joinchat/EKBQLj7Zf6lE2K_Pk0Epcg', --group link, not username!
+		['Italian'] = 'https://telegram.me/joinchat/ITgroupbutler',
+		['Persian'] = 'https://telegram.me/joinchat/CTDUTkCOsEvtZl09w32-Qg',
+		['Russian'] = 'https://telegram.me/rubutler',
 		['Spanish'] = false,
 		['ИТ-кот'] = 'https://telegram.me/it_cat_encrypted',
 	},
-	source_code = 'https://github.com/mymedia2/it_cat_butler',
 	plugins = {
 		'onmessage.lua', --THIS MUST BE THE FIRST: IF AN USER IS SPAMMING/IS BLOCKED, THE BOT WON'T GO THROUGH PLUGINS
 		'notifications.lua',
@@ -38,7 +35,6 @@ return {
 		'users.lua',
 		'help.lua',
 		'rules.lua',
-		'about.lua',
 		'service.lua',
 		'links.lua',
 		'warn.lua',
@@ -47,9 +43,10 @@ return {
 		'mediasettings.lua',
 		'private.lua',
 		'admin.lua',
-		'restore.lua',
-		'test.lua',
-		'extra.lua', --has to be the last
+		--'restore.lua',
+		--'test.lua',
+		--'logchannel.lua',
+		'extra.lua', --must be the last
 	},
 	multipurpose_plugins = {
 		'commit.lua',
@@ -67,9 +64,9 @@ return {
 		['fr'] = 'Français 🇫🇷',
 		['zh'] = '中文 🇨🇳',
 		['fa'] = 'فارسی 🇮🇷'
-		--more to come
+		-- more to come
 	},
-	allow_fuzzy_translations = false,
+	allow_fuzzy_translations = true,
 	media_list = {
 		'image',
 		'audio',
@@ -88,7 +85,8 @@ return {
 			['Extra'] = 'on',
 			['Flood'] = 'off',
 			['Silent'] = 'off',
-			['Rules'] = 'off'
+			['Rules'] = 'off',
+			['Antibot'] = 'off'
 		},
 		['flood'] = {
 			['MaxFlood'] = 5,
@@ -132,6 +130,14 @@ return {
 			['link'] = 'ok',
 			['TGlink'] = 'ok'
 		},
+		['tolog'] = {
+			['ban'] = 'yes',
+			['kick'] = 'yes',
+			['warn'] = 'yes',
+			['join'] = 'yes',
+			['mediawarn'] = 'yes',
+			['flood'] = 'yes',
+		},
 	},
 	private_settings = {
 		rules_on_join = 'on',
@@ -141,7 +147,7 @@ return {
 	chat_custom_texts = {'extra', 'info', 'links', 'warns', 'mediawarn'},
 	bot_keys = {
 		d3 = {'bot:general', 'bot:usernames', 'bot:chat:latsmsg'},
-		d2 = {'bot:groupsid', 'bot:groupsid:removed', 'tempbanned', 'bot:blocked'}
+		d2 = {'bot:groupsid', 'bot:groupsid:removed', 'tempbanned', 'bot:blocked', 'remolden_chats'} --remolden_chats: chat removed with $remold command
 	},
 	api_errors = {
 		[101] = 'Not enough rights to kick participant', --SUPERGROUP: bot is not admin

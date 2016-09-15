@@ -5,13 +5,12 @@ JSON = require('dkjson')
 redis = require('redis')
 clr = require 'term.colors'
 db = Redis.connect('127.0.0.1', 6379)
---db:select(0)
 serpent = require('serpent')
 
 local function check_config()
 	if not config.bot_api_key or config.bot_api_key == '' then
 		return 'Bot token missing. You must set it!'
-	elseif not config.admin.owner or config.admin.owner == '' then
+	elseif not next(config.superadmins) then
 		return 'You have to set the id of the owner'
 	elseif not config.bot_settings.cache_time.adminlist or config.bot_settings.cache_time.adminlist == '' then
 		return 'Please set up a cache time for the adminlist'
@@ -26,7 +25,11 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 		print(clr.red..error)
 		return
 	end
-	misc, roles, users = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
+	
+	db:select(config.db or 0) --select the redis db
+	
+	misc, roles = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
+	locale = dofile('languages.lua')
 	api = require('methods')
 	locale = dofile('languages.lua')
 	locale.init()
@@ -34,7 +37,7 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	current_m = 0
 	last_m = 0
 	
-	bot = api.getMe().result
+	bot = api.getMe().result -- Get bot info
 
 	plugins = {} -- Load plugins.
 	for i,v in ipairs(config.plugins) do
@@ -67,40 +70,12 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 end
 
 local function get_from(msg)
-	local user = '['..msg.from.first_name
-	if msg.from.last_name then
-		user = user..' '..msg.from.last_name
-	end
-	user = user..']'
+	local user = '['..msg.from.first_name..']'
 	if msg.from.username then
 		user = user..' [@'..msg.from.username..']'
 	end
 	user = user..' ['..msg.from.id..']'
 	return user
-end
-
-local function get_what(msg)
-	if msg.sticker then
-		return 'sticker'
-	elseif msg.photo then
-		return 'photo'
-	elseif msg.document then
-		return 'document'
-	elseif msg.audio then
-		return 'audio'
-	elseif msg.video then
-		return 'video'
-	elseif msg.voice then
-		return 'voice'
-	elseif msg.contact then
-		return 'contact'
-	elseif msg.location then
-		return 'location'
-	elseif msg.text then
-		return 'text'
-	else
-		return 'service message'
-	end
 end
 
 local function collect_stats(msg)
@@ -145,78 +120,59 @@ end
 on_msg_receive = function(msg) -- The fn run whenever a message is received.
 	--vardump(msg)
 	if not msg then
-		api.sendAdmin('A loop without msg') return
+		return
 	end
 	
+	if msg.chat.type ~= 'group' then --do not process messages from normal groups
+		
 	if msg.date < os.time() - 7 then return end -- Do not process old messages.
 	if not msg.text then msg.text = msg.caption or '' end
 	
-	msg.normal_group = false
-	if msg.chat.type == 'group' then msg.normal_group = true end
-	
-	--for commands link
 	--[[if msg.text:match('^/start .+') then
 		msg.text = '/' .. msg.text:input()
 	end]]
 	
-	--Group language
-	locale.language = db:get('lang:'..msg.chat.id) or 'en'
-	
-	collect_stats(msg) --resolve_username support, chat stats
-	
-	local stop_loop
+	locale.language = db:get('lang:'..msg.chat.id) or 'en' --group language
+	if not config.available_languages[locale.language] then
+		locale.language = 'en'
+	end
+
+	collect_stats(msg)
+
+	local continue
 	for i, plugin in pairs(plugins) do
-		if plugin.on_each_msg then
-			msg, stop_loop = plugin.on_each_msg(msg, msg.lang)
-		end
-		if stop_loop then --check if on_each_msg said to stop the triggers loop
-			return
-		end
+			if plugin.onmessage then continue = plugin.onmessage(msg) end
+			if not continue then return end
 	end
 	
 	for i,plugin in pairs(plugins) do
 		if plugin.triggers then
-			if (config.bot_settings.testing_mode and plugin.test) or not plugin.test then --run test plugins only if test mode is on
 				for k,w in pairs(plugin.triggers) do
 					local blocks = match_pattern(w, msg.text)
 					if blocks then
 						
-						--workaround for the stupid bug
-						if not(msg.chat.type == 'private') and not db:exists('chat:'..msg.chat.id..':settings') and not msg.service then
+						if msg.chat.type ~= 'private' and not db:exists('chat:'..msg.chat.id..':settings') and not msg.service then --init agroup if the bot wasn't aware to be in
 							misc.initGroup(msg.chat.id)
 						end
 						
-						--print in the terminal
-						print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..'] ['..msg.chat.type..']')
-						
-						--print the match
-						if blocks[1] ~= '' then
-      						db:hincrby('bot:general', 'query', 1)
-      						if msg.from then db:incrby('user:'..msg.from.id..':query', 1) end
+						if config.bot_settings.stream_commands then --print some info in the terminal
+							print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..']')
       					end
 						
-						--execute the plugin
-						local success, result = xpcall(plugin.action, debug.traceback, msg, blocks)
+						local success, result = xpcall(plugin.action, debug.traceback, msg, blocks) --execute the main function of the plugin triggered
 						
-						--if bugs
-						if not success then
-							vardump(msg)
+						if not success then --if a bug happens
 							print(result)
 							if config.bot_settings.notify_bug then
 								api.sendReply(msg, _("Sorry, a *bug* occurred"), true)
 							end
-							--misc.save_log('errors', result, msg.from.id or false, msg.chat.id or false, msg.text or false)
           					api.sendAdmin('An #error occurred.\n'..result..'\n'..locale.language..'\n'..msg.text)
 							return
 						end
 						
-						-- If the action returns a table, make that table msg.
-						if type(result) == 'table' then
-							msg = result
-						elseif type(result) == 'string' then
+						if type(result) == 'string' then --if the action returns a string, make that string the new msg.text
 							msg.text = result
-						-- If the action returns true, don't stop.
-						elseif result ~= true then
+						elseif result ~= true then --if the action returns true, then don't stop the loop of the plugin's actions
 							return
 						end
 					end
@@ -355,9 +311,9 @@ end
 bot_init() -- Actually start the script. Run the bot_init function.
 
 while is_started do -- Start a loop while the bot should be running.
-	local res = api.getUpdates(last_update+1) -- Get the latest updates!
+	local res = api.getUpdates(last_update+1) -- Get the latest updates
 	if res then
-		--vardump(res)
+		clocktime_last_update = os.clock()
 		for i,msg in ipairs(res.result) do -- Go through every new message.
 			last_update = msg.update_id
 			current_m = current_m + 1
@@ -386,8 +342,8 @@ while is_started do -- Start a loop while the bot should be running.
 	else
 		print('Connection error')
 	end
-	if last_cron ~= os.date('%M') then -- Run cron jobs every minute.
-		last_cron = os.date('%M')
+	if last_cron ~= os.date('%H') then -- Run cron jobs every hour.
+		last_cron = os.date('%H')
 		last_m = current_m
 		current_m = 0
 		for i,v in ipairs(plugins) do

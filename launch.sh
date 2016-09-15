@@ -7,6 +7,7 @@ make_template() {
 			--package-name=GroupButler \
 			--package-version=4.0 \
 			--msgid-bugs-address=https://telegram.me/baconnn \
+			--force-po \
 			--files-from=/dev/stdin \
 			--output=/dev/stdout
 }

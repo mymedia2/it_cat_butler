@@ -113,9 +113,10 @@ local function insert_settings_section(keyboard, settings_section, chat_id)
 		Extra = _("Extra"),
 		Flood = _("Anti-flood"),
 		Silent = _("Silent mode"),
-		Rules = _("/rules"),
+		Rules = _("Rules"),
 		Arab = _("Arab"),
 		Rtl = _("RTL"),
+		Antibot = _("Ban bots")
 	}
 
     for key, icon in pairs(settings_section) do

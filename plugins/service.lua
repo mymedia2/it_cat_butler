@@ -10,12 +10,12 @@ end
 
 local function gsub_custom_inform(msg, custom)
 	local user = msg.added or msg.removed
-	local name = user.first_name:mEscape():gsub('%%', '')
+	local name = user.first_name:escape():gsub('%%', '')
 	local id = user.id
 	local username
-	local title = msg.chat.title:mEscape():gsub('%%', '')
+	local title = msg.chat.title:escape():gsub('%%', '')
 	if user.username then
-		username = '@'..user.username:mEscape()
+		username = '@'..user.username:escape()
 	else
 		username = '(no username)'
 	end
@@ -35,7 +35,7 @@ local function get_welcome(msg)
 	elseif type == 'custom' then
 		return gsub_custom_inform(msg, content)
 	else
-		return _("Hi %s, and welcome to *%s*!"):format(msg.added.first_name:mEscape_hard(), msg.chat.title:mEscape_hard())
+		return _("Hi %s, and welcome to *%s*!"):format(msg.added.first_name:escape_hard(), msg.chat.title:escape_hard())
 	end
 end
 
@@ -55,7 +55,7 @@ local function get_goodbye(msg)
 			if msg.removed.username then
 				name = name..' (@'..msg.removed.username..')'
 			end
-			return _("Goodbye, %s!"):format(name:mEscape_hard())
+			return _("Goodbye, %s!"):format(name:escape_hard())
 		end
 		return gsub_custom_inform(msg, content)
 	end
@@ -69,13 +69,13 @@ local action = function(msg, blocks)
 	--if the bot join the chat
 	if blocks[1] == 'botadded' then
 		
-		if db:hget('bot:general', 'adminmode') == 'on' and not roles.is_bot_owner(msg.adder.id) then
-			api.sendMessage(msg.chat.id, 'Admin mode is on: only the bot admin can add me to a new group')
+		if db:hget('bot:general', 'adminmode') == 'on' and not roles.is_superadmin(msg.adder.id) then
+			api.sendMessage(msg.chat.id, '_Admin mode is on: only the bot admin can add me to a new group_', true)
 			api.leaveChat(msg.chat.id)
 			return
 		end
 		if misc.is_blocked_global(msg.adder.id) then
-			api.sendMessage(msg.chat.id, '_You ('..msg.adder.first_name:mEscape()..', '..msg.adder.id..') are in the blocked list_', true)
+			api.sendMessage(msg.chat.id, '_You ('..msg.adder.first_name:escape()..', '..msg.adder.id..') are in the blocked list_', true)
 			api.leaveChat(msg.chat.id)
 			return
 		end
@@ -86,29 +86,15 @@ local action = function(msg, blocks)
 	--if someone join the chat
 	if blocks[1] == 'added' then
 		
-		if msg.chat.type == 'group' and misc.is_banned(msg.chat.id, msg.added.id) then
-			if not roles.is_admin2(msg.chat.id, msg.adder.id) then
-				api.kickChatMember(msg.chat.id, msg.added.id)
-				return
-			else
-				api.unbanUser(msg.chat.id, msg.added.id, true)
-			end
-		end
-		
-		--[[if msg.chat.type == 'supergroup' and db:sismember('chat:'..msg.chat.id..':prevban') then
-			if msg.adder and roles.is_admin_cached(msg) then --if the user is added by a moderator, remove the added user from the prevbans
-				db:srem('chat:'..msg.chat.id..':prevban', msg.added.id)
-			else --if added by a not-mod, ban the user
-				local res = api.banUser(msg.chat.id, msg.added.id, false)
-				if res then
-					api.sendMessage(msg.chat.id, make_text(lang[msg.ln].banhammer.was_banned, msg.added.first_name))
-				end
-			end
-		end]]
-		
 		if msg.added.username then
 			local username = msg.added.username:lower()
-			if username:find('bot', -3) then return end
+			if username:find('bot', -3) then
+				local antibot_status = db:hget('chat:'..msg.chat.id..':settings', 'Antibot')
+				if antibot_status and antibot_status == 'on' and msg.from and not roles.is_admin_cached(msg) then
+					api.banUser(msg.chat.id, msg.added.id)
+				end
+				return
+			end
 		end
 		
 		local text = get_welcome(msg)
@@ -122,7 +108,7 @@ local action = function(msg, blocks)
 	if blocks[1] == 'botremoved' then
 		
 		--remove the group settings
-		misc.remGroup(msg.chat.id, true)
+		misc.remGroup(msg.chat.id)
 		
 		--save stats
         db:hincrby('bot:general', 'groups', -1)

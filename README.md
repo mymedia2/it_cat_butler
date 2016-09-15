@@ -60,11 +60,9 @@ Other things to check before run the bot:
 
 **Before you do anything, open config.lua in a text editor and make the following changes:**
 
-> • Set bot_api_key to the authentication token you received from the [BotFather](http://telegram.me/BotFather).
+> • Set `bot_api_key` to the authentication token you received from the [BotFather](http://telegram.me/BotFather).
 >
-> • Set admin as your Telegram ID under `admin.owner` field. You can set other admins by placing their IDs under `admin.admins`, as a table key with `true` value.
->
-> • If it asks for the sudo password during/after the installation, insert it.
+> • Add your Telegram ID the `superadmins` table. Other superadmins can be added. IDs must be a number, and not a string.
 
 Before start the bot, you have to start the Redis process.
 ```bash
@@ -130,12 +128,12 @@ You may also start the bot with `lua bot.lua`, but then it will not restart auto
     * `multipurpose_mode`: set it to `true` if you want to load the plugins placed in `plugins/multipurpose` folder. At the moment, this directory is empty
     * `notify_bug`: if `true`, the bot will send a message that notifies that a bug has occured to the current user, when a plugin is executed and an error happens
     * `log_api_errors`: if `true`, the bot will send in the `log_chat` (`config.lua`) all the relevant errors returned by an api request toward Telegram
+    * `stream_commands`: if `true`, when an update triggers a plugin, the match will be printed on the console
   * There are some other useful fields that can be filled in `config.lua`
-    * `admin.admins`: you can add in this table other (numerical) keys, they must be the IDs of the other admins of the bot. Each key must have a boolean value, `true` if admin, `false` if not
     * `log_chat`: if `log_api_errors` is set on `true`, this must be the chat id where the bot will log the errors. If `nil` or empty, they will be sent directly to the bot owner
+    * `log_admin`: this must be the id of the admin that will receive the errors that happen during the execution of the bot
     * `channel`: a channel where you can post something through the bot. Must be an username, `@` included. To post something, the bot must be admin of the channel. Use `$post [text]` to post a message
     * `db`: the selected Redis database (if you are running Redis with the default config, the available databases are 16). The database will be selected on each start/reload. Default: 2
-    * `languages`: the path to the file that contains the translations
   * Other things that may be useful
     * Admin commands start for `$`. They are not documented, look at the triggers of `plugins/admin.lua` plugin for the whole list
     * If the `action` function of a plugin returns `true`, the bot will continue to try to match the message text with the missing triggers of the `plugins` table
@@ -152,7 +150,31 @@ You may also start the bot with `lua bot.lua`, but then it will not restart auto
 
 You can find a backup of your Redis database under `/etc/redis/dump.rdb`. The name of this file and the frequency of the saves depend on your redis configuration file.
 
-***
+* * *
+
+## Translators
+If you want to help translate the bot, follow below instructions. Group Butler
+partially uses some tools from [gettext](https://www.gnu.org/software/gettext/).
+However we don't use binary format `*.mo` for the sake of simplicity. The bot
+manually parses the files `*.po` in directory `locales`.
+
+If you want to improve exsist translation, run this command in the root
+directoy with the bot: `./launch.sh update-locale <name>` where &lt;name&gt;
+is two letters of your chosen locale. Further edit the file
+`locales/<name>.po`, make sure that the translation is done correctly and send
+us your translation.
+
+We recommend [Poedit](https://poedit.net/) as editor of `*.po` files. You must
+specify information about yourself in the settings; put your link to Telegram
+account in the field Email if you have it.
+
+If you want to create new locale, run `./launch.sh create-locale <name>`. This
+command create the file `locales/<name>.po` with untranslated strings. You can
+also use Poedit to translate the bot. List of avaible locales see in [gettext
+manual](https://www.gnu.org/software/gettext/manual/gettext.html#Language-Codes).
+After add your new locale in the file `config.lua`.
+
+* * *
 
 ###Notes about this repository
 

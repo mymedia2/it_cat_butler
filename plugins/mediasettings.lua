@@ -69,27 +69,27 @@ The number is not related the the normal `/warn` command
 	    api.editMessageText(msg.chat.id, msg.message_id, media_first, keyboard, true)
 	else
 		if blocks[1] == 'mediallert' then
-			api.answerCallbackQuery(msg.cb_id, _("⚠️ Tap on the right column")) return
+			api.answerCallbackQuery(msg.cb_id, _("⚠️ Tap on the right column"))
+			return
 		end
 		local cb_text
 		if blocks[1] == 'mediawarn' then
 			local current = tonumber(db:hget('chat:'..chat_id..':warnsettings', 'mediamax')) or 2
 			if blocks[2] == 'dim' then
 				if current < 2 then
-					cb_text = _("The new value is too low ( < 1)")
+					cb_text = _("⚙ The new value is too low ( < 1)")
 				else
 					local new = db:hincrby('chat:'..chat_id..':warnsettings', 'mediamax', -1)
-					cb_text = string.format('%d → %d', current, new)
+					cb_text = string.format('⚙ %d → %d', current, new)
 				end
 			elseif blocks[2] == 'raise' then
 				if current > 11 then
-					cb_text = _("The new value is too high ( > 12)")
+					cb_text = _("⚙ The new value is too high ( > 12)")
 				else
 					local new = db:hincrby('chat:'..chat_id..':warnsettings', 'mediamax', 1)
-					cb_text = string.format('%d → %d', current, new)
+					cb_text = string.format('⚙ %d → %d', current, new)
 				end
 			end
-			cb_text = '⚙ '..cb_text
 		end
 		if blocks[1] == 'mediatype' then
 			local hash = 'chat:'..chat_id..':warnsettings'

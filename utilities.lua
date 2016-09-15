@@ -24,22 +24,19 @@ function string:input() -- Returns the string after the first space.
 	return self:sub(self:find(' ')+1)
 end
 
-function string:mEscape() -- Remove the markdown.
+function string:escape()
 	self = self:gsub('*', '\\*'):gsub('_', '\\_'):gsub('`', '\\`'):gsub('%]', '\\]'):gsub('%[', '\\[')
 	return self
 end
 
-function string:mEscape_hard() -- Remove the markdown.
+function string:escape_hard() -- Remove the markdown.
 	self = self:gsub('*', ''):gsub('_', ''):gsub('`', ''):gsub('%[', ''):gsub('%]', '')
 	return self
 end
 
-function roles.is_bot_owner(user_id, real_owner) --if real owner is true, the function will return true only if msg.from.id == config.admin.owner
-	if user_id == config.admin.owner then
-		return true
-	end
-	if not real_owner then
-		if user_id and config.admin.admins[user_id] then
+function roles.is_superadmin(user_id) --if real owner is true, the function will return true only if msg.from.id == config.admin.owner
+	for i=1, #config.superadmins do
+		if tonumber(user_id) == config.superadmins[i] then
 			return true
 		end
 	end
@@ -124,17 +121,6 @@ function misc.cache_adminlist(chat_id)
 	return true
 end
 
-function misc.is_banned(chat_id, user_id)
-	--useful only for normal groups
-	local hash = 'chat:'..chat_id..':banned'
-	local res = db:sismember(hash, user_id)
-	if res then
-		return true
-	else
-		return false
-	end
-end
-
 function misc.is_blocked_global(id)
 	if db:sismember('bot:blocked', id) then
 		return true
@@ -177,67 +163,6 @@ end
 
 function vtext(value)
   return serpent.block(value, {comment=false})
-end
-
-local function per_away(text)
-	local text = tostring(text):gsub('%%', '£&£')
-	return text
-end
-
-local function create_folder(name)
-	local cmd = io.popen('sudo mkdir '..name)
-    cmd:read('*all')
-    cmd = io.popen('sudo chmod -R 775 '..name)
-    cmd:read('*all')
-    cmd:close()
-end
-
-function misc.write_file(path, text, mode)
-	if not mode then
-		mode = "w"
-	end
-	file = io.open(path, mode)
-	if not file then
-		create_folder('logs')
-		file = io.open(path, mode)
-		if not file then
-			return false
-		end
-	end
-	file:write(text)
-	file:close()
-	return true
-end
-
-function misc.save_log(action, arg1, arg2, arg3, arg4)
-	if action == 'send_msg' then
-		local text = os.date('[%A, %d %B %Y at %X]')..'\n'..arg1..'\n\n'
-		local path = "./logs/msgs_errors.txt"
-		local res = misc.write_file(path, text, "a")
-		if not res then
-			create_folder('logs')
-			misc.write_file(path, text, "a")
-		end
-    elseif action == 'errors' then
-    	--error, from, chat, text
-    	local path = "./logs/errors.txt"
-    	local text = os.date('[%A, %d %B %Y at %X]')..'\nERROR: '..arg1
-    	if arg2 then
-    		text = text..'\nFROM: '..arg2
-    	end
- 		if arg3 then
- 			text = text..'\nCHAT: '..arg3
- 		end
- 		if arg4 then
- 			text = text..'\nTEXT: '..arg4
- 		end
- 		text = text..'\n\n'
- 		local res = misc.write_file(path, text, "a")
-    	if not res then
-			create_folder('logs')
-			misc.write_file(path, text, "a")
-		end
-    end
 end
 
 function misc.clone_table(t) --doing "table1 = table2" in lua = create a pointer to table2
@@ -296,14 +221,6 @@ function misc.is_lang_supported(code)
 	return config.available_languages[code:lower()] ~= nil
 end
 
-function misc.create_folder(name)
-	local cmd = io.popen('sudo mkdir '..name)
-    cmd:read('*all')
-    cmd = io.popen('sudo chmod -R 775 '..name)
-    cmd:read('*all')
-    cmd:close()
-end
-
 function misc.write_file(path, text, mode)
 	if not mode then
 		mode = "w"
@@ -322,13 +239,9 @@ function misc.write_file(path, text, mode)
 end
 
 function misc.save_br(code, text)
-	text = os.date('[%A, %d %B %Y at %X]')..', code: '..code..'\n'..text
-	local path = "./logs/msgs_errors.txt"
+	text = os.date('[%A, %d %B %Y at %X]')..', code: ['..code..']\n'..text
+	local path = "./msgs_errors.txt"
 	local res = misc.write_file(path, text, "a")
-	if not res then
-		create_folder('logs')
-		misc.write_file(path, text, "a")
-	end
 end
 
 function misc.get_media_type(msg)
@@ -386,34 +299,31 @@ end
 
 function misc.migrate_chat_info(old, new, on_request)
 	if not old or not new then
-		print('A group id is missing')
 		return false
 	end
 	
-	local about = db:get('chat:'..old..':about')
-	if about then
-		db:set('chat:'..new..':about', about)
+	for hash_name, hash_content in pairs(config.chat_settings) do
+		local old_t = db:hgetall('chat:'..old..':'..hash_name)
+		db:hmset('chat:'..new..':'..hash_name, old_t)
 	end
 	
-	local rules = db:get('chat:'..old..':rules')
-	if rules then
-		db:set('chat:'..new..':rules', rules)
-	end
-	
-	for set, default in pairs(config.chat_settings) do
-		local old_t = db:hgetall('chat:'..old..':'..set)
-		for field, val in pairs(old_t) do
-			db:hset('chat:'..new..':'..set, field, val)
-		end
-	end
-	
-	local extra = db:hgetall('chat:'..old..':extra')
-	for trigger, response in pairs(extra) do
-		db:hset('chat:'..new..':extra', trigger, response)
+	for _, hash_name in pairs(config.chat_custom_texts) do
+		local old_t = db:hgetall('chat:'..old..':'..hash_name)
+		db:hmset('chat:'..new..':'..hash_name, old_t)
 	end
 	
 	if on_request then
 		api.sendReply(msg, 'Should be done')
+	end
+end
+
+function misc.to_supergroup(msg)
+	local old = msg.chat.id
+	local new = msg.migrate_to_chat_id
+	local done = misc.migrate_chat_info(old, new, false)
+	if done then
+	misc.remGroup(old, true)
+	api.sendMessage(new, '(_service notification: migration of the group executed_)', true)
 	end
 end
 
@@ -423,18 +333,14 @@ function div()
 	print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 end
 
-function misc.to_supergroup(msg)
-	local old = msg.chat.id
-	local new = msg.migrate_to_chat_id
-	misc.migrate_chat_info(old, new, false)
-	misc.remGroup(old, true)
-	api.sendMessage(new, '(_service notification: migration of the group executed_)', true)
-end
-
 function misc.getname(msg)
     local name = msg.from.first_name
 	if msg.from.username then name = name..' (@'..msg.from.username..')' end
     return name
+end
+
+function misc.getname_final(user)
+	return misc.getname_link(user.first_name, user.username) or '`'..user.first_name:escape()..'`'
 end
 
 function misc.getname_id(msg)
@@ -509,7 +415,7 @@ function misc.getRules(chat_id)
 	local hash = 'chat:'..chat_id..':info'
 	local rules = db:hget(hash, 'rules')
     if not rules then
-        return _("*-empty-*")
+        return _("-*empty*-")
     else
        	return rules
     end
@@ -523,9 +429,9 @@ function users.get_link(user)
 end
 
 function users.full_name(user, without_link)
-	local result = user.first_name:mEscape_hard()
+	local result = user.first_name:escape_hard()
 	if user.last_name then
-		result = result .. ' ' .. user.last_name:mEscape_hard()
+		result = result .. ' ' .. user.last_name:escape_hard()
 	end
 	if not without_link and user.username then
 		result = string.format('[%s](%s)', result, users.get_link(user))
@@ -533,7 +439,7 @@ function users.full_name(user, without_link)
 	return result
 end
 
-function misc.format_adminlist(chat_id, from_id, ln, msg)
+function misc.getAdminlist(chat_id, user_id)
 	--- ???
 	local list, code = api.getChatAdministrators(chat_id)
 	if not list then
@@ -570,10 +476,7 @@ function misc.format_adminlist(chat_id, from_id, ln, msg)
 	end
 
 	if not roles.bot_is_admin(chat_id) then
-		if #lines == 0 then
-			assert(#list.result == 0)
-			return _("_No administrators in the group_")
-		elseif roles.is_admin_cached(msg) then
+		if roles.is_admin_cached(msg) then
 			table.insert(lines, _("*I'm not an admin*. I can't fully perform "
 					.. "my functions until group creator hasn't made me admin. "
 					.. "See [this post](https://telegram.me/GroupButler_ch/104) "
@@ -581,9 +484,6 @@ function misc.format_adminlist(chat_id, from_id, ln, msg)
 		else
 			table.insert(lines, _("*I'm not an admin* 😞"))
 		end
-	elseif #lines == 0 then
-		assert(#list.result == 1)
-		return _("_I'm the only administrator in the group_")
 	end
 
 	return table.concat(lines, '\n')
@@ -607,7 +507,7 @@ function misc.getSettings(chat_id)
     local hash = 'chat:'..chat_id..':settings'
         
     local message = _("Current settings for *the group*:\n\n")
-			.. _("*Language*: `%s`\n"):format(ln)
+			.. _("*Language*: `%s`\n"):format(locale.language)
         
     --build the message
 	local strings = {
@@ -630,13 +530,11 @@ function misc.getSettings(chat_id)
         local db_val = db:hget(hash, key)
         if not db_val then db_val = default end
         
-        local text
         if db_val == 'off' then
-            text = '`'..strings[key]..'`: '..off_icon..'\n'
+            message = message .. string.format('%s: %s\n', strings[key], off_icon)
         else
-            text = '`'..strings[key]..'`: '..on_icon..'\n'
+            message = message .. string.format('%s: %s\n', strings[key], on_icon)
         end
-        message = message..text --concatenete the text
     end
     
     --build the char settings lines
@@ -646,9 +544,9 @@ function misc.getSettings(chat_id)
     	db_val = db:hget(hash, key)
         if not db_val then db_val = default end
     	if db_val == 'off' then
-            message = message..'`'..strings[key]..'`: '..off_icon..'\n'
+            message = message .. string.format('%s: %s\n', strings[key], off_icon)
         else
-            message = message..'`'..strings[key]..'`: '..on_icon..'\n'
+            message = message .. string.format('%s: %s\n', strings[key], on_icon)
         end
     end
     	
@@ -666,8 +564,8 @@ function misc.getSettings(chat_id)
     local warnmax_std = (db:hget('chat:'..chat_id..':warnsettings', 'max')) or config.chat_settings['warnsettings']['max']
     local warnmax_media = (db:hget('chat:'..chat_id..':warnsettings', 'mediamax')) or config.chat_settings['warnsettings']['mediamax']
     
-    return message .. _("`Warn (standard)`: *%s*\n"):format(warnmax_std)
-			.. _("`Warn (media)`: *%s*\n\n"):format(warnmax_media)
+	return message .. _("Warns (`standard`): *%s*\n"):format(warnmax_std)
+			.. _("Warns (`media`): *%s*\n\n"):format(warnmax_media)
 			.. _("✅ = _enabled / allowed_\n")
 			.. _("🚫 = _disabled / not allowed_\n")
 			.. _("👥 = _sent in group (always for admins)_\n")
@@ -675,27 +573,29 @@ function misc.getSettings(chat_id)
 end
 
 function misc.changeSettingStatus(chat_id, field)
-	local disabled = {
+	local turned_off = {
 		welcome = _("Welcome message won't be displayed from now"),
 		extra = _("#extra commands are now available only for moderator"),
 		flood = _("Anti-flood is now off"),
 		rules = _("`/rules` will reply in private (for users)"),
+		antibot = _("Bots won't be kicked if added by an user")
 	}
-	local enabled = {
+	local turned_on = {
 		welcome = _("Welcome message will be displayed"),
-		extra = _("Extra # commands are now available for all"),
+		extra = _("#extra commands are now available for all"),
 		flood = _("Anti-flood is now on"),
 		rules = _("`/rules` will reply in the group (with everyone)"),
+		antibot = _("Bots will be kicked if added by an user")
 	}
 
 	local hash = 'chat:'..chat_id..':settings'
 	local now = db:hget(hash, field)
 	if now == 'on' then
 		db:hset(hash, field, 'off')
-		return disabled[field:lower()]
+		return turned_off[field:lower()]
 	else
 		db:hset(hash, field, 'on')
-		return enabled[field:lower()]
+		return turned_on[field:lower()]
 	end
 end
 
@@ -778,10 +678,6 @@ function misc.initGroup(chat_id)
 	db:sadd('bot:groupsid', chat_id)
 	--remove the group id from the list of dead groups
 	db:srem('bot:groupsid:removed', chat_id)
-	
-	--save stats
-	hash = 'bot:general'
-    db:hincrby(hash, 'groups', 1)
 end
 
 function misc.remGroup(chat_id, full)
@@ -795,12 +691,135 @@ function misc.remGroup(chat_id, full)
 	end
 	
 	db:del('cache:chat:'..chat_id..':admins') --delete the cache
+	db:hdel('bot:logchats', chat_id) --delete the associated log chat
+	db:del('chat:'..chat_id..':pin') --delete the msg id of the (maybe) pinned message
 	
 	if full then
 		for i, set in pairs(config.chat_custom_texts) do
 			db:del('chat:'..chat_id..':'..set)
 		end
 		db:del('lang:'..chat_id)
+	end
+end
+
+function misc.getnames_complete(msg, blocks)
+	local admin, kicked
+	
+	if msg.from.username then
+		admin = misc.getname_link(msg.from.first_name, msg.from.username)
+	else
+		admin = '`'..msg.from.first_name:escape()..'`'
+	end
+	
+	if msg.reply then
+		if msg.reply.from.username then
+			kicked = misc.getname_link(msg.reply.from.first_name, msg.reply.from.username)
+		else
+			kicked = '`'..msg.reply.from.first_name:escape()..'`'
+		end
+	elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%s(@[%w_]+)%s?') then
+		local username = msg.text:match('%s(@[%w_]+)')
+		kicked = username:escape()
+	elseif msg.mention_id then
+		for _, entity in pairs(msg.entities) do
+			if entity.user then
+				kicked = '`'..entity.user.first_name:escape()..'`'
+			end
+		end
+	elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%s(%d+)') then
+		local id = msg.text:match(config.cmd..'%w%w%w%w?%w?%s(%d+)')
+		kicked = '`'..id..'`'
+	end
+	
+	return admin, kicked
+end
+
+function misc.get_user_id(msg, blocks)
+	--if no user id: returns false and the msg id of the translation for the problem
+	if not msg.reply and not blocks[2] then
+		return false, "Reply to someone"
+	else
+		if msg.reply then
+			return msg.reply.from.id
+		elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%w?%s(@[%w_]+)%s?') then
+			local username = msg.text:match('%s(@[%w_]+)')
+			local id = misc.res_user_group(username, msg.chat.id)
+			if not id then
+				return false, "I've never seen this user before.\n"
+					.. "If you want to teach me who is he, forward me a message from him"
+			else
+				return id
+			end
+		elseif msg.mention_id then
+			return msg.mention_id
+		elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%w?%s(%d+)') then
+			local id = msg.text:match(config.cmd..'%w%w%w%w?%w?%s(%d+)')
+			return id
+		else
+			return false, "I've never seen this user before.\n"
+					.. "If you want to teach me who is he, forward me a message from him"
+		end
+	end
+end
+
+function misc.logEvent(event, msg, blocks, extra)
+	local log_id = db:hget('bot:chatlogs', msg.chat.id)
+	
+	if not log_id then return end
+	--if not is_loggable(msg.chat.id, event) then return end
+	
+	local text
+	if event == 'ban' then
+		local admin, banned = misc.getnames_complete(msg, blocks)
+		local admin_id, banned_id = msg.from.id, misc.get_user_id(msg, blocks)
+		if admin and banned and admin_id and banned_id then
+			text = '#BAN\n*Admin*: '..admin..'  #'..admin_id..'\n*User*: '..banned..'  #'..banned_id
+			if extra.motivation then
+				text = text..'\n\n> _'..extra.motivation:escape()..'_'
+			end
+		end
+	end
+	if event == 'kick' then
+		local admin, kicked = misc.getnames_complete(msg, blocks)
+		local admin_id, kicked_id = msg.from.id, misc.get_user_id(msg, blocks)
+		if admin and kicked and admin_id and kicked_id then
+			text = '#KICK\n*Admin*: '..admin..'  #'..admin_id..'\n*User*: '..banned..'  #'..banned_id
+			if extra.motivation then
+				text = text..'\n\n> _'..extra.motivation:escape()..'_'
+			end
+		end
+	end
+	if event == 'join' then
+		local member = misc.getname_link(msg.added.first_name, msg.added.username) or '`'..msg.added.first_name:escape()..'`'
+		text = '#NEW_MEMBER\n'..member.. '  #'..msg.added.id
+	end
+	if event == 'warn' then
+		local admin, warned = misc.getnames_complete(msg, blocks)
+		local admin_id, warned_id = msg.from.id, misc.get_user_id(msg, blocks)
+		if admin and warned and admin_id and warned_id then
+			text = '#WARN ('..extra.warns..'/'..extra.warnmax..') ('..type..')\n*Admin*: '..admin..'  #'..admin_id..']\n*User*: '..banned..'  #'..banned_id..']'
+			if extra.motivation then
+				text = text..'\n\n> _'..extra.motivation:escape()..'_'
+			end
+		end
+	end
+	if event == 'mediawarn' then
+		local name = misc.getname_link(msg.from.first_name, msg.from.username) or '`'..msg.from.first_name:escape()..'`'
+		text = '#MEDIAWARN ('..extra.warns..'/'..extra.warnmax..') '..extra.media..'\n'..name..'  #'..msg.from.id
+		if extra.hammered then
+			text = text..'\n*'..extra.hammered..'*'
+		end
+	end
+	if event == 'flood' then
+		local name = misc.getname_link(msg.from.first_name, msg.from.username) or '`'..msg.from.first_name:escape()..'`'
+		text = '#FLOOD\n'..name..'  #'..msg.from.id
+		if extra.hammered then
+			text = text..'\n*'..extra.hammered..'*'
+		end
+	end
+	
+	if text then
+		api.sendMessage(log_id, text, true)
 	end
 end
 

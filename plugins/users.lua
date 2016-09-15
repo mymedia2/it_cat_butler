@@ -11,7 +11,7 @@ local function do_keybaord_credits()
 end
 
 local function do_keyboard_cache(chat_id)
-	local keyboard = {inline_keyboard = {{{text = '🔄️ Refresh cache', callback_data = 'cc:rel:'..chat_id}}}}
+	local keyboard = {inline_keyboard = {{{text = _("🔄️ Refresh cache"), callback_data = 'cc:rel:'..chat_id}}}}
 	return keyboard
 end
 
@@ -120,38 +120,20 @@ end
 local action = function(msg, blocks)
     if blocks[1] == 'adminlist' then
     	if msg.chat.type == 'private' then return end
-		local text = misc.format_adminlist(msg.chat.id, msg.from.id, msg.ln, msg)
+		local text = misc.getAdminlist(msg.chat.id, msg.from.id)
 		if misc.is_silentmode_on(msg.chat.id) then
 			api.sendMessage(msg.from.id, text, true)
         else
 			api.sendMessage(msg.chat.id, text, true)
         end
     end
-	if blocks[1] == 'echo' and (msg.chat.type == 'private' or roles.is_admin_cached(msg)) then
-		local res, code = api.sendMessage(msg.chat.id, blocks[2], true)
-		if not res then
-			if code == 118 then
-				api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
-			else
-				local message_text = _("This text breaks the markdown.\n"
-						.. "More info about a proper use of markdown "
-						.. "[here](https://telegram.me/GroupButler_ch/46).")
-				api.sendMessage(msg.chat.id, message_text, true)
-			end
-		end
-	end
     if blocks[1] == 'status' then
     	if msg.chat.type == 'private' then return end
     	if roles.is_admin_cached(msg) then
-    		local user_id
-    		if blocks[2]:match('%d+$') then
-    			user_id = blocks[2]
-    		else
-    			user_id = misc.resolve_user(blocks[2], msg.chat.id)
-    		end
+    		if not blocks[2] and not msg.reply then return end
+    		local user_id, error_tr_id = misc.get_user_id(msg, blocks)
     		if not user_id then
-		 		api.sendReply(msg, _("I've never seen this user before.\n"
-					.. "If you want to teach me who is he, forward me a message from him"), true)
+				api.sendReply(msg, _(error_tr_id), true)
 		 	else
 		 		local res = api.getChatMember(msg.chat.id, user_id)
 		 		if not res then
@@ -159,11 +141,7 @@ local action = function(msg, blocks)
 		 			return
 		 		end
 		 		local status = res.result.status
-				local name = res.result.user.first_name
-				if res.result.user.username then name = name..' (@'..res.result.user.username..')' end
-				if msg.chat.type == 'group' and misc.is_banned(msg.chat.id, user_id) then
-					status = 'kicked'
-				end
+				local name = misc.getname_final(res.result.user)
 				local texts = {
 					kicked = _("%s is banned from this group"),
 					left = _("%s left the group or has been kicked and unbanned"),
@@ -171,8 +149,8 @@ local action = function(msg, blocks)
 					creator = _("%s is the group creator"),
 					unknown = _("%s has nothing to do with this chat"),
 					member = _("%s is a chat member")
-				},
-		 		api.sendReply(msg, texts[status]:format(name))
+				}
+				api.sendReply(msg, texts[status]:format(name), true)
 		 	end
 	 	end
  	end
@@ -194,7 +172,8 @@ local action = function(msg, blocks)
         
         --ignore if not input text and not reply
         if not input and not msg.reply then
-            api.sendReply(msg, _("Welcome and...?"), false) return
+			api.sendReply(msg, _("Welcome and...?"), false)
+			return
         end
         
         local hash = 'chat:'..msg.chat.id..':welcome'
@@ -287,13 +266,14 @@ local action = function(msg, blocks)
 		if msg.chat.type == 'private' or not roles.is_admin_cached(msg) then return end
 		
 		if not msg.reply and (not blocks[2] or (not blocks[2]:match('@[%w_]+$') and not blocks[2]:match('%d+$') and not msg.mention_id)) then
-			api.sendReply(msg, _("Reply to an user or mention him (works by id too)")) return
+			api.sendReply(msg, _("Reply to an user or mention him (works by id too)"))
+			return
 		end
 		
 		------------------ get user_id --------------------------
 		local user_id = get_user_id(msg, blocks)
 		
-		if roles.is_bot_owner(msg.from.id) and msg.reply and not msg.cb then
+		if roles.is_superadmin(msg.from.id) and msg.reply and not msg.cb then
 			if msg.reply.forward_from then
 				user_id = msg.reply.forward_from.id
 			end
@@ -314,7 +294,7 @@ local action = function(msg, blocks)
 	end
 	if blocks[1] == 'banuser' then
 		if not roles.is_admin_cached(msg) then
-    		api.answerCallbackQuery(msg.cb_id, _("You are *not* an admin"):mEscape_hard())
+			api.answerCallbackQuery(msg.cb_id, _("You are not an admin"))
     		return
 		end
 		
@@ -323,20 +303,20 @@ local action = function(msg, blocks)
 		local res, text = api.banUser(msg.chat.id, user_id, msg.normal_group)
 		if res then
 			misc.saveBan(user_id, 'ban')
-			local name = misc.getname_link(msg.from.first_name, msg.from.username) or msg.from.first_name:mEscape()
+			local name = misc.getname_link(msg.from.first_name, msg.from.username) or msg.from.first_name:escape()
 			text = _("_Banned!_\n(Admin: %s)"):format(name)
 		end
 		api.editMessageText(msg.chat.id, msg.message_id, text, false, true)
 	end
 	if blocks[1] == 'remwarns' then
 		if not roles.is_admin_cached(msg) then
-    		api.answerCallbackQuery(msg.cb_id, _("You are *not* an admin"):mEscape_hard())
+			api.answerCallbackQuery(msg.cb_id, _("You are not an admin"))
     		return
 		end
 		db:hdel('chat:'..msg.chat.id..':warns', msg.target_id)
 		db:hdel('chat:'..msg.chat.id..':mediawarn', msg.target_id)
         
-        local name = misc.getname_link(msg.from.first_name, msg.from.username) or msg.from.first_name:mEscape()
+        local name = misc.getname_link(msg.from.first_name, msg.from.username) or msg.from.first_name:escape()
 		local text = _("The number of warns received by this user has been *reset*\n(Admin: %s)")
         api.editMessageText(msg.chat.id, msg.message_id, text:format(name), false, true)
     end
@@ -346,8 +326,8 @@ local action = function(msg, blocks)
     	local hash = 'cache:chat:'..msg.chat.id..':admins'
     	if db:exists(hash) then
     		local seconds = db:ttl(hash)
-    		local cached_admins = db:smembers(hash)
-    		text = '📌 Status: `CACHED`\n⌛ ️Remaining: `'..get_time_remaining(tonumber(seconds))..'`\n👥 Admins cached: `'..#cached_admins..'`'
+    		local cached_admins = db:scard(hash)
+    		text = '📌 Status: `CACHED`\n⌛ ️Remaining: `'..get_time_remaining(tonumber(seconds))..'`\n👥 Admins cached: `'..cached_admins..'`'
     	else
     		text = 'Status: NOT CACHED'
     	end
@@ -359,10 +339,51 @@ local action = function(msg, blocks)
     		api.sendReply(msg, '[msg n° '..msg.reply.message_id..'](https://telegram.me/'..msg.chat.username..'/'..msg.reply.message_id..')', true)
     	end
     end
+	if blocks[1] == 'pin' then
+		if roles.is_admin_cached(msg) then
+			local res, code = api.sendMessage(msg.chat.id, blocks[2], true)
+			if not res then
+				if code == 118 then
+				    api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
+			    else
+					api.sendMessage(msg.chat.id, _("This text breaks the markdown.\n"
+						.. "More info about a proper use of markdown "
+						.. "[here](https://telegram.me/GroupButler_ch/46)."), true)
+		    	end
+	    	else
+	    		db:set('chat:'..msg.chat.id..':pin', res.result.message_id)
+	    		api.sendMessage(msg.chat.id, _("You can now pin this message and use `/editpin [new text]` to edit it, without send the new message to pin again"), true, res.result.message_id)
+	    	end
+    	end
+	end
+	if blocks[1] == 'editpin' then
+		if roles.is_admin_cached(msg) then
+			local pin_id = db:get('chat:'..msg.chat.id..':pin')
+			if not pin_id then
+				api.sendReply(msg, _("You don't have any pinned message sent with `/pin [text to pin]`"), true)
+			else
+				local res, code = api.editMessageText(msg.chat.id, pin_id, blocks[2], nil, true)
+				if not res then
+					if code == 118 then
+				    	api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
+				    elseif code == 116 then
+				    	api.sendMessage(msg.chat.id, _("The preview pinned message I sent *does no longer exist*. I can't edit it"), true)
+			    	else
+						api.sendMessage(msg.chat.id, _("This text breaks the markdown.\n"
+							.. "More info about a proper use of markdown "
+							.. "[here](https://telegram.me/GroupButler_ch/46)."), true)
+		    		end
+		    	else
+		    		db:set('chat:'..msg.chat.id..':pin', res.result.message_id)
+	    			api.sendMessage(msg.chat.id, _("Message edited. Check it here"), nil, pin_id)
+	    		end
+	    	end
+    	end
+    end
     if blocks[1] == 'cc:rel' and msg.cb then
     	if not roles.is_admin_cached(msg) then
-			-- ¯\_(ツ)_/¯
-			api.answerCallbackQuery(msg.cb_id, _("You are *not* an admin"):mEscape_hard()) return
+			api.answerCallbackQuery(msg.cb_id, _("You are not an admin"))
+			return
 		end
 		local missing_sec = tonumber(db:ttl('cache:chat:'..msg.target_id..':admins') or 0)
 		if (config.bot_settings.cache_time.adminlist - missing_sec) < 3600 then
@@ -386,8 +407,8 @@ return {
 	triggers = {
 		config.cmd..'(id)$',
 		config.cmd..'(adminlist)$',
-		config.cmd..'(status) (@[%w_]+)$',
-		config.cmd..'(status) (%d+)$',
+		config.cmd..'(status) (.+)$',
+		config.cmd..'(status)$',
 		config.cmd..'(welcome) (.*)$',
 		config.cmd..'(welcome)$',
 		config.cmd..'(goodbye) (.*)$',
@@ -395,6 +416,8 @@ return {
 		config.cmd..'(echo) (.*)$',
 		config.cmd..'(cache)$',
 		config.cmd..'(msglink)$',
+		config.cmd..'(pin) (.*)$',
+		config.cmd..'(editpin) (.*)$',
 		
 		config.cmd..'(user)$',
 		config.cmd..'(user) (.*)',

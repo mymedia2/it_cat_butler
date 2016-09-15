@@ -26,7 +26,7 @@ local function is_blocked(id)
 	end
 end
 
-local pre_process = function(msg)
+local function onmessage(msg)
     
     local msg_type = 'text'
 	if msg.forward_from then msg_type = 'forward' end
@@ -46,7 +46,7 @@ local pre_process = function(msg)
             --how flood on/off works: yes->yes, antiflood is diabled. no->no, anti flood is not disbaled
             if status == 'on' and not msg.cb and not roles.is_admin_cached(msg) then --if the status is on, and the user is not an admin, and the message is not a callback, then:
                 local action = db:hget('chat:'..msg.chat.id..':flood', 'ActionFlood')
-                local name = misc.getname_link(msg.from.first_name, msg.from.username) or misc.getname_id(msg):mEscape()
+                local name = misc.getname_link(msg.from.first_name, msg.from.username) or misc.getname_id(msg):escape()
                 local res, message
                 --try to kick or ban
                 if action == 'ban' or action == 'tempban' then
@@ -79,7 +79,7 @@ local pre_process = function(msg)
             if msg.cb then
                 api.answerCallbackQuery(msg.cb_id, _("‼️ Please don't abuse the keyboard, requests will be ignored"))
             end
-            return msg, true --if an user is spamming, don't go through plugins
+            return false --if an user is spamming, don't go through plugins
         end
     end
     
@@ -89,8 +89,8 @@ local pre_process = function(msg)
         local media_status = (db:hget(hash, media)) or 'ok'
         local out
         if not(media_status == 'ok') then
-            if roles.is_admin_cached(msg) then return msg end --ignore admins
-            local name = misc.getname_link(msg.from.first_name, msg.from.username) or misc.getname_id(msg):mEscape()
+            if roles.is_admin_cached(msg) then return true end --ignore admins
+            local name = misc.getname_link(msg.from.first_name, msg.from.username) or misc.getname_id(msg):escape()
             local max_reached_var, n, max = max_reached(msg.chat.id, msg.from.id)
     	    if max_reached_var then --max num reached. Kick/ban the user
     	        local status = (db:hget('chat:'..msg.chat.id..':warnsettings', 'mediatype')) or config.chat_settings['warnsettings']['mediatype']
@@ -126,7 +126,7 @@ local pre_process = function(msg)
         if msg.from.last_name then last_name = msg.from.last_name end
         local check = msg.text:find(rtl..'+') or msg.from.first_name:find(rtl..'+') or last_name:find(rtl..'+')
         if check ~= nil and not roles.is_admin_cached(msg) then
-            local name = misc.getname_link(msg.from.first_name, msg.from.username) or misc.getname_id(msg):mEscape()
+            local name = misc.getname_link(msg.from.first_name, msg.from.username) or misc.getname_id(msg):escape()
             local res
             if rtl_status == 'kick' then
                 res = api.kickUser(msg.chat.id, msg.from.id)
@@ -148,7 +148,7 @@ local pre_process = function(msg)
         local arab_status = (db:hget('chat:'..msg.chat.id..':char', 'Arab')) or 'allowed'
         if arab_status == 'kick' or arab_status == 'ban' then
     	    if not roles.is_admin_cached(msg) then
-    	        local name = misc.getname_link(msg.from.first_name, msg.from.username) or misc.getname_id(msg):mEscape()
+    	        local name = misc.getname_link(msg.from.first_name, msg.from.username) or misc.getname_id(msg):escape()
     	        local res
     	        if arab_status == 'kick' then
     	            res = api.kickUser(msg.chat.id, msg.from.id)
@@ -168,12 +168,12 @@ local pre_process = function(msg)
     end
     
     if is_blocked(msg.from.id) then --ignore blocked users
-        return msg, true --if an user is blocked, don't go through plugins
+        return false --if an user is blocked, don't go through plugins
     end
     
-    return msg
+    return true
 end
 
 return {
-    on_each_msg = pre_process
+    onmessage = onmessage
 }

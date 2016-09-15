@@ -29,7 +29,7 @@ local action = function(msg, blocks)
 	    			to_save = '###file_id###:'..file_id
 	    		end
 	    		db:hset('chat:'..msg.chat.id..':extra', blocks[2], to_save)
-	    		api.sendReply(msg, 'This media has been saved as response to '..blocks[2])
+	    		api.sendReply(msg, _("This media has been saved as response to %s"):format(blocks[2]))
 	    	end
 		else
 	    	local hash = 'chat:'..msg.chat.id..':extra'
@@ -40,7 +40,8 @@ local action = function(msg, blocks)
 					api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
 				else
 					local text = _("This text breaks the markdown.\n"
-							.. "More info about a proper use of markdown [here](https://telegram.me/GroupButler_ch/46).")
+							.. "More info about a proper use of markdown [here]"
+							.. "(https://telegram.me/GroupButler_ch/46).")
 					api.sendMessage(msg.chat.id, text, true)
 				end
     		else
@@ -56,7 +57,7 @@ local action = function(msg, blocks)
 	    local commands = db:hkeys(hash)
 	    local text = ''
 	    if commands[1] == nil then
-	        api.sendReply(msg, _("No commands set!"))
+	        api.sendReply(msg, _("No commands set"))
 	    else
 	        for k,v in pairs(commands) do
 	            text = text..v..'\n'
@@ -120,6 +121,6 @@ return {
 		config.cmd..'(extra) (#[%w_]*)',
 		config.cmd..'(extra del) (#[%w_]*)$',
 		config.cmd..'(extra list)$',
-		'^(#[%s_]*)$'
+		'^(#[%w_]*)$'
 	}
 }

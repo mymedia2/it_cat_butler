@@ -35,6 +35,10 @@ local action = function(msg, blocks)
 				.. "Use `/setrules [rules]` to set them"), true)
         else
             local input = blocks[2]
+			if not input then
+				api.sendReply(msg, _("Please write something next this poor `/addabout`"), true)
+				return
+			end
 			
 			--add the new string to the rules
 			local message = _("*Rules added:*\n\n") ..  input

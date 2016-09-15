@@ -60,13 +60,12 @@ local function do_keyboard_flood(chat_id)
     local exceptions = {
 		text = _("Texts"),
 		forward = _("Forward"),
-		image = _("Images"),
-		gif = _("GIFs"),
-		sticker = _("Stickers"),
-		video = _("Videos"),
+        sticker = _("Stickers"),
+        image = _("Images"),
+        gif = _("GIFs"),
+        video = _("Videos"),
     }
-
-	local hash = 'chat:'..chat_id..':floodexceptions'
+    local hash = 'chat:'..chat_id..':floodexceptions'
     for i, media in pairs(order) do
 		translation = exceptions[media]
         --ignored by the antiflood-> yes, no
@@ -202,7 +201,7 @@ You can set some exceptions for the antiflood:
             elseif blocks[1] == 'raise' then
                 action = 1
             end
-            text = misc.changeFloodSettings(chat_id, action):mEscape_hard()
+            text = misc.changeFloodSettings(chat_id, action):escape_hard()
 		elseif blocks[1] == 'increase' then
 			local hash = string.format('chat:%d:flood', chat_id)
 			local old = tonumber(db:hget(hash, 'TempBanDuration')) or config.chat_settings.flood['TempBanDuration']
@@ -223,7 +222,7 @@ You can set some exceptions for the antiflood:
         
         if blocks[1] == 'status' then
             local status = db:hget('chat:'..chat_id..':settings', 'Flood') or config.chat_settings['settings']['Flood']
-            text = misc.changeSettingStatus(chat_id, 'Flood'):mEscape_hard()
+            text = misc.changeSettingStatus(chat_id, 'Flood'):escape_hard()
         end
         
         keyboard = do_keyboard_flood(chat_id)

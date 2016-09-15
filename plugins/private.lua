@@ -1,4 +1,4 @@
-local function do_keybaord_credits(ln)
+local function do_keybaord_credits()
 	local keyboard = {}
     keyboard.inline_keyboard = {
     	{
@@ -13,32 +13,43 @@ local function do_keybaord_credits(ln)
 	return keyboard
 end
 
+local function doKeyboard_strings()
+	local keyboard = {
+		inline_keyboard = {}
+	}
+	for lang, flag in pairs(config.available_languages) do
+		local line = {{text = flag, callback_data = 'sendpo:'..lang}}
+		table.insert(keyboard.inline_keyboard, line)
+	end
+	return keyboard
+end
+
 local action = function(msg, blocks)
     
     if msg.chat.type ~= 'private' then return end
     
 	if blocks[1] == 'ping' then
-		api.sendMessage(msg.from.id, '*Pong!*', true)
+		local res = api.sendMessage(msg.from.id, _("Pong!"), true)
+		vardump(res)
+		if res then
+			api.editMessageText(msg.chat.id, res.result.message_id, _("Pong!\nResponse time: %d"):format(os.clock() - clocktime_last_update))
+		end
 	end
-	if blocks[1] == 'strings' then
-		if not blocks[2] then
-			local file_id = db:get('trfile:EN')
-			if not file_id then return end
-			api.sendDocumentId(msg.chat.id, file_id, msg.message_id)
-		else
-			local l_code = blocks[2]
-			local exists = misc.is_lang_supported(l_code)
-			if exists then
-				local file_id = db:get('trfile:'..l_code:upper())
-				if not file_id then return end
-				api.sendDocumentId(msg.chat.id, file_id, msg.message_id)
+	if blocks[1] == 'echo' then
+		local res, code = api.sendMessage(msg.chat.id, blocks[2], true)
+		if not res then
+			if code == 118 then
+				api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
 			else
-				api.sendReply(msg, _("Language not yet supported"), true)
+				local message_text = _("This text breaks the markdown.\n"
+						.. "More info about a proper use of markdown "
+						.. "[here](https://telegram.me/GroupButler_ch/46).")
+				api.sendMessage(msg.chat.id, message_text, true)
 			end
 		end
 	end
 	if blocks[1] == 'info' then
-		local keyboard = do_keybaord_credits(msg.ln)
+		local keyboard = do_keybaord_credits()
 		local text = _("🕔 Bot version: `%s`\n🔗 *Some useful links*:"):format(config.version)
 		if msg.cb then
 			api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
@@ -64,15 +75,18 @@ local action = function(msg, blocks)
 			end
 		end
 	end
-	if blocks[1] == 'resolve' then
-		local id = misc.resolve_user(blocks[2], msg.chat.id)
-		if not id then
-			message = _("I've never seen this user before.\n"
-				.. "If you want to teach me who is he, forward me a message from him")
-		else
-			message = '*'..id..'*'
+	if blocks[1] == 'strings' then
+		keyboard = doKeyboard_strings()
+		
+		api.sendKeyboard(msg.chat.id, _("*Choose your language:*"), keyboard, true)
 		end
-		api.sendMessage(msg.chat.id, message, true)
+	if blocks[1] == 'sendpo' then
+		local lang = blocks[2]
+		local instr_url = 'telegram.me/groupbutler_ch'
+		local path = 'locales/'..lang..'.po'
+		local button = {inline_keyboard = {{{text = _("Instructions"), url = instr_url}}}}
+		api.editMessageText(msg.chat.id, msg.message_id, _("Sending `%s.po` file..."):format(lang), button, true)
+		api.sendDocument(msg.chat.id, path)
 	end
 end
 
@@ -84,9 +98,9 @@ return {
 		config.cmd..'(strings) (%a%a)$',
 		config.cmd..'(info)$',
 		config.cmd..'(groups)$',
-		config.cmd..'(resolve) (@[%w_]+)$',
 		
 		'^###cb:fromhelp:(info)$',
-		'^###cb:private:(groups)$'
+		'^###cb:private:(groups)$',
+		'^###cb:(sendpo):(.*)$',
 	}
 }

@@ -3,9 +3,9 @@ local function notify(recipient, msg)
 	local text
 	if msg.chat.username then
 		local link = string.format('https://telegram.me/%s/%d', msg.chat.username, msg.message_id)
-		text = _('%s [mentioned](%s) you in the group "%s"'):format(msg.from.first_name:mEscape(), link, msg.chat.title:mEscape())
+		text = _('%s [mentioned](%s) you in the group "%s"'):format(msg.from.first_name:escape(), link, msg.chat.title:escape())
 	else
-		text = _('%s mentioned you in the group "%s"'):format(msg.from.first_name:mEscape(), msg.chat.title:mEscape())
+		text = _('%s mentioned you in the group "%s"'):format(msg.from.first_name:escape(), msg.chat.title:escape())
 	end
 	local clue1 = api.sendMessage(recipient, text, true, nil, true)
 	local clue2 = api.forwardMessage(recipient, msg.chat.id, msg.message_id, true)
@@ -99,7 +99,7 @@ local function control(msg, blocks)
 end
 
 return {
-	on_each_msg = scan_mentions,
+	onmessage = scan_mentions,
 	action = control,
 	triggers = {
 		config.cmd..'(subscribe)$',

@@ -1,7 +1,6 @@
-local function get_helper(ln)
-	return {
-		kb_header = _("Tap on a button to see the *related commands*"),
-		started = _([[
+local function get_helped_string(key)
+	if key == 'private' then
+		return _([[
 Hello *%s* 👋🏼, nice to meet you!
 I'm Group Butler, the first administration bot using the official Bot API.
 
@@ -15,8 +14,9 @@ I'm Group Butler, the first administration bot using the official Bot API.
 …and more, below you can find the "all commands" button to get the whole list!
 
 I work better if you add me to the group administrators (otherwise I won't be able to kick or ban)!
-]]),
-		all = _([[
+]])
+	elseif key == 'all' then
+		return _([[
 *Commands for all*:
 `/dashboard` : see all the group info from private
 `/rules` : show the group rules (via pm)
@@ -26,16 +26,17 @@ I work better if you add me to the group administrators (otherwise I won't be ab
 `/echo [text]` : the bot will send the text back (with markdown, available only in private for non-admin users)
 `/info` : show some useful informations about the bot
 `/groups` : show the list of the discussion groups
-`/help` : show this message'
+`/help` : show this message
 ]])
-.. _("If you like this bot, please leave the vote you think it deserves [here](%s)."):format('https://telegram.me/storebot?start='..bot.username),
-		subscribe = _([[
+	elseif key == 'subscribe' then
+		return _([[
 *Commands for manage subscription*:
 If you often miss replies in the bustling chats, you can subscribe to notifications from the bot. Send in the desired group the command `/subscribe`, if you want to receive these notifications. Use the command `/unscribe` to unsubscribe.
 Even if you leave the group with subscription you will still continue to receive notifications for mentions and you will be able to answer it.
 If you do not have the opportunity to join the group for unsubscribe, just reply to the next notification with command `/unscribe`.
-]]),
-		mods_info = _([[
+]])
+	elseif key == 'mods_info' then
+		return _([[
 *Moderators: info about the group*
 
 `/setrules [group rules]` = set the new regulation for the group (the old will be overwritten).
@@ -45,10 +46,11 @@ If you do not have the opportunity to join the group for unsubscribe, just reply
 `/setabout -` = delete the current description.
 `/addabout [text]` = add some text at the end of the existing description."
 
-*Note:* the markdown is supported. If the text sent breaks the markdown, the bot will notify that something is wrong.
+*Note*: the markdown is supported. If the text sent breaks the markdown, the bot will notify that something is wrong.
 For a correct use of the markdown, check [this post](https://telegram.me/GroupButler_ch/46) in the channel
-]]),
-		mods_banhammer = _([[
+]])
+	elseif key == 'mods_banhammer' then
+		return _([[
 *Moderators: banhammer powers*
 
 `/kick [by reply|username]` = kick a user from the group (he can be added again).
@@ -57,15 +59,17 @@ For a correct use of the markdown, check [this post](https://telegram.me/GroupBu
 `/unban [by reply|username]` = unban the user from the group.
 `/user [by reply|username|text mention|id]` = shows how many times the user has been banned *in all the groups*, and the warns received.
 `/status [username|id]` = show the current status of the user `(member|kicked/left the chat|banned|admin/creator|never seen)`
-]]),
-		mods_flood = _([[
+]])
+	elseif key == 'mods_flood' then
+		return _([[
 *Moderators: flood settings*
 
 `/antiflood` = manage the flood settings in private, with an inline keyboard. You can change the sensitivity, the action (kick/ban), and even set some exceptions.
 `/antiflood [number]` = set how many messages a user can write in 5 seconds.
 _Note_ : the number must be higher than 3 and lower than 26.
-]]),
-		mods_media = _([[
+]])
+	elseif key == 'mods_media' then
+		return _([[
 *Moderators: media settings*
 
 `/config` command, then `media` button = receive via private message an inline keyboard to change all the media settings.
@@ -73,13 +77,14 @@ _Note_ : the number must be higher than 3 and lower than 26.
 `/nowarns (by reply)` = reset the number of warnings for the users (*NOTE: both regular warnings and media warnings*).
 
 *List of supported media*: _image, audio, video, sticker, gif, voice, contact, file, link, telegram.me links_
-]]),
-		mods_welcome = _([[
-Moderators: *welcome settings*
+]])
+	elseif key == 'mods_welcome' then
+		return _([[
+*Moderators: welcome settings*
 
 `/menu` = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.
 
-*Custom welcome message:*
+*Custom welcome message*:
 `/welcome Welcome $name, enjoy the group!`
 Write after `/welcome` your welcome message. You can use some placeholders to include the name/username/id of the new member of the group
 Placeholders: _$username_ (will be replaced with the username); _$name_ (will be replaced with the name); _$id_ (will be replaced with the id); _$title_ (will be replaced with the group title).
@@ -91,8 +96,9 @@ You can use a particular gif/sticker as welcome message. To set it, reply to a g
 Also you can set the custom goodbye message:
 `/goodbye` _message_
 Same placeholders and media are available
-]]),
-		mods_extra = _([[
+]])
+	elseif key == 'mods_extra' then
+		return _([[
 *Moderators: extra commands*
 
 `/extra [#trigger] [reply]` = set a reply to be sent when someone writes the trigger.
@@ -103,8 +109,9 @@ You can reply to a media (_photo, file, vocal, video, gif, audio_) with `/extra 
 
 *Note:* the markdown is supported. If the text sent breaks the markdown, the bot will notify that something is wrong.
 For a correct use of the markdown, check [this post](https://telegram.me/GroupButler_ch/46) in the channel
-]]),
-		mods_warns = _([[
+]])
+	elseif key == 'mods_warns' then
+		return _([[
 *Moderators: warns*
 
 `/warn [by reply]` = warn a user. Once the max number is reached, he will be kicked/banned.
@@ -114,8 +121,9 @@ For a correct use of the markdown, check [this post](https://telegram.me/GroupBu
 How to see how many warns a user has received (or to reset them): use `/user` command.
 How to change the max. number of warnings allowed: `/config` command, then `menu` button.
 How to change the max. number of warnings allowed for media: `/config` command, then `media` button.
-]]),
-		mods_chars = _([[
+]])
+	elseif key == 'mods_chars' then
+		return _([[
 *Moderators: special characters*
 
 `/config` command, then `menu` button = you will receive in private the menu keyboard.
@@ -124,26 +132,27 @@ Here you will find two particular options: _Arab and RTL_.
 *Arab*: when Arab it's not allowed (🚫), everyone who will write an arab character will be kicked from the group.
 *Rtl*: it stands for 'Righ To Left' character, and it's the responsible of the weird service messages that are written in the opposite sense.
 When Rtl is not allowed (🚫), everyone that writes this character (or that has it in his name) will be kicked.
-]]),
-		mods_links = _([[
+]])
+	elseif key == 'mods_links' then
+		return _([[
 *Moderators: links*
 
 `/setlink [link|-]` : set the group link, so it can be re-called by other admins, or unset it.
 `/link` = get the group link, if already setted by the owner.
 
 *Note*: the bot can recognize valid group links. If a link is not valid, you won't receive a reply.
-]]),
-		mods_langs = _([[
+]])
+	elseif key == 'mods_langs' then
+		return _([[
 *Moderators: group language*"
 `/lang` = choose the group language (can be changed in private too).
 
 *Note*: translators are volunteers, so I can't ensure the correctness of all the translations. And I can't force them to translate the new strings after each update (not translated strings are in english).
 
-Anyway, translations are open to everyone. Use `/strings` command to receive a _.lua_ file with all the strings (in english).
-Use `/strings [lang code]` to receive the file for that specific language (example: _/strings es_ ).
-In the file you will find all the instructions: follow them, and as soon as possible your language will be available
-]]),
-		mods_settings = _([[
+Anyway, translations are open to everyone. If you want to translate the bot, see an [information](https://github.com/RememberTheAir/GroupButler#translators) on GitHub.
+]])
+	elseif key == 'mods_settings' then
+		return _([[
 *Moderators: group settings*
 
 `/config` = manage the group settings in private with a comfortable inline keyboard.
@@ -152,11 +161,13 @@ The inline keyboard has three sub-menus:
 *Menu*: manage the most important group settings
 *Antiflood*: turn on or off the antiflood, set its sensitivity and choose some media to ignore, if you want
 *Media*: choose which media to forbid in your group, and set the number of times that an user will be warned before being kicked/banned
-]]),
-	}
+]])
+	else
+		assert('bad key')
+	end
 end
 
-local function get_list(ln)
+local function get_list()
 	return {
 		common = _("Common commands"),
 		subscribe = _("Subscriptions"),
@@ -177,7 +188,7 @@ end
 local function make_keyboard(mod, mod_current_position)
 	local keyboard = {}
 	keyboard.inline_keyboard = {}
-	local list = get_list(ln)
+	local list = get_list()
 	local order = { 'common', 'subscribe' }
 	if mod then -- extra options for the mod
 		order = {
@@ -223,7 +234,7 @@ local function make_keyboard(mod, mod_current_position)
 	return keyboard
 end
 
-local function do_keyboard_private(ln)
+local function do_keyboard_private()
     local keyboard = {}
     keyboard.inline_keyboard = {
     	{
@@ -238,21 +249,21 @@ local function do_keyboard_private(ln)
 end
 
 local action = function(msg, blocks)
-	local helper = get_helper(msg.ln)
+	local helper = get_helped_string()
 
     -- save stats
     if blocks[1] == 'start' then
         if msg.chat.type == 'private' then
             db:hincrby('bot:general', 'users', 1)
-            local message = helper.started:format(msg.from.first_name:mEscape())
-            local keyboard = do_keyboard_private(msg.ln)
+            local message = get_helped_string('private'):format(msg.from.first_name:escape())
+            local keyboard = do_keyboard_private()
             api.sendKeyboard(msg.from.id, message, keyboard, true)
         end
         return
     end
-    local keyboard = make_keyboard(nil, nil)
     if blocks[1] == 'help' then
-        local res = api.sendKeyboard(msg.from.id, _("You can surf this keyboard to see *all the available commands*"), keyboard, true)
+		local keyboard = make_keyboard()
+		local res = api.sendKeyboard(msg.from.id, get_helped_string('all'), keyboard, true)
         if not misc.is_silentmode_on(msg.chat.id) then --send the responde in the group only if the silent mode is off
             if res then
                 if msg.chat.type ~= 'private' then
@@ -266,49 +277,72 @@ local action = function(msg, blocks)
     if msg.cb then
         local query = blocks[1]
         local text
-
+        if query == 'info_button' then
+            local keyboard = do_keybaord_credits()
+		    api.editMessageText(msg.chat.id, msg.message_id, _("Some useful *links*:"), keyboard, true)
+		    return
+		end
         local with_mods_lines = true
         if query == 'user' then
-            text = _("You can surf this keyboard to see *all the available commands*")
-            with_mods_lines = false
+            text = _("Tap on a button to see the *related commands*")
+			with_mods_lines = false
 		elseif query == 'common' then
-			text = helper.all
-			with_mods_lines = false
+            text = get_helped_string('all')
+            with_mods_lines = false
 		elseif query == 'subscribe' then
-			text = helper.subscribe
-			with_mods_lines = false
+			text = get_helped_string('subscribe')
+            with_mods_lines = false
         elseif query == 'mod' then
-            text = helper.kb_header
-		elseif query == 'info' then
-        	text = helper.mods_info
+            text = _("Tap on a button to see the *related commands*")
+        elseif query == 'info' then
+        	text = get_helped_string('mods_info')
         elseif query == 'banhammer' then
-        	text = helper.mods_banhammer
+        	text = get_helped_string('mods_banhammer')
         elseif query == 'flood' then
-        	text = helper.mods_flood
+        	text = get_helped_string('mods_flood')
         elseif query == 'media' then
-        	text = helper.mods_media
+        	text = get_helped_string('mods_media')
         elseif query == 'welcome' then
-        	text = helper.mods_welcome
+        	text = get_helped_string('mods_welcome')
         elseif query == 'extra' then
-        	text = helper.mods_extra
+        	text = get_helped_string('mods_extra')
         elseif query == 'warns' then
-        	text = helper.mods_warns
+        	text = get_helped_string('mods_warns')
         elseif query == 'char' then
-        	text = helper.mods_chars
+        	text = get_helped_string('mods_chars')
         elseif query == 'links' then
-        	text = helper.mods_links
+        	text = get_helped_string('mods_links')
         elseif query == 'lang' then
-        	text = helper.mods_langs
+        	text = get_helped_string('mods_langs')
         elseif query == 'settings' then
-        	text = helper.mods_settings
+        	text = get_helped_string('mods_settings')
         end
-
-        keyboard = make_keyboard(with_mods_lines, query)
+        local keyboard = make_keyboard(with_mods_lines, query)
         local res, code = api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
         if not res and code and code == 111 then
             api.answerCallbackQuery(msg.cb_id, _("❗️ Already on this tab"))
-        elseif query ~= 'user' and query ~= 'mod' then
-            api.answerCallbackQuery(msg.cb_id, '💡 ' ..get_list(msg.ln)[query])
+		elseif query == 'info' then
+			api.answerCallbackQuery(msg.cb_id, _("💡 Moderators: info about the group"))
+		elseif query == 'banhammer' then
+			api.answerCallbackQuery(msg.cb_id, _("💡 Moderators: banhammer powers"))
+		elseif query == 'flood' then
+			api.answerCallbackQuery(msg.cb_id, _("💡 Moderators: flood settings"))
+		elseif query == 'media' then
+			api.answerCallbackQuery(msg.cb_id, _("💡 Moderators: media settings"))
+		elseif query == 'links' then
+			api.answerCallbackQuery(msg.cb_id, _("💡 Moderators: links"))
+		elseif query == 'lang' then
+			api.answerCallbackQuery(msg.cb_id, _("💡 Moderators: group language"))
+		elseif query == 'welcome' then
+			api.answerCallbackQuery(msg.cb_id, _("💡 Moderators: welcome settings"))
+		elseif query == 'extra' then
+			api.answerCallbackQuery(msg.cb_id, _("💡 Moderators: extra commands"))
+		elseif query == 'warns' then
+			api.answerCallbackQuery(msg.cb_id, _("💡 Moderators: warns"))
+		elseif query == 'char' then
+			api.answerCallbackQuery(msg.cb_id, _("💡 Moderators: special characters"))
+		elseif query == 'settings' then
+			api.answerCallbackQuery(msg.cb_id, _("💡 Moderators: group settings"))
         end
     end
 end
