@@ -199,17 +199,8 @@ function misc.get_date(timestamp)
 end
 
 function misc.resolve_user(username, chat_id)
-	username = username:lower()
-
-	if chat_id then
-		local hash = string.format('bot:usernames:%d', chat_id)
-		local stored = db:hget(hash, username)
-		if stored then return tonumber(stored) end
-	end
-
-	local stored = db:hget('bot:usernames', username)
+	local stored = db:hget('bot:usernames', username:lower())
 	if stored then return tonumber(stored) end
-
 	return false
 end
 

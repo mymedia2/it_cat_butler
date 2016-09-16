@@ -70,12 +70,12 @@ local action = function(msg, blocks)
 	if blocks[1] == 'botadded' then
 		
 		if db:hget('bot:general', 'adminmode') == 'on' and not roles.is_superadmin(msg.adder.id) then
-			api.sendMessage(msg.chat.id, '_Admin mode is on: only the bot admin can add me to a new group_', true)
+			api.sendMessage(msg.chat.id, _("_Admin mode is on: only the bot admin can add me to a new group_"), true)
 			api.leaveChat(msg.chat.id)
 			return
 		end
 		if misc.is_blocked_global(msg.adder.id) then
-			api.sendMessage(msg.chat.id, '_You ('..msg.adder.first_name:escape()..', '..msg.adder.id..') are in the blocked list_', true)
+			api.sendMessage(msg.chat.id, _("_You (%s, %d) are in the blocked list_"):format(msg.adder.first_name:escape(), msg.adder.id), true)
 			api.leaveChat(msg.chat.id)
 			return
 		end

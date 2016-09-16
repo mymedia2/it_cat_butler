@@ -84,11 +84,18 @@ local function collect_stats(msg)
 	--for resolve username
 	if msg.from and msg.from.username then
 		db:hset('bot:usernames', '@'..msg.from.username:lower(), msg.from.id)
-		db:hset('bot:usernames:'..msg.chat.id, '@'..msg.from.username:lower(), msg.from.id)
+	end
+	if msg.reply and msg.reply.from.username then
+		db:hset('bot:usernames', '@'..msg.reply.from.username:lower(), msg.reply.from.id)
 	end
 	if msg.forward_from and msg.forward_from.username then
 		db:hset('bot:usernames', '@'..msg.forward_from.username:lower(), msg.forward_from.id)
-		db:hset('bot:usernames:'..msg.chat.id, '@'..msg.forward_from.username:lower(), msg.forward_from.id)
+	end
+	if msg.added and msg.added.username then
+		db:hset('bot:usernames', '@'..msg.added.username:lower(), msg.added.id)
+	end
+	if msg.removed and msg.removed.username then
+		db:hset('bot:usernames', '@'..msg.removed.username:lower(), msg.removed.id)
 	end
 	
 	if not(msg.chat.type == 'private') then
