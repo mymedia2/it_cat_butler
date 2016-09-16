@@ -75,4 +75,6 @@ end
 
 _ = locale.translate
 
+locale.init()
+
 return locale

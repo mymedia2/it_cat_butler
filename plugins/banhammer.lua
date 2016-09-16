@@ -170,9 +170,6 @@ local action = function(msg, blocks)
 					db:hset('tempbanned', unban_time, val) --set the hash
 				end
 			end
-			if msg.cb then --if the user tap on 'unban', show the pop-up
-				api.answerCallbackQuery(msg.cb_id, _("You are not an admin"))
-			end
 		end
 	end
 end

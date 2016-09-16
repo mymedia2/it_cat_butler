@@ -142,6 +142,7 @@ local function onmessage(msg)
     	        api.sendMessage(msg.chat.id, message, true)
     	    end
         end
+		return false
     end
     
     if msg.text and msg.text:find('([\216-\219][\128-\191])') then

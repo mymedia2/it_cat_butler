@@ -31,8 +31,6 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	misc, roles = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
 	locale = dofile('languages.lua')
 	api = require('methods')
-	locale = dofile('languages.lua')
-	locale.init()
 	
 	current_m = 0
 	last_m = 0

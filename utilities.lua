@@ -53,10 +53,6 @@ function roles.bot_is_admin(chat_id)
 end
 
 function roles.is_admin(msg)
-	if config.admin.admins[msg.from.id] then
-		-- Bot owners always are considered as moderators
-		return true, true
-	end
 	local res = api.getChatMember(msg.chat.id, msg.from.id)
 	if not res then
 		return false, false
@@ -654,12 +650,7 @@ function misc.changeMediaStatus(chat_id, media, new_status)
 end
 
 function misc.sendStartMe(chat_id, text)
-    local keyboard = {}
-    keyboard.inline_keyboard = {
-    	{
-			{text = _("Start me"), url = 'https://telegram.me/'..bot.username}
-	    }
-    }
+	local keyboard = {inline_keyboard = {{{text = _("Start me"), url = 'https://telegram.me/'..bot.username}}}}
 	api.sendKeyboard(chat_id, text, keyboard, true)
 end
 
@@ -743,7 +734,7 @@ function misc.get_user_id(msg, blocks)
 			return msg.reply.from.id
 		elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%w?%s(@[%w_]+)%s?') then
 			local username = msg.text:match('%s(@[%w_]+)')
-			local id = misc.res_user_group(username, msg.chat.id)
+			local id = misc.resolve_user(username, msg.chat.id)
 			if not id then
 				return false, "I've never seen this user before.\n"
 					.. "If you want to teach me who is he, forward me a message from him"

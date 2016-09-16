@@ -91,28 +91,6 @@ In this way, a cron job will run every minute and will perform a redis backgroun
 
 * * *
 
-## Translators
-If you want to help translate the bot, follow below instructions. Group Butler
-partially uses some tools from [gettext](https://www.gnu.org/software/gettext/).
-However we don't use binary format `*.mo` for the sake of simplicity. The bot
-manually parses the files `*.po` in directory `locales`.
-
-If you want to improve exsist translation, run this command in the root
-directoy with the bot: `./launch.sh update-locale <name>` where &lt;name&gt;
-is two letters of your chosen locale. Further edit the file
-`locales/<name>.po`, make sure that the translation is done correctly and send
-us your translation.
-
-We recommend [Poedit](https://poedit.net/) as editor of `*.po` files. You must
-specify information about yourself in the settings; put your link to Telegram
-account in the field Email if you have it.
-
-If you want to create new locale, run `./launch.sh create-locale <name>`. This
-command create the file `locales/<name>.po` with untranslated strings. You can
-also use Poedit to translate the bot. List of avaible locales see in [gettext
-manual](https://www.gnu.org/software/gettext/manual/gettext.html#Language-Codes).
-After add your new locale in the file `config.lua`.
-
 ##Start the process
 
 To start the bot, run `./launch.sh`. To stop the bot, press Ctrl+c twice.

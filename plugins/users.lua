@@ -413,7 +413,6 @@ return {
 		config.cmd..'(welcome)$',
 		config.cmd..'(goodbye) (.*)$',
 		config.cmd..'(goodbye)$',
-		config.cmd..'(echo) (.*)$',
 		config.cmd..'(cache)$',
 		config.cmd..'(msglink)$',
 		config.cmd..'(pin) (.*)$',

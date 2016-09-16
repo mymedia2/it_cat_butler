@@ -96,6 +96,7 @@ return {
 		config.cmd..'(ping)$',
 		config.cmd..'(strings)$',
 		config.cmd..'(strings) (%a%a)$',
+		config.cmd..'(echo) (.*)$',
 		config.cmd..'(info)$',
 		config.cmd..'(groups)$',
 		

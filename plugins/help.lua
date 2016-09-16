@@ -249,8 +249,6 @@ local function do_keyboard_private()
 end
 
 local action = function(msg, blocks)
-	local helper = get_helped_string()
-
     -- save stats
     if blocks[1] == 'start' then
         if msg.chat.type == 'private' then

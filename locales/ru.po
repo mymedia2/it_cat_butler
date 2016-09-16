@@ -25,11 +25,11 @@ msgstr ""
 # "you" переводим как "ты"
 #: bot.lua:167
 msgid "Sorry, a *bug* occurred"
-msgstr "Извините, произошла *ошибка*"
+msgstr "Извини, произошла *ошибка*"
 
 #: methods.lua:113
 msgid "I'm not an admin, I can't kick people"
-msgstr "Я не администратор этой группы, я не могу кикать людей"
+msgstr "Я не администратор и не могу кикать людей"
 
 #: methods.lua:115
 msgid "I can't kick or ban an admin"
