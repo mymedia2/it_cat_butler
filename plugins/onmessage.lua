@@ -50,8 +50,7 @@ local function onmessage(msg)
                 local res, message
                 --try to kick or ban
                 if action == 'ban' or action == 'tempban' then
-                    if msg.chat.type == 'group' then is_normal_group = true end
-        	        res = api.banUser(msg.chat.id, msg.from.id, msg.normal_group)
+        	        res = api.banUser(msg.chat.id, msg.from.id)
         	    else
         	        res = api.kickUser(msg.chat.id, msg.from.id)
         	    end
@@ -141,8 +140,8 @@ local function onmessage(msg)
     	        end
     	        api.sendMessage(msg.chat.id, message, true)
     	    end
+			return false -- not welcome
         end
-		return false
     end
     
     if msg.text and msg.text:find('([\216-\219][\128-\191])') then

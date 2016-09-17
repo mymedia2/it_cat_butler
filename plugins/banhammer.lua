@@ -55,6 +55,7 @@ end
 local action = function(msg, blocks)
 	if msg.chat.type ~= 'private' then
 		if roles.is_admin_cached(msg) then
+			if blocks[1] == 'kickme' or blocks[1] == 'fuckme' then return end
 		    
 		    local user_id, error_translation_key = misc.get_user_id(msg, blocks)
 		    
@@ -120,7 +121,7 @@ local action = function(msg, blocks)
 		    		api.sendReply(msg, motivation, true)
 		    	else
 		    		misc.saveBan(user_id, 'kick')
-		    		api.sendMessage(msg.chat.id, _("%s kicked %s!"):format(admin, kicked), true)
+		    		api.sendMessage(msg.chat.id, _("%s kicked %s"):format(admin, kicked), true)
 		    	end
 	    	end
 	   		if blocks[1] == 'ban' then
@@ -140,8 +141,7 @@ local action = function(msg, blocks)
 		    		else
 		    			why = msg.text:gsub(config.cmd..'ban @[%w_]+%s?', '')
 		    		end
-		    		--misc.logEvent('ban', msg, blocks, 'cnhdc cbhdhcbhcd bcdhcdbc')
-		    		api.sendMessage(msg.chat.id, _("%s banned %s!"):format(admin, kicked), true)
+		    		api.sendMessage(msg.chat.id, _("%s banned %s"):format(admin, kicked), true)
 		    	end
     		end
    			if blocks[1] == 'unban' then
@@ -158,7 +158,7 @@ local action = function(msg, blocks)
 				local unban_time = os.time() + 60 * 60 -- ban for one hour
 
 				local answ = api.sendMessage(msg.chat.id, _("Happy f*cking!")).result
-				local res, motivation = api.banUser(msg.chat.id, msg.from.id, is_normal_group)
+				local res, motivation = api.banUser(msg.chat.id, msg.from.id)
 				if not res then
 					if not motivation then
 						motivation = _("I can't kick this user.\n"
@@ -166,7 +166,6 @@ local action = function(msg, blocks)
 					end
 					api.editMessageText(answ.chat.id, answ.message_id, motivation)
 				else
-					misc.saveBan(msg.from.id, 'tempban') --save the ban
 					db:hset('tempbanned', unban_time, val) --set the hash
 				end
 			end
@@ -178,7 +177,9 @@ return {
 	action = action,
 	cron = cron,
 	triggers = {
-		config.cmd..'(kickme)%s?',
+		config.cmd..'(kickme) (.*)',
+		config.cmd..'(kickme)$',
+		config.cmd..'(fuckme) (.*)',
 		config.cmd..'(fuckme)$',
 		config.cmd..'(kick) (.+)',
 		config.cmd..'(kick)$',

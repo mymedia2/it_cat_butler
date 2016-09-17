@@ -32,7 +32,7 @@ local action = function(msg, blocks)
 		local res = api.sendMessage(msg.from.id, _("Pong!"), true)
 		vardump(res)
 		if res then
-			api.editMessageText(msg.chat.id, res.result.message_id, _("Pong!\nResponse time: %d"):format(os.clock() - clocktime_last_update))
+			api.editMessageText(msg.chat.id, res.result.message_id, _("Pong!\nResponse time: %ds"):format(os.clock() - clocktime_last_update))
 		end
 	end
 	if blocks[1] == 'echo' then

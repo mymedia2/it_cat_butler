@@ -52,7 +52,7 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	print('\n'..clr.blue..'BOT RUNNING:'..clr.reset, clr.red..'[@'..bot.username .. '] [' .. bot.first_name ..'] ['..bot.id..']'..clr.reset..'\n')
 	if not on_reload then
 		db:hincrby('bot:general', 'starts', 1)
-		api.sendAdmin('*Bot started!*\n_'..os.date('On %A, %d %B %Y\nAt %X')..'_\n'..#plugins..' plugins loaded', true)
+		api.sendAdmin(_("*Bot *@%s* started!*\n_%s_\n%d plugins loaded"):format(bot.username:escape(), os.date('!%c UTC'), #plugins), true)
 	end
 	
 	-- Generate a random seed and "pop" the first random number. :)
@@ -347,14 +347,16 @@ while is_started do -- Start a loop while the bot should be running.
 	else
 		print('Connection error')
 	end
-	if last_cron ~= os.date('%H') then -- Run cron jobs every hour.
-		last_cron = os.date('%H')
+	local current_minute = os.date('%M')
+	if last_cron ~= current_minute then -- Run cron jobs every minute.
+		last_cron = current_minute
 		last_m = current_m
 		current_m = 0
 		for i,v in ipairs(plugins) do
 			if v.cron then -- Call each plugin's cron function, if it has one.
-				local res, err = pcall(function() v.cron() end)
+				local res, err = xpcall(v.cron, debug.traceback)
 				if not res then
+					print(err)
           			api.sendLog('An #error occurred.\n'..err)
 					return
 				end

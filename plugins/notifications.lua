@@ -28,7 +28,7 @@ local function scan_mentions(msg)
 			end
 		end
 	end
-	return msg
+	return true
 end
 
 -- Subscribes the user and returns message text and flag of button "start me"

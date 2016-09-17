@@ -46,7 +46,11 @@ local logtxt = ''
 local failed = 0
 
 local function cron()
-	db:bgsave()
+	local current_hour = os.date('%H')
+	if last_database_save ~= current_hour then
+		last_database_save = current_hour
+		db:bgsave()
+	end
 end
 
 local function save_in_redis(hash, text)
