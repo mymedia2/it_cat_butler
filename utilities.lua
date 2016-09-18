@@ -289,17 +289,37 @@ function misc.migrate_chat_info(old, new, on_request)
 	
 	for hash_name, hash_content in pairs(config.chat_settings) do
 		local old_t = db:hgetall('chat:'..old..':'..hash_name)
-		db:hmset('chat:'..new..':'..hash_name, old_t)
+		if next(old_t) then
+			for key, val in pairs(old_t) then
+				db:hset('chat:'..new..':'..hash_name, key, val)
+			end
+		end
 	end
 	
 	for _, hash_name in pairs(config.chat_custom_texts) do
 		local old_t = db:hgetall('chat:'..old..':'..hash_name)
-		db:hmset('chat:'..new..':'..hash_name, old_t)
+		if next(old_t) then
+			for key, val in pairs(old_t) then
+				db:hset('chat:'..new..':'..hash_name, key, val)
+			end
+		end
 	end
 	
 	if on_request then
 		api.sendReply(msg, 'Should be done')
 	end
+end
+
+function string:replaceholders(msg) -- Returns the string after the first space.
+	self = self:gsub('$name', msg.from.first_name:escape())
+	if msg.from.username then
+		self = self:gsub('$username', msg.from.username:escape())
+	else
+		self = self:gsub('$username', '@-')
+	end
+	self = self:gsub('$id', msg.from.id)
+	self = self:gsub('$title', msg.chat.title:escape())
+	return self
 end
 
 function misc.to_supergroup(msg)

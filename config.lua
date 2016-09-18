@@ -1,6 +1,6 @@
 return {
 	bot_api_key = os.getenv('BOT_TOKEN'),
-	version = '4.1.2',
+	version = '4.1.3',
 	cmd = '^[/!#]',
 	db = 2, --default redis db: 0
 	superadmins = {119416836, 93158165},
@@ -13,7 +13,7 @@ return {
 		multipurpose_mode = true,
 		notify_bug = true,
 		log_api_errors = false,
-		stream_commands = true
+		stream_commands = true,
 	},
 	channel = '@it_cat_encrypted', --channel username with the '@'
 	source_code = 'https://github.com/mymedia2/it_cat_butler',
