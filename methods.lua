@@ -11,7 +11,10 @@ local function sendRequest(url)
 		return false, code 
 	end
 	
-	local tab = JSON.decode(dat)
+	local tab, err = JSON.decode(dat)
+	if not tab then
+		error(string.format('Unexpected response\ncode = %d, err = "%s"\ndata = "%s"', code, err, dat))
+	end
 
 	if code ~= 200 then
 		print(clr.red..code, tab.description..clr.reset)

@@ -52,9 +52,9 @@ local function get_user_id(msg, blocks)
 		elseif blocks[2]:match('%d+$') then --by id
 			print('id')
 			return blocks[2]
-		elseif msg.mention_id then --by text mention
+		elseif msg.mentions then --by text mention
 			print('text mention')
-			return msg.mention_id
+			return next(msg.mentions)
 		else
 			return false
 		end
@@ -167,7 +167,7 @@ local action = function(msg, blocks)
 	if blocks[1] == 'user' then
 		if msg.chat.type == 'private' or not roles.is_admin_cached(msg) then return end
 		
-		if not msg.reply and (not blocks[2] or (not blocks[2]:match('@[%w_]+$') and not blocks[2]:match('%d+$') and not msg.mention_id)) then
+		if not msg.reply and (not blocks[2] or not blocks[2]:match('%d+$') and not msg.mentions) then
 			api.sendReply(msg, _("Reply to an user or mention him (works by id too)"))
 			return
 		end

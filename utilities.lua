@@ -742,7 +742,7 @@ function misc.getnames_complete(msg, blocks)
 	elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%s(@[%w_]+)%s?') then
 		local username = msg.text:match('%s(@[%w_]+)')
 		kicked = username:escape()
-	elseif msg.mention_id then
+	elseif msg.mentions then
 		for _, entity in pairs(msg.entities) do
 			if entity.user then
 				kicked = '`'..entity.user.first_name:escape()..'`'
@@ -772,8 +772,8 @@ function misc.get_user_id(msg, blocks)
 			else
 				return id
 			end
-		elseif msg.mention_id then
-			return msg.mention_id
+		elseif msg.mentions then
+			return next(msg.mentions)
 		elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%w?%s(%d+)') then
 			local id = msg.text:match(config.cmd..'%w%w%w%w?%w?%w?%s(%d+)')
 			return id

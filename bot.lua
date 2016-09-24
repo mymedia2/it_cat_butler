@@ -175,7 +175,7 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 						end
 						
 						if config.bot_settings.stream_commands then --print some info in the terminal
-							print(clr.reset..clr.blue..'['..os.date('%X')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..']')
+							print(clr.reset..clr.blue..'['..os.date('%F %T')..']'..clr.red..' '..w..clr.reset..' '..get_from(msg)..' -> ['..msg.chat.id..']')
       					end
 						
 						local success, result = xpcall(plugin.action, debug.traceback, msg, blocks) --execute the main function of the plugin triggered
