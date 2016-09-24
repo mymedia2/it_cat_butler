@@ -32,8 +32,8 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	locale = dofile('languages.lua')
 	api = require('methods')
 	
-	current_m = 0
-	last_m = 0
+	current = {h = 0, d = 0}
+	last = {h = 0, d = 0}
 	
 	bot = api.getMe().result -- Get bot info
 
@@ -51,8 +51,8 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 
 	print('\n'..clr.blue..'BOT RUNNING:'..clr.reset, clr.red..'[@'..bot.username .. '] [' .. bot.first_name ..'] ['..bot.id..']'..clr.reset..'\n')
 	if not on_reload then
-		db:hincrby('bot:general', 'starts', 1)
 		api.sendAdmin(_("*Bot *@%s* started!*\n_%s_\n%d plugins loaded"):format(bot.username:escape(), os.date('!%c UTC'), #plugins), true)
+		start_timestamp = os.time()
 	end
 	
 	-- Generate a random seed and "pop" the first random number. :)
@@ -76,33 +76,47 @@ local function get_from(msg)
 	return user
 end
 
-local function collect_stats(msg)
-	
-	--count the number of messages
-	db:hincrby('bot:general', 'messages', 1)
-	
-	--for resolve username
-	if msg.from and msg.from.username then
-		db:hset('bot:usernames', '@'..msg.from.username:lower(), msg.from.id)
-	end
-	if msg.reply and msg.reply.from.username then
-		db:hset('bot:usernames', '@'..msg.reply.from.username:lower(), msg.reply.from.id)
+-- for resolve username
+local function extract_usernames(msg)
+	if msg.from then
+		if msg.from.username then
+			db:hset('bot:usernames', '@'..msg.from.username:lower(), msg.from.id)
+		end
+		db:sadd(string.format('chat:%d:members', msg.chat.id), msg.from.id)
 	end
 	if msg.forward_from and msg.forward_from.username then
 		db:hset('bot:usernames', '@'..msg.forward_from.username:lower(), msg.forward_from.id)
 	end
-	if msg.added and msg.added.username then
-		db:hset('bot:usernames', '@'..msg.added.username:lower(), msg.added.id)
-	end
-	if msg.removed and msg.removed.username then
-		db:hset('bot:usernames', '@'..msg.removed.username:lower(), msg.removed.id)
-	end
-	
-	if not(msg.chat.type == 'private') then
-		if msg.from then
-			db:hset('chat:'..msg.chat.id..':userlast', msg.from.id, os.time()) --last message for each user
-			db:hset('bot:chat:latsmsg', msg.chat.id, os.time()) --last message in the group
+	if msg.added then
+		if msg.added.username then
+			db:hset('bot:usernames', '@'..msg.added.username:lower(), msg.added.id)
 		end
+		db:sadd(string.format('chat:%d:members', msg.chat.id), msg.added.id)
+	end
+	if msg.removed then
+		if msg.removed.username then
+			db:hset('bot:usernames', '@'..msg.removed.username:lower(), msg.removed.id)
+		end
+		db:srem(string.format('chat:%d:members', msg.chat.id), msg.removed.id)
+	end
+	if msg.reply then
+		extract_usernames(msg.reply)
+	end
+	if msg.pinned_message then
+		extract_usernames(msg.pinned_message)
+	end
+end
+
+local function collect_stats(msg)
+	
+	--count the number of messages
+	db:hincrby('bot:general', 'messages', 1)
+
+	extract_usernames(msg)
+	
+	if msg.chat.type ~= 'private' and msg.from then
+		db:hset('chat:'..msg.chat.id..':userlast', msg.from.id, os.time()) --last message for each user
+		db:hset('bot:chats:latsmsg', msg.chat.id, os.time()) --last message in the group
 	end
 	
 	--user stats
@@ -262,8 +276,12 @@ local function media_to_msg(msg)
 			if entity.type == 'text_mention' then
 				msg.mentions = msg.mentions or {}
 				msg.mentions[entity.user.id] = true
+				if entity.user.username then
+					db:hset('bot:usernames', '@'..entity.user.username:lower(), entity.user.id)
+				end
 			end
 			if entity.type == 'mention' then
+				-- FIXME: cut the username taking into consideration length of unicode characters
 				local username = msg.text:sub(entity.offset + 1, entity.offset + entity.length)
 				local user_id = misc.resolve_user(username, msg.chat.id)
 				if user_id then
@@ -321,7 +339,8 @@ while is_started do -- Start a loop while the bot should be running.
 		clocktime_last_update = os.clock()
 		for i,msg in ipairs(res.result) do -- Go through every new message.
 			last_update = msg.update_id
-			current_m = current_m + 1
+			current.h = current.h + 1
+			current.d = current.d + 1
 			if msg.message  or msg.callback_query --[[or msg.edited_message]]then
 				--[[if msg.edited_message then
 					msg.message = msg.edited_message
@@ -347,11 +366,8 @@ while is_started do -- Start a loop while the bot should be running.
 	else
 		print('Connection error')
 	end
-	local current_minute = os.date('%M')
-	if last_cron ~= current_minute then -- Run cron jobs every minute.
-		last_cron = current_minute
-		last_m = current_m
-		current_m = 0
+	if last_cron ~= os.date('%M') then -- Run cron jobs every minute.
+		last_cron = os.date('%M')
 		for i,v in ipairs(plugins) do
 			if v.cron then -- Call each plugin's cron function, if it has one.
 				local res, err = xpcall(v.cron, debug.traceback)
@@ -361,6 +377,14 @@ while is_started do -- Start a loop while the bot should be running.
 					return
 				end
 			end
+		end
+		if last_cron ~= os.date('%H') then
+			last.h = current.h
+			current.h = 0
+		end
+		if last_cron ~= os.date('%d') then
+			last.d = current.d
+			current.d = 0
 		end
 	end
 end

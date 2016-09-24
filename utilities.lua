@@ -159,6 +159,10 @@ function vtext(value)
   return serpent.block(value, {comment=false})
 end
 
+function misc.deeplink_constructor(chat_id, what)
+	return 'telegram.me/'..bot.username..'?start='..chat_id..':'..what
+end
+
 function misc.clone_table(t) --doing "table1 = table2" in lua = create a pointer to table2
   local new_t = {}
   local i, v = next(t, nil)
@@ -196,14 +200,19 @@ function misc.get_date(timestamp)
 	return os.date('%d/%m/%y')
 end
 
-function misc.resolve_user(username, chat_id)
-	local stored = db:hget('bot:usernames', username:lower())
-	if stored then return tonumber(stored) end
-	return false
-end
+-- Resolves username. Returns ID of user if it was early stored in date base.
+-- Argument username must begin with symbol @ (commercial 'at')
+function misc.resolve_user(username)
+	assert(username:byte(1) == string.byte('@'))
 
-function misc.is_lang_supported(code)
-	return config.available_languages[code:lower()] ~= nil
+	local stored_id = db:hget('bot:usernames', username:lower())
+	if not stored_id then return false end
+	local user_obj = api.getChat(stored_id)
+	if not user_obj then return stored_id end
+
+	-- User could change his username. Update it
+	db:hset('bot:usernames', username:lower(), user_obj.result.id)
+	return user_obj.result.id
 end
 
 function misc.write_file(path, text, mode)
@@ -311,14 +320,26 @@ function misc.migrate_chat_info(old, new, on_request)
 end
 
 function string:replaceholders(msg) -- Returns the string after the first space.
+	if msg.added then
+		msg.from = msg.added
+	end
+	
+	msg.from.first_name = msg.from.first_name:gsub('%%', '')
+	
 	self = self:gsub('$name', msg.from.first_name:escape())
 	if msg.from.username then
-		self = self:gsub('$username', msg.from.username:escape())
+		self = self:gsub('$username', '@'..msg.from.username:escape())
 	else
 		self = self:gsub('$username', '@-')
 	end
+	if msg.from.last_name then
+		self = self:gsub('$surname', '@'..msg.from.last_name:escape())
+	else
+		self = self:gsub('$surname', '-')
+	end
 	self = self:gsub('$id', msg.from.id)
 	self = self:gsub('$title', msg.chat.title:escape())
+	self = self:gsub('$rules', misc.deeplink_constructor(msg.chat.id, 'rules'))
 	return self
 end
 
@@ -744,7 +765,7 @@ function misc.get_user_id(msg, blocks)
 			return msg.reply.from.id
 		elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%w?%s(@[%w_]+)%s?') then
 			local username = msg.text:match('%s(@[%w_]+)')
-			local id = misc.resolve_user(username, msg.chat.id)
+			local id = misc.resolve_user(username)
 			if not id then
 				return false, "I've never seen this user before.\n"
 					.. "If you want to teach me who is he, forward me a message from him"
@@ -754,7 +775,7 @@ function misc.get_user_id(msg, blocks)
 		elseif msg.mention_id then
 			return msg.mention_id
 		elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%w?%s(%d+)') then
-			local id = msg.text:match(config.cmd..'%w%w%w%w?%w?%s(%d+)')
+			local id = msg.text:match(config.cmd..'%w%w%w%w?%w?%w?%s(%d+)')
 			return id
 		else
 			return false, "I've never seen this user before.\n"

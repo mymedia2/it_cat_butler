@@ -8,20 +8,6 @@ local function is_locked(chat_id, param)
   	end
 end
 
-local function gsub_custom_inform(msg, custom)
-	local user = msg.added or msg.removed
-	local name = user.first_name:escape():gsub('%%', '')
-	local id = user.id
-	local username
-	local title = msg.chat.title:escape():gsub('%%', '')
-	if user.username then
-		username = '@'..user.username:escape()
-	else
-		username = '(no username)'
-	end
-	return custom:gsub('$name', name):gsub('$username', username):gsub('$id', id):gsub('$title', title)
-end
-
 local function get_welcome(msg)
 	if is_locked(msg.chat.id, 'Welcome') then
 		return false
@@ -33,7 +19,7 @@ local function get_welcome(msg)
 		api.sendDocumentId(msg.chat.id, file_id)
 		return false
 	elseif type == 'custom' then
-		return gsub_custom_inform(msg, content)
+		return content:replaceholders(msg)
 	else
 		return _("Hi %s, and welcome to *%s*!"):format(msg.added.first_name:escape_hard(), msg.chat.title:escape_hard())
 	end
@@ -57,7 +43,7 @@ local function get_goodbye(msg)
 			end
 			return _("Goodbye, %s!"):format(name:escape_hard())
 		end
-		return gsub_custom_inform(msg, content)
+		return content:replaceholders(msg)
 	end
 end
 
@@ -106,12 +92,7 @@ local action = function(msg, blocks)
 	
 	--if the bot is removed from the chat
 	if blocks[1] == 'botremoved' then
-		
-		--remove the group settings
 		misc.remGroup(msg.chat.id)
-		
-		--save stats
-        db:hincrby('bot:general', 'groups', -1)
 	end
 	
 	if blocks[1] == 'removed' then

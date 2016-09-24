@@ -41,7 +41,7 @@ local function get_user_id(msg, blocks)
 		return msg.reply.from.id
 	elseif blocks[2] then
 		if blocks[2]:match('@[%w_]+$') then --by username
-			local user_id = misc.resolve_user(blocks[2], msg.chat.id)
+			local user_id = misc.resolve_user(blocks[2])
 			if not user_id then
 				print('username (not found)')
 				return false
@@ -164,104 +164,6 @@ local action = function(msg, blocks)
  		end
  		api.sendReply(msg, '`'..id..'`', true)
  	end
-    if blocks[1] == 'welcome' then
-        
-        if msg.chat.type == 'private' or not roles.is_admin_cached(msg) then return end
-        
-        local input = blocks[2]
-        
-        --ignore if not input text and not reply
-        if not input and not msg.reply then
-			api.sendReply(msg, _("Welcome and...?"), false)
-			return
-        end
-        
-        local hash = 'chat:'..msg.chat.id..':welcome'
-        
-        if not input and msg.reply then
-            local replied_to = misc.get_media_type(msg.reply)
-            if replied_to == 'sticker' or replied_to == 'gif' then
-                local file_id
-                if replied_to == 'sticker' then
-                    file_id = msg.reply.sticker.file_id
-                else
-                    file_id = msg.reply.document.file_id
-                end
-                db:hset(hash, 'type', 'media')
-                db:hset(hash, 'content', file_id)
-                api.sendReply(msg, _("New media setted as welcome message: `%s`"):format(replied_to), true)
-            else
-                api.sendReply(msg, _("Reply to a `sticker` or a `gif` to set them as *welcome message*"), true)
-            end
-        else
-            db:hset(hash, 'type', 'custom')
-            db:hset(hash, 'content', input)
-            local res, code = api.sendReply(msg, input, true)
-            if not res then
-                db:hset(hash, 'type', 'no') --if wrong markdown, remove 'custom' again
-                db:hset(hash, 'content', 'no')
-                if code == 118 then
-				    api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
-			    else
-				    api.sendMessage(msg.chat.id, _("This text breaks the markdown.\n"
-						.. "More info about a proper use of markdown "
-						.. "[here](https://telegram.me/GroupButler_ch/46)."), true)
-			    end
-            else
-                local id = res.result.message_id
-                api.editMessageText(msg.chat.id, id, _("*Custom welcome message saved!*"), false, true)
-            end
-        end
-    end
-    if blocks[1] == 'goodbye' then
-        if msg.chat.type == 'private' or not roles.is_admin_cached(msg) then return end
-
-        local input = blocks[2]
-        local hash = 'chat:'..msg.chat.id..':goodbye'
-
-        -- ignore if not input text and not reply
-        if not input and not msg.reply then
-            api.sendReply(msg, _("No goodbye message"), false)
-            return
-        end
-
-        if not input and msg.reply then
-            local replied_to = misc.get_media_type(msg.reply)
-            if replied_to == 'sticker' or replied_to == 'gif' then
-                local file_id
-                if replied_to == 'sticker' then
-                    file_id = msg.reply.sticker.file_id
-                else
-                    file_id = msg.reply.document.file_id
-                end
-                db:hset(hash, 'type', 'media')
-                db:hset(hash, 'content', file_id)
-                api.sendReply(msg, _("New media setted as goodbye message: `%s`"):format(replied_to), true)
-            else
-                api.sendReply(msg, _("Reply to a `sticker` or a `gif` to set them as *goodbye message*"), true)
-            end
-            return
-        end
-
-		input = input:gsub('^%s*(.-)%s*$', '%1') -- trim spaces
-		db:hset(hash, 'type', 'custom')
-		db:hset(hash, 'content', input)
-		local res, code = api.sendReply(msg, _("*Custom goodbye message* setted!\n\n%s"):format(input), true)
-		if not res then
-			db:hset(hash, 'type', 'composed') --if wrong markdown, remove 'custom' again
-			db:hset(hash, 'content', 'no')
-			if code == 118 then
-				api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
-			else
-				api.sendMessage(msg.chat.id, _("This text breaks the markdown.\n"
-					.. "More info about a proper use of markdown "
-					.. "[here](https://telegram.me/GroupButler_ch/46)."), true)
-			end
-		else
-			local id = res.result.message_id
-			api.editMessageText(msg.chat.id, id, _("*Custom goodbye message saved!*"), false, true)
-		end
-    end
 	if blocks[1] == 'user' then
 		if msg.chat.type == 'private' or not roles.is_admin_cached(msg) then return end
 		
@@ -273,10 +175,8 @@ local action = function(msg, blocks)
 		------------------ get user_id --------------------------
 		local user_id = get_user_id(msg, blocks)
 		
-		if roles.is_superadmin(msg.from.id) and msg.reply and not msg.cb then
-			if msg.reply.forward_from then
-				user_id = msg.reply.forward_from.id
-			end
+		if roles.is_superadmin(msg.from.id) and msg.reply and not msg.cb and msg.reply.forward_from then
+			user_id = msg.reply.forward_from.id
 		end
 		
 		if not user_id then
@@ -334,54 +234,9 @@ local action = function(msg, blocks)
     	local keyboard = do_keyboard_cache(msg.chat.id)
     	api.sendKeyboard(msg.chat.id, text, keyboard, true)
     end
-    if blocks[1] == 'msglink' then
-    	if roles.is_admin_cached(msg) and msg.reply and msg.chat.username then
-    		api.sendReply(msg, '[msg n° '..msg.reply.message_id..'](https://telegram.me/'..msg.chat.username..'/'..msg.reply.message_id..')', true)
-    	end
-    end
-	if blocks[1] == 'pin' then
-		if roles.is_admin_cached(msg) then
-			local res, code = api.sendMessage(msg.chat.id, blocks[2], true)
-			if not res then
-				if code == 118 then
-				    api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
-			    else
-					api.sendMessage(msg.chat.id, _("This text breaks the markdown.\n"
-						.. "More info about a proper use of markdown "
-						.. "[here](https://telegram.me/GroupButler_ch/46)."), true)
-		    	end
-	    	else
-	    		db:set('chat:'..msg.chat.id..':pin', res.result.message_id)
-	    		api.sendMessage(msg.chat.id, _("You can now pin this message and use `/editpin [new text]` to edit it, without send the new message to pin again"), true, res.result.message_id)
-	    	end
-    	end
+    if blocks[1] == 'msglink' and roles.is_admin_cached(msg) and msg.reply and msg.chat.username then
+		api.sendReply(msg, '[msg n° '..msg.reply.message_id..'](https://telegram.me/'..msg.chat.username..'/'..msg.reply.message_id..')', true)
 	end
-	if blocks[1] == 'editpin' then
-		if roles.is_admin_cached(msg) then
-			local pin_id = db:get('chat:'..msg.chat.id..':pin')
-			if not pin_id then
-				api.sendReply(msg, _("You don't have any pinned message sent with `/pin [text to pin]`"), true)
-			else
-				local res, code = api.editMessageText(msg.chat.id, pin_id, blocks[2], nil, true)
-				if not res then
-					if code == 118 then
-				    	api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
-				    elseif code == 116 then
-				    	api.sendMessage(msg.chat.id, _("The preview pinned message I sent *does no longer exist*. I can't edit it"), true)
-				    elseif code == 111 then
-				    	api.sendMessage(msg.chat.id, _("The text is not modified"), true)
-			    	else
-						api.sendMessage(msg.chat.id, _("This text breaks the markdown.\n"
-							.. "More info about a proper use of markdown "
-							.. "[here](https://telegram.me/GroupButler_ch/46)."), true)
-		    		end
-		    	else
-		    		db:set('chat:'..msg.chat.id..':pin', res.result.message_id)
-	    			api.sendMessage(msg.chat.id, _("Message edited. Check it here"), nil, pin_id)
-	    		end
-	    	end
-    	end
-    end
     if blocks[1] == 'cc:rel' and msg.cb then
     	if not roles.is_admin_cached(msg) then
 			api.answerCallbackQuery(msg.cb_id, _("You are not an admin"))
@@ -411,14 +266,8 @@ return {
 		config.cmd..'(adminlist)$',
 		config.cmd..'(status) (.+)$',
 		config.cmd..'(status)$',
-		config.cmd..'(welcome) (.*)$',
-		config.cmd..'(welcome)$',
-		config.cmd..'(goodbye) (.*)$',
-		config.cmd..'(goodbye)$',
 		config.cmd..'(cache)$',
 		config.cmd..'(msglink)$',
-		config.cmd..'(pin) (.*)$',
-		config.cmd..'(editpin) (.*)$',
 		
 		config.cmd..'(user)$',
 		config.cmd..'(user) (.*)',

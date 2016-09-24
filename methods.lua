@@ -103,6 +103,7 @@ function api.kickChatMember(chat_id, user_id)
 		return false, tab.description
 	end
 	
+	db:srem(string.format('chat:%d:members', chat_id), user_id)
 	return tab
 
 end
@@ -206,7 +207,7 @@ function api.leaveChat(chat_id)
 	local res, code = sendRequest(url)
 	
 	if res then
-		db:hincrby('bot:general', 'groups', -1)
+		db:srem(string.format('chat:%d:members', chat_id), bot.id)
 	end
 	
 	return res, code
@@ -542,11 +543,11 @@ function api.sendVoice(chat_id, voice, reply_to_message_id)
 end
 
 function api.sendAdmin(text, markdown)
-	return api.sendMessage(config.log_admin, text, markdown)
+	return api.sendMessage(config.log.admin, text, markdown)
 end
 
 function api.sendLog(text, markdown)
-	return api.sendMessage(config.log_chat or config.admin.owner, text, markdown)
+	return api.sendMessage(config.log.chat or config.log.admin, text, markdown)
 end
 
 return api	

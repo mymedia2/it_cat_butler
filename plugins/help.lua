@@ -252,25 +252,15 @@ local action = function(msg, blocks)
     -- save stats
     if blocks[1] == 'start' then
         if msg.chat.type == 'private' then
-            db:hincrby('bot:general', 'users', 1)
             local message = get_helped_string('private'):format(msg.from.first_name:escape())
             local keyboard = do_keyboard_private()
             api.sendKeyboard(msg.from.id, message, keyboard, true)
         end
         return
     end
-    if blocks[1] == 'help' then
+    if blocks[1] == 'help' and msg.chat.type == 'private' then
 		local keyboard = make_keyboard()
-		local res = api.sendKeyboard(msg.from.id, get_helped_string('all'), keyboard, true)
-        if not misc.is_silentmode_on(msg.chat.id) then --send the responde in the group only if the silent mode is off
-            if res then
-                if msg.chat.type ~= 'private' then
-                    api.sendMessage(msg.chat.id, _("_I've sent you the help message in private_"), true)
-                end
-            else
-				misc.sendStartMe(msg.chat.id, _("_Please message me first so I can message you_"))
-            end
-        end
+		api.sendKeyboard(msg.from.id, get_helped_string('all'), keyboard, true)
     end
     if msg.cb then
         local query = blocks[1]

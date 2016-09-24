@@ -1,26 +1,28 @@
 return {
 	bot_api_key = os.getenv('BOT_TOKEN'),
-	version = '4.1.3',
+	version = '4.1.7',
 	cmd = '^[/!#]',
 	db = 2, --default redis db: 0
 	superadmins = {119416836, 93158165},
-	log_chat = -1001086427803,
-	log_admin = -1001086427803,
+	log = {
+		chat = -1001086427803,
+		admin = -1001086427803,
+	},
 	bot_settings = {
 		cache_time = {
 			adminlist = 18000, --5 hours (18000s)
 		},
 		multipurpose_mode = true,
 		notify_bug = true,
-		log_api_errors = false,
+		log_api_errors = true,
 		stream_commands = true,
 	},
 	channel = '@it_cat_encrypted', --channel username with the '@'
 	source_code = 'https://github.com/mymedia2/it_cat_butler',
 	help_groups = {
 		['Internatonal (English)'] = 'https://telegram.me/joinchat/EKBQLj7Zf6lE2K_Pk0Epcg', --group link, not username!
-		['Italian'] = 'https://telegram.me/joinchat/ITgroupbutler',
-		['Persian'] = 'https://telegram.me/joinchat/CTDUTkCOsEvtZl09w32-Qg',
+		['Italian'] = 'https://telegram.me/joinchat/ITAgroupbutler',
+		['Persian'] = 'https://telegram.me/joinchat/CTDUTkCOsEt4DZT-SUQdBQ',
 		['Russian'] = 'https://telegram.me/rubutler',
 		['Spanish'] = false,
 		['ИТ-кот'] = 'https://telegram.me/it_cat_encrypted',
@@ -40,6 +42,8 @@ return {
 		'warn.lua',
 		'setlang.lua',
 		'floodmanager.lua',
+		'welcome.lua',
+		'pin.lua',
 		'mediasettings.lua',
 		'private.lua',
 		'admin.lua',
@@ -150,7 +154,7 @@ return {
 		d2 = {'bot:groupsid', 'bot:groupsid:removed', 'tempbanned', 'bot:blocked', 'remolden_chats'} --remolden_chats: chat removed with $remold command
 	},
 	api_errors = {
-		[101] = 'Not enough rights to kick participant', --SUPERGROUP: bot is not admin
+		[101] = 'Not enough rights to kick/unban chat member', --SUPERGROUP: bot is not admin
 		[102] = 'USER_ADMIN_INVALID', --SUPERGROUP: trying to kick an admin
 		[103] = 'method is available for supergroup chats only', --NORMAL: trying to unban
 		[104] = 'Only creator of the group can kick administrators from the group', --NORMAL: trying to kick an admin
@@ -158,7 +162,7 @@ return {
 		[106] = 'USER_NOT_PARTICIPANT', --NORMAL: trying to kick an user that is not in the group
 		[107] = 'CHAT_ADMIN_REQUIRED', --NORMAL: bot is not an admin or everyone is an admin
 		[108] = 'there is no administrators in the private chat', --something asked in a private chat with the api methods 2.1
-
+		[109] = 'Wrong URL host', --hyperlink not valid
 		[110] = 'PEER_ID_INVALID', --user never started the bot
 		[111] = 'message is not modified', --the edit message method hasn't modified the message
 		[112] = 'Can\'t parse message text: Can\'t find end of the entity starting at byte offset %d+', --the markdown is wrong and breaks the delivery
@@ -188,6 +192,8 @@ return {
 		[136] = 'USER_DEACTIVATED', --deleted account, probably
 		[137] = 'Can\'t parse inline keyboard button: Text buttons are unallowed in the inline keyboard',
 		[138] = 'Message was not forwarded',
+		[139] = 'Can\'t parse inline keyboard button: Field \\\"text\\\" must be of type String', --"text" field in a button object is not a string
+		[140] = 'Channel invalid', --/shrug
 		[403] = 'Bot was blocked by the user', --user blocked the bot
 		[429] = 'Too many requests: retry later', --the bot is hitting api limits
 		[430] = 'Too big total timeout', --too many callback_data requests
