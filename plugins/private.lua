@@ -31,7 +31,7 @@ local action = function(msg, blocks)
 	if blocks[1] == 'ping' then
 		local res = api.sendMessage(msg.from.id, _("Pong!"), true)
 		if res then
-			api.editMessageText(msg.chat.id, res.result.message_id, _("Pong!\nResponse time: %ds"):format(os.clock() - clocktime_last_update))
+			api.editMessageText(msg.chat.id, res.result.message_id, _("Response time: %ds"):format(os.clock() - clocktime_last_update))
 		end
 	end
 	if blocks[1] == 'echo' then
@@ -49,7 +49,7 @@ local action = function(msg, blocks)
 	end
 	if blocks[1] == 'info' then
 		local keyboard = do_keybaord_credits()
-		local text = _("🕔 Bot version: `%s`\n🔗 *Some useful links*:"):format(config.version)
+		local text = _("*Some useful links*:")
 		if msg.cb then
 			api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
 		else

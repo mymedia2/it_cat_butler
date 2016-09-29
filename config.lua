@@ -1,6 +1,5 @@
 return {
 	bot_api_key = os.getenv('BOT_TOKEN'),
-	version = '4.1.7',
 	cmd = '^[/!#]',
 	db = 2, --default redis db: 0
 	superadmins = {119416836, 93158165},
@@ -12,10 +11,11 @@ return {
 		cache_time = {
 			adminlist = 18000, --5 hours (18000s)
 		},
-		multipurpose_mode = true,
+		multipurpose_mode = false,
 		notify_bug = true,
 		log_api_errors = true,
 		stream_commands = true,
+		admin_mode = false
 	},
 	channel = '@it_cat_encrypted', --channel username with the '@'
 	source_code = 'https://github.com/mymedia2/it_cat_butler',
@@ -24,8 +24,8 @@ return {
 		['Italian'] = 'https://telegram.me/joinchat/ITAgroupbutler',
 		['Persian'] = 'https://telegram.me/joinchat/CTDUTkCOsEt4DZT-SUQdBQ',
 		['Russian'] = 'https://telegram.me/rubutler',
-		['Spanish'] = false,
 		['ИТ-кот'] = 'https://telegram.me/it_cat_encrypted',
+		['Spanish'] = 'https://telegram.me/SPAhroupbutler'
 	},
 	plugins = {
 		'onmessage.lua', --THIS MUST BE THE FIRST: IF AN USER IS SPAMMING/IS BLOCKED, THE BOT WON'T GO THROUGH PLUGINS
@@ -47,14 +47,14 @@ return {
 		'mediasettings.lua',
 		'private.lua',
 		'admin.lua',
-		--'restore.lua',
 		--'test.lua',
 		--'logchannel.lua',
 		'extra.lua', --must be the last
 	},
 	multipurpose_plugins = {
 		'commit.lua',
-		'eightball.lua'
+		'eightball.lua',
+		'patterns.lua'
 	},
 	available_languages = {
 		['en'] = 'English 🇬🇧',
@@ -144,8 +144,7 @@ return {
 		},
 	},
 	private_settings = {
-		rules_on_join = 'on',
-		motivation_on_kick = 'on',
+		rules_on_join = 'off',
 		reports = 'off'
 	},
 	chat_custom_texts = {'extra', 'info', 'links', 'warns', 'mediawarn'},

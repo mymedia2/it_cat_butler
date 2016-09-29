@@ -378,11 +378,12 @@ while is_started do -- Start a loop while the bot should be running.
 				end
 			end
 		end
+		-- I don't understand how it works
 		if last_cron ~= os.date('%H') then
 			last.h = current.h
 			current.h = 0
 		end
-		if last_cron ~= os.date('%d') then
+		if os.date('%d', last_cron) ~= os.date('%d') then
 			last.d = current.d
 			current.d = 0
 		end
