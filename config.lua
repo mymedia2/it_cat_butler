@@ -34,6 +34,7 @@ return {
 		'menu.lua',
 		'dashboard.lua',
 		'banhammer.lua',
+		'voteban.lua',
 		'users.lua',
 		'help.lua',
 		'rules.lua',
@@ -121,6 +122,11 @@ return {
 		},
 		['goodbye'] = {
 			['type'] = 'custom'
+		},
+		['voteban'] = {
+			['status'] = 'off',
+			['quorum'] = 5,
+			['duration'] = 30,
 		},
 		['media'] = {
 			['image'] = 'ok', --'notok'

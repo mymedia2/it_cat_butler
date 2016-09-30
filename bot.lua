@@ -28,7 +28,7 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	
 	db:select(config.db or 0) --select the redis db
 	
-	misc, roles = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
+	misc, roles, users = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
 	locale = dofile('languages.lua')
 	api = require('methods')
 	
@@ -280,7 +280,7 @@ local function media_to_msg(msg)
 					db:hset('bot:usernames', '@'..entity.user.username:lower(), entity.user.id)
 				end
 			end
-			if entity.type == 'mention' then
+		   if entity.type == 'mention' and entity.offset == 0 then
 				-- FIXME: cut the username taking into consideration length of unicode characters
 				local username = msg.text:sub(entity.offset + 1, entity.offset + entity.length)
 				local user_id = misc.resolve_user(username, msg.chat.id)
