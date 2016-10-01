@@ -766,8 +766,8 @@ function misc.get_user_id(msg, blocks)
 			local username = msg.text:match('%s(@[%w_]+)')
 			local id = misc.resolve_user(username)
 			if not id then
-				return false, "I've never seen this user before.\n"
-					.. "If you want to teach me who is he, forward me a message from him"
+				return false, _("I've never seen this user before.\n"
+					.. "If you want to teach me who is he, forward me a message from him")
 			else
 				return id
 			end
@@ -777,8 +777,8 @@ function misc.get_user_id(msg, blocks)
 			local id = msg.text:match(config.cmd..'%w%w%w%w?%w?%w?%s(%d+)')
 			return id
 		else
-			return false, "I've never seen this user before.\n"
-					.. "If you want to teach me who is he, forward me a message from him"
+			return false, _("I've never seen this user before.\n"
+					.. "If you want to teach me who is he, forward me a message from him")
 		end
 	end
 end
