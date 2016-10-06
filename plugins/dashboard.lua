@@ -36,8 +36,8 @@ local function getFloodSettings_text(chat_id)
         list_exc = list_exc..'• `'..translation..'`: '..exc_status..'\n'
     end
     return _("- *Status*: `%s`\n"):format(status)
-			.. _("- *Action* when an user floods: `%s`\n"):format(action)
-			.. _("- Number of messages *every 5 seconds* allowed: `%d`\n"):format(num)
+			.. _("- *Action* to perform when an user floods: `%s`\n"):format(action)
+			.. _("- Number of messages allowed *every 5 seconds*: `%d`\n"):format(num)
 			.. _("- *Ignored media*:\n%s"):format(list_exc)
 end
 
@@ -74,7 +74,7 @@ local action = function(msg, blocks)
         local res = api.sendKeyboard(msg.from.id, _("Navigate this message to see *all the info* about this group!"), keyboard, true)
         if not misc.is_silentmode_on(msg.chat.id) then --send the responde in the group only if the silent mode is off
             if res then
-                api.sendMessage(msg.chat.id, _("_I've sent you the group dashboard in private_"), true)
+                api.sendMessage(msg.chat.id, _("_I've sent you the group dashboard via private message_"), true)
             else
                 misc.sendStartMe(msg.chat.id, _("_Please message me first so I can message you_"))
             end
@@ -83,25 +83,46 @@ local action = function(msg, blocks)
     end
     if msg.cb then
         local request = blocks[2]
-        local text
+        local text, notification
+
+		local res = api.getChat(chat_id)
+		if not res then
+			api.answerCallbackQuery(msg.cb_id, _("🚫 This group was deleted"))
+			return
+		end
+		-- Private chats have no an username
+		local private = not res.result.username
+
+		local res = api.getChatMember(chat_id, msg.from.id)
+		if not res or (res.result.status == 'left' or res.result.status == 'kicked') and private then
+			api.editMessageText(msg.from.id, msg.message_id, _("🚷 You aren't member chat. " ..
+				"You can't watch settings of the private group."))
+			return
+		end
+
         keyboard = doKeyboard_dashboard(chat_id)
         if request == 'settings' then
             text = misc.getSettings(chat_id)
+            notification = _("ℹ️ Group ► Settings")
         end
         if request == 'rules' then
             text = misc.getRules(chat_id)
+            notification = _("ℹ️ Group ► Rules")
         end
         if request == 'adminlist' then
             text = misc.getAdminlist(chat_id, msg.from.id)
+            notification = _("ℹ️ Group ► Admin list")
         end
         if request == 'extra' then
             text = misc.getExtraList(chat_id)
+            notification = _("ℹ️ Group ► Extra")
         end
         if request == 'flood' then
             text = getFloodSettings_text(chat_id)
+            notification = _("ℹ️ Group ► Flood")
         end
         if request == 'media' then
-            text = _("*Current settings for media*:\n\n")
+            text = _("*Current media settings*:\n\n")
             for media, default_status in pairs(config.chat_settings['media']) do
                 local status = (db:hget('chat:'..chat_id..':media', media)) or default_status
                 if status == 'ok' then
@@ -111,9 +132,10 @@ local action = function(msg, blocks)
                 end
                 text = text..'`'..media..'` ≡ '..status..'\n'
             end
+            notification = _("ℹ️ Group ► Media")
         end
-        api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
-        api.answerCallbackQuery(msg.cb_id, 'ℹ️ Group ► '..request)
+        api.editMessageText(msg.from.id, msg.message_id, text, keyboard, true)
+        api.answerCallbackQuery(msg.cb_id, notification)
         return
     end
 end

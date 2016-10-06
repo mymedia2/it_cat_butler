@@ -25,7 +25,7 @@ function string:input() -- Returns the string after the first space.
 end
 
 function string:escape()
-	return self:gsub('*', '\\*'):gsub('_', '\\_'):gsub('`', '\\`'):gsub('%]', '\\]'):gsub('%[', '\\[')
+	return self:gsub('%*', '\\*'):gsub('_', '\\_'):gsub('`', '\\`'):gsub('%]', '\\]'):gsub('%[', '\\[')
 end
 
 function string:escape_hard() -- Remove the markdown.
@@ -63,12 +63,20 @@ function roles.is_admin(msg)
 	end
 end
 
-function roles.is_admin_cached(msg)
-	local hash = 'cache:chat:'..msg.chat.id..':admins'
-	if not db:exists(hash) then
-		misc.cache_adminlist(msg.chat.id, res)
+-- Returns the admin status of the user. The first argument can be the message,
+-- then the function checks the rights of the sender in the incoming chat.
+function roles.is_admin_cached(chat_id, user_id)
+	if type(chat_id) == 'table' then
+		local msg = chat_id
+		chat_id = msg.chat.id
+		user_id = msg.from.id
 	end
-	return db:sismember(hash, msg.from.id)
+
+	local hash = 'cache:chat:'..chat_id..':admins'
+	if not db:exists(hash) then
+		misc.cache_adminlist(chat_id, res)
+	end
+	return db:sismember(hash, user_id)
 end
 
 function roles.is_admin2(chat_id, user_id)
@@ -205,13 +213,22 @@ end
 function misc.resolve_user(username)
 	assert(username:byte(1) == string.byte('@'))
 
-	local stored_id = db:hget('bot:usernames', username:lower())
+	local stored_id = tonumber(db:hget('bot:usernames', username:lower()))
 	if not stored_id then return false end
 	local user_obj = api.getChat(stored_id)
 	if not user_obj then return stored_id end
 
-	-- User could change his username. Update it
-	db:hset('bot:usernames', username:lower(), user_obj.result.id)
+	-- User could change his username
+	if username ~= '@' .. user_obj.result.username then
+		if user_obj.result.username then
+			-- Update it if it exists
+			db:hset('bot:usernames', user_obj.result.username:lower(), user_obj.result.id)
+		end
+		-- And return false because this user not the same that asked
+		return false
+	end
+
+	assert(stored_id == user_obj.result.id)
 	return user_obj.result.id
 end
 
@@ -359,6 +376,32 @@ function div()
 	print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 end
 
+function misc.log_error(method, code, extras)
+	if not method or not code then return end
+	
+	local ignored_errors = {403, 429, 110, 111, 116, 131}
+	
+	for _, ignored_code in pairs(ignored_errors) do
+		if tonumber(code) == tonumber(ignored_code) then return end
+	end
+	
+	local text = 'Type: #badrequest\nCode: #n'..code
+	
+	if extras then
+		if next(extras) then
+			for i, extra in pairs(extras) do
+				text = text..'\n#more'..i..': '..extra
+			end
+		else
+			text = text..'\n#more: empty'
+		end
+	else
+		text = text..'\n#more: nil'
+	end
+	
+	api.sendLog(text)
+end
+
 function misc.getname(msg)
     local name = msg.from.first_name
 	if msg.from.username then name = name..' (@'..msg.from.username..')' end
@@ -492,7 +535,7 @@ function misc.getAdminlist(chat_id, user_id)
 	end
 
 	if not roles.bot_is_admin(chat_id) then
-		if roles.is_admin_cached(msg) then
+		if roles.is_admin_cached(chat_id, user_id) then
 			table.insert(lines, _("*I'm not an admin*. I can't fully perform "
 					.. "my functions until group creator hasn't made me admin. "
 					.. "See [this post](https://telegram.me/GroupButler_ch/104) "
@@ -522,8 +565,9 @@ end
 function misc.getSettings(chat_id)
     local hash = 'chat:'..chat_id..':settings'
         
+	local lang = db:get('lang:'..chat_id) or 'en' -- group language
     local message = _("Current settings for *the group*:\n\n")
-			.. _("*Language*: `%s`\n"):format(locale.language)
+			.. _("*Language*: %s\n"):format(config.available_languages[lang])
         
     --build the message
 	local strings = {
@@ -536,6 +580,7 @@ function misc.getSettings(chat_id)
 		Rules = _("Rules"),
 		Arab = _("Arab"),
 		Rtl = _("RTL"),
+		Reports = _("Reports"),
 	}
     for key, default in pairs(config.chat_settings['settings']) do
         
@@ -614,41 +659,6 @@ function misc.changeSettingStatus(chat_id, field)
 		db:hset(hash, field, 'on')
 		return turned_on[field:lower()]
 	end
-end
-
-function misc.changeFloodSettings(chat_id, screm)
-	local hash = 'chat:'..chat_id..':flood'
-	if type(screm) == 'string' then
-		if screm == 'kick' then
-			db:hset(hash, 'ActionFlood', 'ban')
-			return _("Now flooders will be banned")
-        elseif screm == 'ban' then
-			db:hset(hash, 'ActionFlood', 'tempban')
-			return _("Now flooders will be temporary banned")
-		elseif screm == 'tempban' then
-        	db:hset(hash, 'ActionFlood', 'kick')
-			return _("Now flooders will be kicked")
-        end
-    elseif type(screm) == 'number' then
-    	local old = tonumber(db:hget(hash, 'MaxFlood')) or 5
-    	local new
-    	if screm > 0 then
-    		new = db:hincrby(hash, 'MaxFlood', 1)
-    		if new > 25 then
-    			db:hincrby(hash, 'MaxFlood', -1)
-				return _("%d is not a valid value!\n"):format(new)
-						.. ("The value should be *higher* than 3 and *lower* then 26")
-    		end
-    	elseif screm < 0 then
-    		new = db:hincrby(hash, 'MaxFlood', -1)
-    		if new < 4 then
-    			db:hincrby(hash, 'MaxFlood', 1)
-				return _("%d is not a valid value!\n"):format(new)
-						.. ("The value should be *higher* than 3 and *lower* then 26")
-    		end
-    	end
-		return string.format('%d → %d', old, new)
-    end 	
 end
 
 function misc.changeMediaStatus(chat_id, media, new_status)

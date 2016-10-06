@@ -1,5 +1,4 @@
-HTTP = require('socket.http')
-HTTPS = require('ssl.https')
+curl = require('cURL')
 URL = require('socket.url')
 JSON = require('dkjson')
 redis = require('redis')
@@ -32,9 +31,6 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	locale = dofile('languages.lua')
 	api = require('methods')
 	
-	current = {h = 0, d = 0}
-	last = {h = 0, d = 0}
-	
 	bot = api.getMe().result -- Get bot info
 
 	plugins = {} -- Load plugins.
@@ -50,10 +46,6 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	end
 
 	print('\n'..clr.blue..'BOT RUNNING:'..clr.reset, clr.red..'[@'..bot.username .. '] [' .. bot.first_name ..'] ['..bot.id..']'..clr.reset..'\n')
-	if not on_reload then
-		api.sendAdmin(_("*Bot *@%s* started!*\n_%s_\n%d plugins loaded"):format(bot.username:escape(), os.date('!%c UTC'), #plugins), true)
-		start_timestamp = os.time()
-	end
 	
 	-- Generate a random seed and "pop" the first random number. :)
 	math.randomseed(os.time())
@@ -63,8 +55,14 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	last_cron = last_cron or os.time() -- the time of the last cron job,
 	is_started = true -- whether the bot should be running or not.
 	
-	if on_reload then return #plugins end
-
+	if on_reload then
+		return #plugins
+	else
+		api.sendAdmin(_("*Bot *@%s* started!*\n_%s_\n%d plugins loaded"):format(bot.username:escape(), os.date('!%c UTC'), #plugins), true)
+		start_timestamp = os.time()
+		current = {h = 0, d = 0}
+		last = {h = 0, d = 0}
+	end
 end
 
 local function get_from(msg)
@@ -87,17 +85,20 @@ local function extract_usernames(msg)
 	if msg.forward_from and msg.forward_from.username then
 		db:hset('bot:usernames', '@'..msg.forward_from.username:lower(), msg.forward_from.id)
 	end
-	if msg.added then
-		if msg.added.username then
-			db:hset('bot:usernames', '@'..msg.added.username:lower(), msg.added.id)
-		end
-		db:sadd(string.format('chat:%d:members', msg.chat.id), msg.added.id)
+	if msg.forward_from_chat and msg.forward_from_chat.username then
+		db:hset('bot:usernames', '@'..msg.forward_from_chat.username:lower(), msg.forward_from_chat.id)
 	end
-	if msg.removed then
-		if msg.removed.username then
-			db:hset('bot:usernames', '@'..msg.removed.username:lower(), msg.removed.id)
+	if msg.new_chat_member then
+		if msg.new_chat_member.username then
+			db:hset('bot:usernames', '@'..msg.new_chat_member.username:lower(), msg.new_chat_member.id)
 		end
-		db:srem(string.format('chat:%d:members', msg.chat.id), msg.removed.id)
+		db:sadd(string.format('chat:%d:members', msg.chat.id), msg.new_chat_member.id)
+	end
+	if msg.left_chat_member then
+		if msg.left_chat_member.username then
+			db:hset('bot:usernames', '@'..msg.left_chat_member.username:lower(), msg.left_chat_member.id)
+		end
+		db:srem(string.format('chat:%d:members', msg.chat.id), msg.left_chat_member.id)
 	end
 	if msg.reply then
 		extract_usernames(msg.reply)
@@ -158,9 +159,17 @@ on_msg_receive = function(msg) -- The fn run whenever a message is received.
 
 	collect_stats(msg)
 
-	local continue
+		local continue = true
+		local onm_success
 	for i, plugin in pairs(plugins) do
-			if plugin.onmessage then continue = plugin.onmessage(msg) end
+			if plugin.onmessage then
+				onm_success, continue = pcall(plugin.onmessage, msg)
+				--vardump(onm_success)
+				--vardump(continue)
+				if not onm_success then
+					api.sendAdmin('An #error occurred (preprocess).\n'..tostring(continue)..'\n'..locale.language..'\n'..msg.text)
+				end
+			end
 			if not continue then return end
 	end
 	
@@ -266,6 +275,9 @@ local function media_to_msg(msg)
 	elseif msg.contact then
 		msg.text = '###contact'
 		msg.media_type = 'contact'
+	elseif msg.game then
+		msg.text = '###game:' .. msg.game.title .. '\n' .. msg.game.description
+		msg.media_type = 'game'
 	else
 		msg.media = false
 	end
@@ -280,7 +292,7 @@ local function media_to_msg(msg)
 					db:hset('bot:usernames', '@'..entity.user.username:lower(), entity.user.id)
 				end
 			end
-			if entity.type == 'mention' then
+			if entity.type == 'mention' and entity.offset == 0 then
 				-- FIXME: cut the username taking into consideration length of unicode characters
 				local username = msg.text:sub(entity.offset + 1, entity.offset + entity.length)
 				local user_id = misc.resolve_user(username, msg.chat.id)
@@ -329,8 +341,6 @@ local function handle_inline_keyboards_cb(msg)
 	return on_msg_receive(msg)
 end
 
----------WHEN THE BOT IS STARTED FROM THE TERMINAL, THIS IS THE FIRST FUNCTION HE FOUNDS
-
 bot_init() -- Actually start the script. Run the bot_init function.
 
 while is_started do -- Start a loop while the bot should be running.
@@ -352,7 +362,9 @@ while is_started do -- Start a loop while the bot should be running.
 					misc.to_supergroup(msg.message)
 				elseif msg.message.new_chat_member or msg.message.left_chat_member or msg.message.group_chat_created then
 					service_to_message(msg.message)
-				elseif msg.message.photo or msg.message.video or msg.message.document or msg.message.voice or msg.message.audio or msg.message.sticker or msg.message.entities then
+				elseif msg.message.photo or msg.message.video or msg.message.document
+					or msg.message.voice or msg.message.audio or msg.message.sticker
+					or msg.message.entities or msg.message.game then
 					media_to_msg(msg.message)
 				elseif msg.message.forward_from then
 					forward_to_msg(msg.message)
