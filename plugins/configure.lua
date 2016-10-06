@@ -12,7 +12,9 @@ end
     
 
 local function action(msg, blocks)
-    if msg.chat.type == 'private' and not msg.cb then return end
+    if msg.chat.type == 'private' and not msg.cb then
+		return blocks[1] == 'settings'  -- for alias in private also. See plugins/private_settings.lua
+	end
     local chat_id = msg.target_id or msg.chat.id
     local keyboard = do_keyboard_config(chat_id)
     if msg.cb then
@@ -34,8 +36,8 @@ end
 return {
     action = action,
     triggers = {
-        config.cmd..'config$',
-        config.cmd..'settings$',
+        config.cmd..'(config)$',
+        config.cmd..'(settings)$',
         '^###cb:config:back:'
     }
 }

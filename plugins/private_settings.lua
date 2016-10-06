@@ -40,6 +40,8 @@ local function action(msg, blocks)
         if msg.chat.type == 'private' then
             local keyboard = doKeyboard_privsett(msg.from.id)
             api.sendKeyboard(msg.from.id, _('Change your private settings'), keyboard, true)
+		elseif blocks[1] == 'settings' then
+			return true  -- for alias in gruops also. See plugins/configure.lua
         end
     end
     if msg.cb then
