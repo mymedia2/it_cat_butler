@@ -32,6 +32,7 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	api = require('methods')
 	
 	bot = api.getMe().result -- Get bot info
+	bot.version = io.popen('git rev-parse --short HEAD'):read()
 
 	plugins = {} -- Load plugins.
 	for i,v in ipairs(config.plugins) do

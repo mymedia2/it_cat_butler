@@ -47,9 +47,14 @@ local action = function(msg, blocks)
 			end
 		end
 	end
-	if blocks[1] == 'about' then
+	if blocks[1] == 'about' or blocks[1] == 'info' then
 		local keyboard = do_keybaord_credits()
-		local text = 'This bot is based on [otouto](https://github.com/topkecleon/otouto) (AKA @mokubot, channel: @otouto), a multipurpose Lua bot.\nGroup Butler wouldn\'t exist without it.\n\nThe owner of this bot is @bac0nnn, do not pm him: use /groups command instead.\n\n*Some useful links*:'
+		local text = _("This bot is based on [otouto](https://github.com/topkecleon/otouto) "
+				.. "(AKA @mokubot, channel: @otouto), a multipurpose Lua bot.\n"
+				.. "Group Butler wouldn't exist without it.\n\n"
+				.. "The owner of this bot is @bac0nnn, do not PM him. Instead, join one of his groups.\n\n"
+				.. "🕔 Current bot version: `%s`\n"
+				.. "🔗 *Some useful links*:"):format(bot.version)
 		if msg.cb then
 			api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
 		else
@@ -97,6 +102,7 @@ return {
 		config.cmd..'(strings) (%a%a)$',
 		config.cmd..'(echo) (.*)$',
 		config.cmd..'(about)$',
+		config.cmd..'(info)$',
 		config.cmd..'(groups)$',
 		'^/start (groups)$',
 		
