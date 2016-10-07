@@ -637,17 +637,23 @@ end
 function misc.changeSettingStatus(chat_id, field)
 	local turned_off = {
 		welcome = _("Welcome message won't be displayed from now"),
+		goodbye = _("Goodbye message won't be displayed from now"),
 		extra = _("#extra commands are now available only for moderator"),
 		flood = _("Anti-flood is now off"),
-		rules = _("`/rules` will reply in private (for users)"),
-		antibot = _("Bots won't be kicked if added by an user")
+		rules = _("/rules will reply in private (for users)"),
+		antibot = _("Bots won't be kicked if added by an user"),
+		reports = _("Now reports from normal users won't be sent to admins"),
+		silent = _("Now the bot will be answering in a group"),
 	}
 	local turned_on = {
 		welcome = _("Welcome message will be displayed"),
+		goodbye = _("Goodbye message will be displayed"),
 		extra = _("#extra commands are now available for all"),
 		flood = _("Anti-flood is now on"),
-		rules = _("`/rules` will reply in the group (with everyone)"),
-		antibot = _("Bots will be kicked if added by an user")
+		rules = _("/rules will reply in the group (with everyone)"),
+		antibot = _("Bots will be kicked if added by an user"),
+		reports = _("Now reports from normal users will be sent to admins"),
+		silent = _("Now the bot will be answering in PM only"),
 	}
 
 	local hash = 'chat:'..chat_id..':settings'
