@@ -126,7 +126,7 @@ local function generate_poll(msg, defendant)
 end
 
 -- edits the message which was associated with the poll
-local function rebuild_poll_message(chat_id, user_id)
+local function rebuild_poll_message(chat_id, user_id, problems)
 	local hash = string.format('chat:%d:voteban:%d', chat_id, user_id)
 	local initiator = tonumber(db:hget(hash, 'initiator'))
 	local expired = tonumber(db:hget(hash, 'expired'))
@@ -138,13 +138,33 @@ local function rebuild_poll_message(chat_id, user_id)
 	local supports = tonumber(db:scard(hash .. ':supports'))
 	local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
 
-	initiator = api.getChat(initiator).result
-	defendant = api.getChat(user_id).result
+	local defendant = api.getChat(user_id).result
+	if supports + oppositionists < quorum then
+		initiator = api.getChat(initiator).result
 
-	local keyboard = do_keyboard_vote(defendant.id)
-	local text = get_header(initiator, defendant, supports, oppositionists,
-							quorum, expired, informative, was_active_previous)
-	local res = api.editMessageText(chat_id, msg_id, text, keyboard, true)
+		local keyboard = do_keyboard_vote(defendant.id)
+		local text = get_header(initiator, defendant, supports, oppositionists,
+								quorum, expired, informative, was_active_previous)
+		return api.editMessageText(chat_id, msg_id, text, keyboard, true)
+	else
+		local lines = {}
+		if supports > oppositionists then
+			if not problems then
+				table.insert(lines, _("The voting was closed, and %s was banned according "
+					.. "to a rules. The results:"):format(users.full_name(defendant)))
+			else
+				table.insert(lines, _("The voting was closed, a community decided ban %s, "
+					.. "but error ocured while ban this user _(%s)_. The results:")
+					:format(users.full_name(defendant), problems))
+			end
+		else
+			table.insert(lines, _("The voting was closed, but %s was not banned, because "
+				.. "a community protected him. The results:"):format(users.full_name(defendant)))
+		end
+		table.insert(lines, _("%d users voted *for ban*."):format(supports))
+		table.insert(lines, _("%d users voted *against ban*."):format(oppositionists))
+		api.editMessageText(chat_id, msg_id, table.concat(lines, '\n'), nil, true)
+	end
 end
 
 -- disposes the vote and returns true if decision has changed
@@ -162,30 +182,20 @@ local function cast_vote(chat_id, defendant_id, voter_id, value)
 	end
 end
 
-local function update()
-	-- FIXME: they don't recommend use keys function
-	for _, hash in pairs(db:keys('chat:*:voteban:*')) do
-		local chat_id, user_id = hash:match('chat:(-?%d+):voteban:(-?%d+)')
-		local expired = db:hget(hash, 'expired')
-		local msg_id = db:hget(hash, 'msg_id')
-		local defendant = api.getChat(user_id).result
-		if expired < os.time() then
-			-- Poll is finished
-			local text = _("Poll was closed because not get enough number of people for ban %s"):format(users.full_name(defendant))
-			api.editMessageText(chat_id, msg_id, text, nil, true)
-			db:del(hash)
+local function tirggerd(chat_id, user_id)
+	local hash = string.format('chat:%d:voteban:%d', chat_id, user_id)
+	local msg_id = db:hget(hash, 'msg_id')
+	local informative = db:hget(hash, 'informative')
+	local supports = tonumber(db:scard(hash .. ':supports'))
+	local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
+
+	if not informative and supports > oppositionists then
+		local ok, reason = api.banUser(chat_id, user_id)
+		if ok then
+			local text = _("A community banned %s"):format(users.full_name(api.getChat(user_id).result))
+			api.sendMessage(chat_id, text, true, msg_id)
 		else
-			-- Poll is continue
-			--local initiator = api.getChat(db:hget(hash, 'initiator')).result
-			--local supports = tonumber(db:hget(hash, 'supports')) or 0
-			--local oppositionists = tonumber(db:hget(hash, 'oppositionists')) or 0
-			--local quorum = tonumber(db:hget(hash, 'quorum'))
-			--local informative = db:hget(hash, 'informative')
-			--local was_active_previous = db:hget(hash, 'was_active_previous')
-			--local keyboard = do_keyboard_vote(chat_id, defendant.id)
-			--local text = get_header(initiator, defendant, supports,
-			--				  oppositionists, quorum, informative, was_active_previous)
-			--api.editMessageText(chat_id, msg_id, text, keyboard, true)
+			return reason
 		end
 	end
 end
@@ -195,13 +205,23 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 	local hash = string.format('chat:%d:voteban:%d', chat_id, user_id)
 	local informative = db:hget(hash, 'informative')
 
-	if from_id == defendant and informative ~= 'against himself' then
+	if from_id == user_id and informative ~= 'against himself' then
 		return _("You can't vote about yourself")
 	end
 
 	local text, without_name
 	if cast_vote(chat_id, user_id, from_id, value) then
-		rebuild_poll_message(chat_id, user_id)
+		local supports = tonumber(db:scard(hash .. ':supports'))
+		local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
+		local quorum = tonumber(db:hget(hash, 'quorum'))
+		local information
+		if supports + oppositionists >= quorum then
+			information = tirggerd(chat_id, user_id)
+		end
+		rebuild_poll_message(chat_id, user_id, information)
+		if supports + oppositionists >= quorum then
+			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
+		end
 
 		if value > 0 then
 			text = _("You have voted against %s")
@@ -222,6 +242,29 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 		text = text:format(users.full_name(api.getChat(user_id).result, true))
 	end
 	return text
+end
+
+local function update()
+	-- FIXME: they don't recommend use keys function
+	for i, hash in pairs(db:keys('chat:*:voteban:*')) do
+		local chat_id, user_id = hash:match('chat:(-?%d+):voteban:(-?%d+)$')
+		-- lua sucks because it have no continue statement
+		if not chat_id then goto continue end
+
+		local expired = tonumber(db:hget(hash, 'expired'))
+		local msg_id = tonumber(db:hget(hash, 'msg_id'))
+		if expired < os.time() then
+			-- Poll is finished
+			local defendant = api.getChat(user_id).result
+			local text = _("Poll was closed because not get enough number of people for ban %s"):format(users.full_name(defendant))
+			api.editMessageText(chat_id, msg_id, text, nil, true)
+			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
+		else
+			-- Poll is continue
+			rebuild_poll_message(chat_id, user_id)
+		end
+		::continue::
+	end
 end
 
 local function action(msg, blocks)
@@ -306,6 +349,7 @@ local function action(msg, blocks)
 end
 
 return {
+	cron = update,
 	action = action,
 	triggers = {
 		config.cmd..'(voteban) ([^%s]*) ?(.*)',
