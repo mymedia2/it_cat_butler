@@ -15,7 +15,8 @@ return {
 		notify_bug = true,
 		log_api_errors = true,
 		stream_commands = true,
-		admin_mode = false
+		admin_mode = false,
+		debug_connections = false,
 	},
 	channel = '@it_cat_encrypted', --channel username with the '@'
 	source_code = 'https://github.com/mymedia2/it_cat_butler',
@@ -24,8 +25,8 @@ return {
 		['Italian'] = 'https://telegram.me/joinchat/ITAgroupbutler',
 		['Persian'] = 'https://telegram.me/joinchat/CTDUTkCOsEt4DZT-SUQdBQ',
 		['Russian'] = 'https://telegram.me/rubutler',
-		['ИТ-кот'] = 'https://telegram.me/it_cat_encrypted',
-		['Spanish'] = 'https://telegram.me/SPAhroupbutler'
+		['IT-KOT'] = 'https://telegram.me/it_cat_encrypted',
+		['Spanish'] = 'https://telegram.me/ESgroupbutler',
 	},
 	plugins = {
 		'onmessage.lua', --THIS MUST BE THE FIRST: IF AN USER IS SPAMMING/IS BLOCKED, THE BOT WON'T GO THROUGH PLUGINS
@@ -48,8 +49,10 @@ return {
 		'mediasettings.lua',
 		'private.lua',
 		'admin.lua',
-		--'test.lua',
+		'test.lua',
 		--'logchannel.lua',
+		'report.lua',
+		'private_settings.lua',
 		'extra.lua', --must be the last
 	},
 	multipurpose_plugins = {
@@ -63,7 +66,7 @@ return {
 		['es'] = 'Español 🇪🇸',
 		['pt_BR'] = 'Português 🇧🇷',
 		['ru'] = 'Русский 🇷🇺',
-		['de'] = 'Deutschland 🇩🇪',
+		['de'] = 'Deutsch 🇩🇪',
 		['sv'] = 'Svensk 🇸🇪',
 		['ar'] = 'العربية 🇸🇩',
 		['fr'] = 'Français 🇫🇷',
@@ -72,17 +75,6 @@ return {
 		-- more to come
 	},
 	allow_fuzzy_translations = false,
-	media_list = {
-		'image',
-		'audio',
-		'video',
-		'sticker',
-		'gif',
-		'voice',
-		'contact',
-		'file',
-		'link'
-	},
 	chat_settings = {
 		['settings'] = {
 			['Welcome'] = 'on',
@@ -91,7 +83,7 @@ return {
 			['Flood'] = 'off',
 			['Silent'] = 'off',
 			['Rules'] = 'off',
-			['Antibot'] = 'off'
+			['Reports'] = 'off'
 		},
 		['flood'] = {
 			['MaxFlood'] = 5,
@@ -138,7 +130,8 @@ return {
 			['contact'] = 'ok',
 			['file'] = 'ok',
 			['link'] = 'ok',
-			['TGlink'] = 'ok'
+			['TGlink'] = 'ok',
+			['game'] = 'ok',
 		},
 		['tolog'] = {
 			['ban'] = 'yes',

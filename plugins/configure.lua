@@ -12,18 +12,20 @@ end
     
 
 local function action(msg, blocks)
-    if msg.chat.type == 'private' and not msg.cb then return end
+    if msg.chat.type == 'private' and not msg.cb then
+		return blocks[1] == 'settings'  -- for alias in private also. See plugins/private_settings.lua
+	end
     local chat_id = msg.target_id or msg.chat.id
     local keyboard = do_keyboard_config(chat_id)
     if msg.cb then
         chat_id = msg.target_id
-        api.editMessageText(msg.chat.id, msg.message_id, _("_Navigate the keyboard to change the settings_"), keyboard, true)
+        api.editMessageText(msg.chat.id, msg.message_id, _("_Change the settings by navigating the keyboard_"), keyboard, true)
     else
         if not roles.is_admin_cached(msg) then return end
-        local res = api.sendKeyboard(msg.from.id, _("_Navigate the keyboard to change the settings_"), keyboard, true)
+        local res = api.sendKeyboard(msg.from.id, _("_Change the settings by navigating the keyboard_"), keyboard, true)
         if not misc.is_silentmode_on(msg.chat.id) then --send the responde in the group only if the silent mode is off
             if res then
-                api.sendMessage(msg.chat.id, _("_I've sent you the keyboard in private_"), true)
+                api.sendMessage(msg.chat.id, _("_I've sent you the keyboard via private message_"), true)
             else
                 misc.sendStartMe(msg.chat.id, _("_Please message me first so I can message you_"))
             end
@@ -34,7 +36,8 @@ end
 return {
     action = action,
     triggers = {
-        config.cmd..'config$',
+        config.cmd..'(config)$',
+        config.cmd..'(settings)$',
         '^###cb:config:back:'
     }
 }

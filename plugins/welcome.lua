@@ -71,9 +71,9 @@ local function action(msg, blocks)
                 end
                 db:hset(hash, 'type', 'media')
                 db:hset(hash, 'content', file_id)
-                api.sendReply(msg, _("New media setted as welcome message: `%s`"):format(replied_to), true)
+                api.sendReply(msg, _("A form of media has been set as the welcome message: `%s`"):format(replied_to), true)
             else
-                api.sendReply(msg, _("Reply to a `sticker` or a `gif` to set them as *welcome message*"), true)
+                api.sendReply(msg, _("Reply to a `sticker` or a `gif` to set them as the *welcome message*"), true)
             end
         else
             db:hset(hash, 'type', 'custom')
@@ -83,10 +83,10 @@ local function action(msg, blocks)
                 db:hset(hash, 'type', 'no') --if wrong markdown, remove 'custom' again
                 db:hset(hash, 'content', 'no')
                 if code == 118 then
-				    api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
+				    api.sendMessage(msg.chat.id, _("This message is too long, I can't send it"))
 			    else
 					api.sendMessage(msg.chat.id, _("This text breaks the markdown.\n"
-						.. "More info about a proper use of markdown "
+						.. "More info about proper markdown usage can be found "
 						.. "[here](https://telegram.me/GroupButler_ch/46)."), true)
 			    end
             else
@@ -150,19 +150,22 @@ local function action(msg, blocks)
 		if msg.added.username then
 			local username = msg.added.username:lower()
 			if username:find('bot', -3) then
-				local antibot_status = db:hget('chat:'..msg.chat.id..':settings', 'Antibot')
-				if antibot_status and antibot_status == 'on' and msg.from and not roles.is_admin_cached(msg) then
-					api.banUser(msg.chat.id, msg.added.id)
-				end
 				return
 			end
 		end
 		
 		local text = get_welcome(msg)
-		if text then
+		if text then --if not text: welcome is locked or is a gif/sticker
 			api.sendMessage(msg.chat.id, text, true)
 		end
-		--if not text: welcome is locked or is a gif/sticker
+		
+		local send_rules_private = db:hget('user:'..msg.added.id..':settings', 'rules_on_join')
+		if send_rules_private and send_rules_private == 'on' then
+		    local rules = db:hget('chat:'..msg.chat.id..':info', 'rules')
+		    if rules then
+		        api.sendMessage(msg.added.id, rules, true)
+		    end
+	    end
 	end
 	if blocks[1] == 'removed' then
 		if not msg.service then return end

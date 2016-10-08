@@ -69,7 +69,7 @@ local function do_keyboard_flood(chat_id)
     for i, media in pairs(order) do
 		translation = exceptions[media]
         --ignored by the antiflood-> yes, no
-        local exc_status = (db:hget(hash, media)) or config.chat_settings['floodexceptions'][media]
+        local exc_status = db:hget(hash, media) or config.chat_settings['floodexceptions'][media]
         if exc_status == 'yes' then
             exc_status = '✅'
         else
@@ -114,7 +114,49 @@ function step(count, direction)
 	end
 end
 
+function changeFloodSettings(chat_id, screm)
+	local hash = 'chat:'..chat_id..':flood'
+	if type(screm) == 'string' then
+		if screm == 'kick' then
+			db:hset(hash, 'ActionFlood', 'ban')
+			return _("Now flooders will be banned")
+        elseif screm == 'ban' then
+			db:hset(hash, 'ActionFlood', 'tempban')
+			return _("Now flooders will be temporary banned")
+		elseif screm == 'tempban' then
+        	db:hset(hash, 'ActionFlood', 'kick')
+			return _("Now flooders will be kicked")
+        end
+    elseif type(screm) == 'number' then
+    	local old = tonumber(db:hget(hash, 'MaxFlood')) or 5
+    	local new
+    	if screm > 0 then
+    		new = db:hincrby(hash, 'MaxFlood', 1)
+    		if new > 25 then
+    			db:hincrby(hash, 'MaxFlood', -1)
+				return _("%d is not a valid value!\n"):format(new)
+						.. ("The value should be higher than 3 and lower then 26")
+    		end
+    	elseif screm < 0 then
+    		new = db:hincrby(hash, 'MaxFlood', -1)
+    		if new < 4 then
+    			db:hincrby(hash, 'MaxFlood', 1)
+				return _("%d is not a valid value!\n"):format(new)
+						.. ("The value should be higher than 3 and lower then 26")
+    		end
+    	end
+		return string.format('%d → %d', old, new)
+    end 	
+end
+
 local function action(msg, blocks)
+	if not msg.cb then return end
+	local chat_id = msg.target_id or msg.chat.id
+	if not roles.is_admin_cached(chat_id, msg.from.id) then
+		api.answerCallbackQuery(msg.cb_id, _("You're no longer admin"))
+		return
+	end
+
 	local header = _([[
 You can manage the group flood settings from here.
 
@@ -134,39 +176,10 @@ You can set some exceptions for the antiflood:
 • *Note*: in "_texts_" are included all the other types of media (file, audio...)
 ]])
 
-    
-    if not msg.cb and msg.chat.type == 'private' then return end
-    
-    local chat_id = msg.target_id or msg.chat.id
-    
-    local text, keyboard
-    
-    if blocks[1] == 'antiflood' then
-        if not roles.is_admin_cached(msg) then return end
-        if blocks[2]:match('%d%d?') then
-            if tonumber(blocks[2]) < 4 or tonumber(blocks[2]) > 25 then
-				local text = _("`%s` is not a valid value!\nThe value should be *higher* than `3` and *lower* then `26`")
-				api.sendReply(msg, text:format(blocks[1]), true)
-			else
-	    	    local new = tonumber(blocks[2])
-	    	    local old = tonumber(db:hget('chat:'..msg.chat.id..':flood', 'MaxFlood')) or config.chat_settings['flood']['MaxFlood']
-	    	    if new == old then
-	            	api.sendReply(msg, _("The max number of messages is already %d"):format(new), true)
-	    	    else
-	            	db:hset('chat:'..msg.chat.id..':flood', 'MaxFlood', new)
-					local text = _("The *max number* of messages (in *5 seconds*) changed _from_  %d _to_  %d")
-	            	api.sendReply(msg, text:format(old, new), true)
-	    	    end
-            end
-            return
-        end
-    else
-        if not msg.cb then return end --avaoid trolls
+    local text
         
         if blocks[1] == 'config' then
-            keyboard = do_keyboard_flood(chat_id)
-            api.editMessageText(msg.chat.id, msg.message_id, header, keyboard, true)
-            return
+        text = _("Antiflood settings")
         end
         
         if blocks[1] == 'alert' then
@@ -195,13 +208,13 @@ You can set some exceptions for the antiflood:
         local action
         if blocks[1] == 'action' or blocks[1] == 'dim' or blocks[1] == 'raise' then
             if blocks[1] == 'action' then
-                action = (db:hget('chat:'..chat_id..':flood', 'ActionFlood')) or 'kick'
+            action = db:hget('chat:'..chat_id..':flood', 'ActionFlood') or 'kick'
             elseif blocks[1] == 'dim' then
                 action = -1
             elseif blocks[1] == 'raise' then
                 action = 1
             end
-            text = misc.changeFloodSettings(chat_id, action):escape_hard()
+            text = changeFloodSettings(chat_id, action)
 		elseif blocks[1] == 'increase' then
 			local hash = string.format('chat:%d:flood', chat_id)
 			local old = tonumber(db:hget(hash, 'TempBanDuration')) or config.chat_settings.flood['TempBanDuration']
@@ -225,25 +238,23 @@ You can set some exceptions for the antiflood:
             text = misc.changeSettingStatus(chat_id, 'Flood'):escape_hard()
         end
         
-        keyboard = do_keyboard_flood(chat_id)
+    local keyboard = do_keyboard_flood(chat_id)
         api.editMessageText(msg.chat.id, msg.message_id, header, keyboard, true)
         api.answerCallbackQuery(msg.cb_id, text)
-    end
 end
 
 return {
     action = action,
     triggers = {
-        config.cmd..'(antiflood) (%d%d?)$',
-        
-        '^###cb:flood:(alert):(%w+)$',
-        '^###cb:flood:(status):(-%d+)$',
-        '^###cb:flood:(action):(-%d+)$',
-        '^###cb:flood:(dim):(-%d+)$',
-        '^###cb:flood:(raise):(-%d+)$',
-		'^###cb:flood:(reduce):(-%d+)$',
-		'^###cb:flood:(increase):(-%d+)$',
-        '^###cb:flood:(exc):(%a+):(-%d+)$',
+        '^###cb:flood:(alert):(num)$',
+        '^###cb:flood:(alert):(voice)$',
+        '^###cb:flood:(status):(-?%d+)$',
+        '^###cb:flood:(action):(-?%d+)$',
+        '^###cb:flood:(dim):(-?%d+)$',
+        '^###cb:flood:(raise):(-?%d+)$',
+		'^###cb:flood:(reduce):(-?%d+)$',
+		'^###cb:flood:(increase):(-?%d+)$',
+        '^###cb:flood:(exc):(%a+):(-?%d+)$',
         
         '^###cb:(config):antiflood:'
     }

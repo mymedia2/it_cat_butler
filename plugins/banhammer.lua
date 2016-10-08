@@ -4,8 +4,7 @@ local function cron()
 		for unban_time,info in pairs(all) do
 			if os.time() > tonumber(unban_time) then
 				local chat_id, user_id = info:match('(-%d+):(%d+)')
-				api.unbanUser(chat_id, user_id, true)
-				api.unbanUser(chat_id, user_id, false)
+				api.unbanUser(chat_id, user_id)
 				db:hdel('tempbanned', unban_time)
 				db:srem('chat:'..chat_id..':tempbanned', user_id) --hash needed to check if an user is already tempbanned or not
 			end
@@ -95,7 +94,7 @@ local action = function(msg, blocks)
 		    	if not res then
 		    		if not motivation then
 		    			motivation = _("I can't kick this user.\n"
-								.. "Probably I'm not an Amdin, or the user is an Admin iself")
+								.. "Either I'm not an admin, or the targeted user is!")
 		    		end
 		    		api.sendReply(msg, motivation, true)
 		    	else
@@ -105,9 +104,9 @@ local action = function(msg, blocks)
 					local is_already_tempbanned = db:sismember('chat:'..chat_id..':tempbanned', user_id) --hash needed to check if an user is already tempbanned or not
 					local text
 					if is_already_tempbanned then
-						text = _("Ban time updated for %s. Ban expiration: %s"):format(kicked, time_reply)
+						text = _("Ban time was updated for %s. Ban expiration: %s"):format(kicked, time_reply)
 					else
-						text = _("User %s banned. Ban expiration: %s"):format(kicked, time_reply)
+						text = _("User %s was banned. Ban expiration: %s"):format(kicked, time_reply)
 						db:sadd('chat:'..chat_id..':tempbanned', user_id) --hash needed to check if an user is already tempbanned or not
 					end
 					api.sendMessage(chat_id, text, true)
@@ -118,7 +117,7 @@ local action = function(msg, blocks)
 		    	if not res then
 		    		if not motivation then
 		    			motivation = _("I can't kick this user.\n"
-								.. "Probably I'm not an Amdin, or the user is an Admin iself")
+								.. "Either I'm not an admin, or the targeted user is!")
 		    		end
 		    		api.sendReply(msg, motivation, true)
 		    	else
@@ -131,7 +130,7 @@ local action = function(msg, blocks)
 		    	if not res then
 		    		if not motivation then
 		    			motivation = _("I can't kick this user.\n"
-								.. "Probably I'm not an Amdin, or the user is an Admin iself")
+								.. "Either I'm not an admin, or the targeted user is!")
 		    		end
 		    		api.sendReply(msg, motivation, true)
 		    	else
