@@ -1,19 +1,20 @@
-function do_keyboard_vote(chat_id, user_id)
+local function do_keyboard_vote(user_id)
 	return {
 		inline_keyboard = {
 			{
-				{text = _("Yes"), callback_data = string.format('voteban:increase:%d:%d', chat_id, user_id)},
-				{text = _("No"), callback_data = string.format('voteban:decrease:%d:%d', chat_id, user_id)},
+				{text = _("Yes"), callback_data = string.format('voteban:increase:%d', user_id)},
+				{text = _("No"), callback_data = string.format('voteban:decrease:%d', user_id)},
 			},
 			{
-				{text = _("Revoke the vote"), callback_data = string.format('voteban:revoke:%d:%d', chat_id, user_id)},
-				{text = _("Cancel the poll"), callback_data = string.format('voteban:cancel:%d:%d', chat_id, user_id)},
+				{text = _("Revoke the vote"), callback_data = string.format('voteban:revoke:%d', user_id)},
+				{text = _("Cancel the poll"), callback_data = string.format('voteban:cancel:%d', user_id)},
 			},
 		}
 	}
 end
 
-function get_header(initiator, defendant, supports, oppositionists, quorum, expired, informative, previous_exists)
+-- return text of messages with current information about ballot
+local function get_header(initiator, defendant, supports, oppositionists, quorum, expired, informative, previous_exists)
 	assert(supports + oppositionists < quorum)
 	assert(not informative or informative == 'against bot' or informative == 'against himself' or
 		   informative == 'against admin' or informative == 'bot not admin')
@@ -52,15 +53,15 @@ function get_header(initiator, defendant, supports, oppositionists, quorum, expi
 	return table.concat(lines, '\n')
 end
 
-function generate_poll(msg, defendant)
+local function generate_poll(msg, defendant)
 	if not defendant then
 		api.sendMessage(msg.chat.id, _("Against whom do you vote?"))
 		return false
 	end
 
 	local hash = string.format('chat:%d:voteban', msg.chat.id)
-	local quorum = db:hget(hash, 'quorum') or config.chat_settings.voteban.quorum
-	local duration = db:hget(hash, 'duration') or config.chat_settings.voteban.duration
+	local quorum = tonumber(db:hget(hash, 'quorum') or config.chat_settings.voteban.quorum)
+	local duration = tonumber(db:hget(hash, 'duration') or config.chat_settings.voteban.duration)
 	duration = duration * 60  -- convert to seconds
 
 	-- Detect if previous poll was or not and set the initiator
@@ -74,6 +75,7 @@ function generate_poll(msg, defendant)
 	else
 		local user_id = tonumber(db:hget(hash, 'initiator'))
 		if not user_id or msg.from.id == user_id then
+			db:hset(hash, 'initiator', msg.from.id)
 			initiator = msg.from
 		else
 			initiator = api.getChat(user_id).result
@@ -87,16 +89,16 @@ function generate_poll(msg, defendant)
 		informative = 'against bot'
 	elseif initiator.id == defendant.id then
 		informative = 'against himself'
-	elseif roles.is_admin_cached({chat = {id = msg.chat.id}, from = {id = defendant.id}}) then
+	elseif roles.is_admin_cached(msg.chat.id, defendant.id) then
 		informative = 'against admin'
 	elseif not roles.bot_is_admin(msg.chat.id) then
 		informative = 'bot not admin'
 	end
 
 	-- Send the keyboard into the chat
-	local supports = tonumber(db:hget(hash, 'supports')) or 0
-	local oppositionists = tonumber(db:hget(hash, 'oppositionists')) or 0
-	local keyboard = do_keyboard_vote(msg.chat.id, defendant.id)
+	local supports = tonumber(db:scard(hash .. ':supports'))
+	local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
+	local keyboard = do_keyboard_vote(defendant.id)
 	local text = get_header(initiator, defendant, supports, oppositionists,
 							quorum, os.time() + duration, informative, was_active_previous)
 	local res = api.sendKeyboard(msg.chat.id, text, keyboard, true)
@@ -123,7 +125,44 @@ function generate_poll(msg, defendant)
 	return true
 end
 
-function update()
+-- edits the message which was associated with the poll
+local function rebuild_poll_message(chat_id, user_id)
+	local hash = string.format('chat:%d:voteban:%d', chat_id, user_id)
+	local initiator = tonumber(db:hget(hash, 'initiator'))
+	local expired = tonumber(db:hget(hash, 'expired'))
+	local msg_id = tonumber(db:hget(hash, 'msg_id'))
+	local quorum = tonumber(db:hget(hash, 'quorum'))
+	local informative = db:hget(hash, 'informative')
+	local was_active_previous = db:hget(hash, 'was_active_previous')
+
+	local supports = tonumber(db:scard(hash .. ':supports'))
+	local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
+
+	initiator = api.getChat(initiator).result
+	defendant = api.getChat(user_id).result
+
+	local keyboard = do_keyboard_vote(defendant.id)
+	local text = get_header(initiator, defendant, supports, oppositionists,
+							quorum, expired, informative, was_active_previous)
+	local res = api.editMessageText(chat_id, msg_id, text, keyboard, true)
+end
+
+-- disposes the vote and returns true if decision has changed
+local function cast_vote(chat_id, defendant_id, voter_id, value)
+	local hash = string.format('chat:%d:voteban:%d', chat_id, defendant_id)
+	if value > 0 then
+		db:srem(hash .. ':oppositionists', voter_id)
+		return db:sadd(hash .. ':supports', voter_id) == 1
+	elseif value < 0 then
+		db:srem(hash .. ':supports', voter_id)
+		return db:sadd(hash .. ':oppositionists', voter_id) == 1
+	else
+		return db:srem(hash .. ':supports', voter_id) == 1
+			or db:srem(hash .. ':oppositionists', voter_id) == 1
+	end
+end
+
+local function update()
 	-- FIXME: they don't recommend use keys function
 	for _, hash in pairs(db:keys('chat:*:voteban:*')) do
 		local chat_id, user_id = hash:match('chat:(-?%d+):voteban:(-?%d+)')
@@ -151,7 +190,41 @@ function update()
 	end
 end
 
-function action(msg, blocks)
+-- counts of votes, edits message header and returns text for callback answer
+local function change_votes_machinery(chat_id, user_id, from_id, value)
+	local hash = string.format('chat:%d:voteban:%d', chat_id, user_id)
+	local informative = db:hget(hash, 'informative')
+
+	if from_id == defendant and informative ~= 'against himself' then
+		return _("You can't vote about yourself")
+	end
+
+	local text, without_name
+	if cast_vote(chat_id, user_id, from_id, value) then
+		rebuild_poll_message(chat_id, user_id)
+
+		if value > 0 then
+			text = _("You have voted against %s")
+		elseif value < 0 then
+			text = _("You have voted for save %s")
+		else
+			text, without_name = _("You have revoked your vote"), true
+		end
+	elseif value > 0 then
+		text = _("You already voted against %s")
+	elseif value < 0 then
+		text = _("You already voted for save %s")
+	else
+		text, without_name = _("You already revoked your vote"), true
+	end
+
+	if not without_name then
+		text = text:format(users.full_name(api.getChat(user_id).result, true))
+	end
+	return text
+end
+
+local function action(msg, blocks)
 	if blocks[1] == 'voteban' then
 		local hash = string.format('chat:%d:voteban', msg.chat.id)
 		local status = db:hget(hash, 'status') or config.chat_settings.voteban.status
@@ -200,19 +273,34 @@ function action(msg, blocks)
 		generate_poll(msg, nominated)
 	end
 	if msg.cb then
-		local chat_id = tonumber(blocks[2])
-		local defendant = tonumber(blocks[3])
+		local defendant = tonumber(blocks[2])
+		local text
 		if blocks[1] == 'increase' then
-			-- ...
+			text = change_votes_machinery(msg.chat.id, defendant, msg.from.id, 1)
 		end
 		if blocks[1] == 'decrease' then
-			-- ...
+			text = change_votes_machinery(msg.chat.id, defendant, msg.from.id, -1)
 		end
 		if blocks[1] == 'revoke' then
-			-- ...
+			text = change_votes_machinery(msg.chat.id, defendant, msg.from.id, 0)
 		end
 		if blocks[1] == 'cancel' then
-			-- ...
+			local hash = string.format('chat:%d:voteban:%d', msg.chat.id, defendant)
+			local initiator = tonumber(db:hget(hash, 'initiator'))
+			if msg.from.id == initiator then
+				defendant = api.getChat(defendant).result
+				local text = _("The poll against %s was closed by initiator"):format(users.full_name(defendant))
+				api.editMessageText(msg.chat.id, msg.message_id, text, nil, true)
+				db:del(hash, hash .. ':supports', hash .. ':oppositionists')
+			elseif roles.is_admin_cached(msg.chat.id, msg.from.id) then
+				api.editMessageText(msg.chat.id, msg.message_id, _("The poll was closed by administrator"))
+				db:del(hash, hash .. ':supports', hash .. ':oppositionists')
+			else
+				text = _("Only administrators or initiator can close the poll")
+			end
+		end
+		if text then
+			api.answerCallbackQuery(msg.cb_id, text)
 		end
 	end
 end
@@ -223,9 +311,9 @@ return {
 		config.cmd..'(voteban) ([^%s]*) ?(.*)',
 		config.cmd..'(voteban)$',
 
-		'^###cb:voteban:(increase):(-?%d+):(-?%d+)$',
-		'^###cb:voteban:(decrease):(-?%d+):(-?%d+)$',
-		'^###cb:voteban:(revoke):(-?%d+):(-?%d+)$',
-		'^###cb:voteban:(cancel):(-?%d+):(-?%d+)$',
+		'^###cb:voteban:(increase):(-?%d+)$',
+		'^###cb:voteban:(decrease):(-?%d+)$',
+		'^###cb:voteban:(revoke):(-?%d+)$',
+		'^###cb:voteban:(cancel):(-?%d+)$',
 	}
 }
