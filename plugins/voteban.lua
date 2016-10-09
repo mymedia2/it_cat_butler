@@ -16,18 +16,23 @@ end
 -- return text of messages with current information about ballot
 local function get_header(initiator, defendant, supports, oppositionists, quorum, expired, informative, previous_exists)
 	assert(supports + oppositionists < quorum)
-	assert(not informative or informative == 'against bot' or informative == 'against himself' or
-		   informative == 'against admin' or informative == 'bot not admin')
+	assert(not informative  -- the usual poll
+		or informative == 'against bot'  -- attempt to ban the bot
+		or informative == 'against himself'  -- attempt to ban himself
+		or informative == 'against admin'  -- attempt to ban an admin
+		or informative == 'bot not admin')  -- the bot isn't an admin
 	local lines = {}
 	
 	if previous_exists then
 		table.insert(lines, _("This is _continuation_ of the previous poll."))
 	end
 
-	if initiator.id ~= defendant.id then
-		table.insert(lines, _("%s suggests a ban %s. Ban him?\n"):format(users.full_name(initiator), users.full_name(defendant)))
-	else
+	if defendant.id == initiator.id then
 		table.insert(lines, _("%s suggests a ban himself. Ban him?\n"):format(users.full_name(initiator)))
+	elseif defendant.id == bot.id then
+		table.insert(lines, _("%s suggests a ban me. Ban me?\n"):format(users.full_name(initiator)))
+	else
+		table.insert(lines, _("%s suggests a ban %s. Ban him?\n"):format(users.full_name(initiator), users.full_name(defendant)))
 	end
 
 	-- TODO: make plural forms
@@ -48,6 +53,79 @@ local function get_header(initiator, defendant, supports, oppositionists, quorum
 	if informative == 'bot not admin' then
 		-- TODO: add info about how to make the bot admin
 		table.insert(lines, _("\n*Informative poll*. User won't banned because I'am not an admin."))
+	end
+
+	return table.concat(lines, '\n')
+end
+
+-- return text of messages with information about a finished poll
+local function conclusion(initiator, defendant, supports, oppositionists, quorum, upshot, informative)
+	assert(not upshot and informative  -- that was informative poll
+		or upshot == 'was banned'  -- the user was successfull banned
+		or upshot == 'bot not admin'  -- ban fail, because the bot ceased to be an admin
+		or upshot == 'already admin'  -- ban fail, because the user became an admin
+		or upshot == 'was protected'  -- a community interceded for the user
+		or upshot == 'no decision')  -- the voting time has expired
+	assert(not informative  -- the usual poll
+		or informative == 'against bot'  -- attempt to ban the bot
+		or informative == 'against himself'  -- attempt to ban himself
+		or informative == 'against admin'  -- attempt to ban an admin
+		or informative == 'bot not admin')  -- the bot was not an admin
+	assert(supports + oppositionists == quorum and supports > oppositionists and upshot == 'was banned'
+		or supports + oppositionists == quorum and supports > oppositionists and upshot == 'bot not admin'
+		or supports + oppositionists == quorum and supports > oppositionists and upshot == 'already admin'
+		or supports + oppositionists == quorum and supports <= oppositionists and upshot == 'was protected'
+		or supports + oppositionists == quorum and not upshot and informative
+		or supports + oppositionists < quorum and upshot == 'no decision')
+	local lines = {}
+
+	local defendant_name = users.full_name(defendant)
+	if upshot == 'was banned' then
+		table.insert(lines, _("The voting was closed, and %s was banned according "
+			.. "to decision of community. The results:\n"):format(defendant_name))
+	end
+	if upshot == 'bot not admin' then
+		table.insert(lines, _("The voting was closed, a community decided ban %s, "
+			.. "but error ocured while ban this user, because I ceased to be "
+			.. "_an admin_. The results:\n"):format(defendant_name))
+	end
+	if upshot == 'already admin' then
+		table.insert(lines, _("The voting was closed, a community decided ban %s, "
+			.. "but error ocured while ban this user, because he became "
+			.. "_an admin_. The results:\n"):format(defendant_name))
+	end
+	if upshot == 'was protected' then
+		table.insert(lines, _("The voting was closed. %s suggested a ban %s, but "
+			.. "a community protected him. The results:\n")
+			:format(users.full_name(initiator), users.full_name(defendant)))
+	end
+	if upshot == 'no decision' then
+		table.insert(lines, _("Poll was closed because not get enough number of people "
+			.. "for ban %s. The results:\n"):format(users.full_name(defendant)))
+	end
+	if informative then
+		table.insert(lines, _("Poll was closed, but it was informative so the user hadn't "
+			.. "been banned. The results:\n"):format(users.full_name(defendant)))
+	end
+
+	-- TODO: make plural forms
+	table.insert(lines, _("%d users voted *for ban*."):format(supports))
+	table.insert(lines, _("%d users voted *against ban*."):format(oppositionists))
+	if upshot == 'no decision' then
+		table.insert(lines, _("It was not enough votes from %d users"):format(quorum - supports - oppositionists))
+	end
+
+	if informative == 'against bot' then
+		table.insert(lines, _("\n*That was informative poll*. Against me they can't vote."))
+	end
+	if informative == 'against himself' then
+		table.insert(lines, _("\n*That was informative poll*. The user wanted to ban himself."))
+	end
+	if informative == 'against admin' then
+		table.insert(lines, _("\n*That was informative poll*. User was not banned because he is an admin."))
+	end
+	if informative == 'bot not admin' then
+		table.insert(lines, _("\n*That was informative poll*. User was banned because I'am not an admin."))
 	end
 
 	return table.concat(lines, '\n')
@@ -182,24 +260,6 @@ local function cast_vote(chat_id, defendant_id, voter_id, value)
 	end
 end
 
-local function tirggerd(chat_id, user_id)
-	local hash = string.format('chat:%d:voteban:%d', chat_id, user_id)
-	local msg_id = db:hget(hash, 'msg_id')
-	local informative = db:hget(hash, 'informative')
-	local supports = tonumber(db:scard(hash .. ':supports'))
-	local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
-
-	if not informative and supports > oppositionists then
-		local ok, reason = api.banUser(chat_id, user_id)
-		if ok then
-			local text = _("A community banned %s"):format(users.full_name(api.getChat(user_id).result))
-			api.sendMessage(chat_id, text, true, msg_id)
-		else
-			return reason
-		end
-	end
-end
-
 -- counts of votes, edits message header and returns text for callback answer
 local function change_votes_machinery(chat_id, user_id, from_id, value)
 	local hash = string.format('chat:%d:voteban:%d', chat_id, user_id)
@@ -214,13 +274,36 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 		local supports = tonumber(db:scard(hash .. ':supports'))
 		local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
 		local quorum = tonumber(db:hget(hash, 'quorum'))
-		local information
 		if supports + oppositionists >= quorum then
-			information = tirggerd(chat_id, user_id)
-		end
-		rebuild_poll_message(chat_id, user_id, information)
-		if supports + oppositionists >= quorum then
+			local msg_id = tonumber(db:hget(hash, 'msg_id'))
+			local send_confirmation, code
+			if not informative and supports > oppositionists then
+				send_confirmation, code = api.banUser(chat_id, user_id)
+			end
+
+			local upshot, initiator
+			if send_confirmation then
+				upshot = 'was banned'
+			elseif code == 101 or code == 105 or code == 107 then
+				upshot = 'bot not admin'
+			elseif code == 102 or code == 104 then
+				upshot = 'already admin'
+			elseif supports <= oppositionists then
+				upshot = 'was protected'
+				initiator = api.getChat(db:hget(hash, 'initiator')).result
+			end
+			local defendant = api.getChat(user_id).result
+
+			local text = conclusion(initiator, defendant, supports, oppositionists, quorum, upshot, informative)
+			api.editMessageText(chat_id, msg_id, text, nil, true)
+
+			if send_confirmation then
+				local text = _("%s has banned"):format(users.full_name(defendant))
+				api.sendMessage(chat_id, text, true, msg_id)
+			end
 			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
+		else
+			rebuild_poll_message(chat_id, user_id)
 		end
 
 		if value > 0 then
@@ -249,15 +332,21 @@ local function update()
 	for i, hash in pairs(db:keys('chat:*:voteban:*')) do
 		local chat_id, user_id = hash:match('chat:(-?%d+):voteban:(-?%d+)$')
 		-- lua sucks because it have no continue statement
-		if not chat_id then goto continue end
+		if not chat_id or not user_id then goto continue end
 
 		local expired = tonumber(db:hget(hash, 'expired'))
 		local msg_id = tonumber(db:hget(hash, 'msg_id'))
 		if expired < os.time() then
 			-- Poll is finished
 			local defendant = api.getChat(user_id).result
-			local text = _("Poll was closed because not get enough number of people for ban %s"):format(users.full_name(defendant))
+			local supports = tonumber(db:scard(hash .. ':supports'))
+			local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
+			local quorum = tonumber(db:hget(hash, 'quorum'))
+			local informative = db:hget(hash, 'informative')
+
+			local text = conclusion(nil, defendant, supports, oppositionists, quorum, 'no decision', informative)
 			api.editMessageText(chat_id, msg_id, text, nil, true)
+
 			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
 		else
 			-- Poll is continue
@@ -274,7 +363,6 @@ local function action(msg, blocks)
 		if status == 'off' and not roles.is_admin_cached(msg) then return end
 
 		-- choose the hero
-		vardump(blocks)
 		local nominated
 		if msg.mentions then
 			nominated = next(msg.mentions)
