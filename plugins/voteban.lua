@@ -28,18 +28,18 @@ local function get_header(initiator, defendant, supports, oppositionists, quorum
 	end
 
 	if defendant.id == initiator.id then
-		table.insert(lines, _("%s suggests a ban himself. Ban him?\n"):format(users.full_name(initiator)))
+		table.insert(lines, _("%s suggests to ban himself. Ban him?\n"):format(users.full_name(initiator)))
 	elseif defendant.id == bot.id then
-		table.insert(lines, _("%s suggests a ban me. Ban me?\n"):format(users.full_name(initiator)))
+		table.insert(lines, _("%s suggests to ban me. Are you really want to ban me?\n"):format(users.full_name(initiator)))
 	else
-		table.insert(lines, _("%s suggests a ban %s. Ban him?\n"):format(users.full_name(initiator), users.full_name(defendant)))
+		table.insert(lines, _("%s suggests to ban %s. Ban him?\n"):format(users.full_name(initiator), users.full_name(defendant)))
 	end
 
 	-- TODO: make plural forms
 	table.insert(lines, _("%d users voted *for ban*."):format(supports))
 	table.insert(lines, _("%d users voted *against ban*."):format(oppositionists))
 	table.insert(lines, _("Requires additional %d users."):format(quorum - supports - oppositionists))
-	table.insert(lines, _("The poll will be closed in %d minutes"):format((expired - os.time()) / 60))
+	table.insert(lines, _("The poll will be automatically closed in %d minutes"):format((expired - os.time()) / 60))
 
 	if informative == 'against bot' then
 		table.insert(lines, _("\n*Informative poll*. You can't vote for ban me."))
@@ -65,7 +65,8 @@ local function conclusion(initiator, defendant, supports, oppositionists, quorum
 		or upshot == 'bot not admin'  -- ban fail, because the bot ceased to be an admin
 		or upshot == 'already admin'  -- ban fail, because the user became an admin
 		or upshot == 'was protected'  -- a community interceded for the user
-		or upshot == 'no decision')  -- the voting time has expired
+		or upshot == 'no decision'  -- the voting time has expired
+		or upshot == 'canceled')  -- the poll was closed by initiator
 	assert(not informative  -- the usual poll
 		or informative == 'against bot'  -- attempt to ban the bot
 		or informative == 'against himself'  -- attempt to ban himself
@@ -76,7 +77,8 @@ local function conclusion(initiator, defendant, supports, oppositionists, quorum
 		or supports + oppositionists == quorum and supports > oppositionists and upshot == 'already admin'
 		or supports + oppositionists == quorum and supports <= oppositionists and upshot == 'was protected'
 		or supports + oppositionists == quorum and not upshot and informative
-		or supports + oppositionists < quorum and upshot == 'no decision')
+		or supports + oppositionists < quorum and upshot == 'no decision'
+		or supports + oppositionists < quorum and upshot == 'canceled')
 	local lines = {}
 
 	local defendant_name = users.full_name(defendant)
@@ -95,16 +97,19 @@ local function conclusion(initiator, defendant, supports, oppositionists, quorum
 			.. "_an admin_. The results:\n"):format(defendant_name))
 	end
 	if upshot == 'was protected' then
-		table.insert(lines, _("The voting was closed. %s suggested a ban %s, but "
+		table.insert(lines, _("The voting was closed. %s suggested to ban %s, but "
 			.. "a community protected him. The results:\n")
 			:format(users.full_name(initiator), users.full_name(defendant)))
 	end
 	if upshot == 'no decision' then
-		table.insert(lines, _("Poll was closed because not get enough number of people "
+		table.insert(lines, _("The voting was closed, because not get enough number of people "
 			.. "for ban %s. The results:\n"):format(users.full_name(defendant)))
 	end
-	if informative then
-		table.insert(lines, _("Poll was closed, but it was informative so the user hadn't "
+	if upshot == 'canceled' then
+		table.insert(lines, _("The poll against %s was closed by initiator. The results:\n"):format(users.full_name(defendant)))
+	end
+	if informative and not upshot then
+		table.insert(lines, _("The voting was closed, but it was informative so the user hadn't "
 			.. "been banned. The results:\n"):format(users.full_name(defendant)))
 	end
 
@@ -115,17 +120,19 @@ local function conclusion(initiator, defendant, supports, oppositionists, quorum
 		table.insert(lines, _("It was not enough votes from %d users"):format(quorum - supports - oppositionists))
 	end
 
-	if informative == 'against bot' then
-		table.insert(lines, _("\n*That was informative poll*. Against me they can't vote."))
-	end
-	if informative == 'against himself' then
-		table.insert(lines, _("\n*That was informative poll*. The user wanted to ban himself."))
-	end
-	if informative == 'against admin' then
-		table.insert(lines, _("\n*That was informative poll*. User was not banned because he is an admin."))
-	end
-	if informative == 'bot not admin' then
-		table.insert(lines, _("\n*That was informative poll*. User was banned because I'am not an admin."))
+	if upshot ~= 'was protected' then
+		if informative == 'against bot' then
+			table.insert(lines, _("\n*That was informative poll*. Against me they can't vote."))
+		end
+		if informative == 'against himself' then
+			table.insert(lines, _("\n*That was informative poll*. The user wanted to ban himself."))
+		end
+		if informative == 'against admin' then
+			table.insert(lines, _("\n*That was informative poll*. User was not banned because he is an admin."))
+		end
+		if informative == 'bot not admin' then
+			table.insert(lines, _("\n*That was informative poll*. User was banned because I'am not an admin."))
+		end
 	end
 
 	return table.concat(lines, '\n')
@@ -144,21 +151,13 @@ local function generate_poll(msg, defendant)
 
 	-- Detect if previous poll was or not and set the initiator
 	local hash = string.format('chat:%d:voteban:%d', msg.chat.id, defendant.id)
-	local expired = tonumber(db:hget(hash, 'expired'))
-	local initiator, was_active_previous
-	if expired and os.time() < expired then
-		db:hset(hash, 'initiator', msg.from.id)
-		initiator = msg.from
-		was_active_previous = true
+	local user_id = tonumber(db:hget(hash, 'initiator'))
+	local initiator
+	if user_id and user_id ~= msg.from.id then
+		initiator = api.getChat(user_id).result
 	else
-		local user_id = tonumber(db:hget(hash, 'initiator'))
-		if not user_id or msg.from.id == user_id then
-			db:hset(hash, 'initiator', msg.from.id)
-			initiator = msg.from
-		else
-			initiator = api.getChat(user_id).result
-		end
-		was_active_previous = false
+		initiator = msg.from
+		db:hset(hash, 'initiator', msg.from.id)
 	end
 
 	-- Detect informative poll
@@ -183,9 +182,15 @@ local function generate_poll(msg, defendant)
 	if not res then return false end
 
 	-- Close previous poll if it exists
-	if was_active_previous then
-		local previous_id = tonumber(db:hget(hash, 'msg_id'))
-		local text = _("The poll for ban of %s was closed because new poll was created"):format(users.full_name(defendant))
+	local previous_id = tonumber(db:hget(hash, 'msg_id'))
+	if previous_id then
+		local text
+		if res.result.chat.username then
+			local link = string.format('https://telegram.me/%s/%d', res.result.chat.username, res.result.message_id)
+			text = _("The poll for ban of %s was closed because [new poll](%s) was created"):format(users.full_name(defendant), link)
+		else
+			text = _("The poll for ban of %s was closed because *new poll* was created"):format(users.full_name(defendant))
+		end
 		api.editMessageText(msg.chat.id, previous_id, text, nil, true)
 	end
 
@@ -196,7 +201,7 @@ local function generate_poll(msg, defendant)
 	if informative then
 		db:hset(hash, 'informative', informative)
 	end
-	if was_active_previous then
+	if previous_id then
 		db:hset(hash, 'was_active_previous', 'yes')
 	end
 
@@ -309,14 +314,14 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 		if value > 0 then
 			text = _("You have voted against %s")
 		elseif value < 0 then
-			text = _("You have voted for save %s")
+			text = _("You have voted to save %s")
 		else
 			text, without_name = _("You have revoked your vote"), true
 		end
 	elseif value > 0 then
 		text = _("You already voted against %s")
 	elseif value < 0 then
-		text = _("You already voted for save %s")
+		text = _("You already voted to save %s")
 	else
 		text, without_name = _("You already revoked your vote"), true
 	end
@@ -420,7 +425,12 @@ local function action(msg, blocks)
 			local initiator = tonumber(db:hget(hash, 'initiator'))
 			if msg.from.id == initiator then
 				defendant = api.getChat(defendant).result
-				local text = _("The poll against %s was closed by initiator"):format(users.full_name(defendant))
+				local supports = tonumber(db:scard(hash .. ':supports'))
+				local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
+				local quorum = tonumber(db:hget(hash, 'quorum'))
+				local informative = db:hget(hash, 'informative')
+
+				local text = conclusion(nil, defendant, supports, oppositionists, quorum, 'canceled', informative)
 				api.editMessageText(msg.chat.id, msg.message_id, text, nil, true)
 				db:del(hash, hash .. ':supports', hash .. ':oppositionists')
 			elseif roles.is_admin_cached(msg.chat.id, msg.from.id) then
