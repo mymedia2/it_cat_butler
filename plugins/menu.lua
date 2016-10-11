@@ -78,7 +78,7 @@ local function changeVotebanSetting(chat_id, action)
 	local hash = string.format('chat:%d:voteban', chat_id)
 
 	if action == 'DimDuration' or action == 'RaiseDuration' then
-		local old_value = tonumber(db:hget(hash, 'duration')) or settings['duration']
+		local old_value = tonumber(db:hget(hash, 'duration') or config.chat_settings.voteban.duration)
 		local direction = 1
 		if action == 'DimDuration' then direction = -1 end
 		local new_value = step(old_value / 60, direction) * 60
@@ -87,7 +87,7 @@ local function changeVotebanSetting(chat_id, action)
 	end
 
 	if action == 'DimQuorum' or action == 'RaiseQuorum' then
-		local old_value = tonumber(db:hget(hash, 'quorum')) or settings['quorum']
+		local old_value = tonumber(db:hget(hash, 'quorum') or config.chat_settings.voteban.quorum)
 		local new_value = old_value + 1
 		if action == 'DimQuorum' then
 			new_value = old_value - 1
@@ -121,7 +121,7 @@ local function adminsettings_table(settings, chat_id)
     local return_table = {}
     local icon_off, icon_on = '🚫', '✅'
     for field, default in pairs(settings) do
-        if field ~= 'Extra' and field ~= 'Rules' then
+        if field ~= 'Extra' and field ~= 'Rules' and field ~= 'voteban' then
             local status = (db:hget('chat:'..chat_id..':settings', field)) or default
             if status == 'off' then
                 return_table[field] = icon_off
