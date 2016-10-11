@@ -88,7 +88,7 @@ local function do_keyboard_flood(chat_id)
     return keyboard
 end
 
-function step(count, direction)
+local function step(count, direction)
 	if 20 < count and count < 60 then
 		return count + 10 * direction
 	elseif 60 < count and count < 240 then
@@ -114,7 +114,7 @@ function step(count, direction)
 	end
 end
 
-function changeFloodSettings(chat_id, screm)
+local function changeFloodSettings(chat_id, screm)
 	local hash = 'chat:'..chat_id..':flood'
 	if type(screm) == 'string' then
 		if screm == 'kick' then
@@ -152,7 +152,7 @@ end
 local function action(msg, blocks)
 	if not msg.cb then return end
 	local chat_id = msg.target_id or msg.chat.id
-	if not roles.is_admin_cached(chat_id, msg.from.id) then
+	if msg.target_id and not roles.is_admin_cached(msg.target_id, msg.from.id) then
 		api.answerCallbackQuery(msg.cb_id, _("You're no longer admin"))
 		return
 	end

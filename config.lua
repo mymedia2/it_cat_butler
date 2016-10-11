@@ -35,6 +35,7 @@ return {
 		'menu.lua',
 		'dashboard.lua',
 		'banhammer.lua',
+		'voteban.lua',
 		'users.lua',
 		'help.lua',
 		'rules.lua',
@@ -82,7 +83,8 @@ return {
 			['Flood'] = 'off',
 			['Silent'] = 'off',
 			['Rules'] = 'off',
-			['Reports'] = 'off'
+			['Reports'] = 'off',
+			['voteban'] = 'off',
 		},
 		['flood'] = {
 			['MaxFlood'] = 5,
@@ -113,6 +115,10 @@ return {
 		},
 		['goodbye'] = {
 			['type'] = 'custom'
+		},
+		['voteban'] = {
+			['quorum'] = 5,
+			['duration'] = 1800,  -- half an hour
 		},
 		['media'] = {
 			['image'] = 'ok', --'notok'

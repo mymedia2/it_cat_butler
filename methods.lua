@@ -114,10 +114,9 @@ function api.banUser(chat_id, user_id)
 	local res, code = api.kickChatMember(chat_id, user_id) --try to kick. "code" is already specific
 	
 	if res then --if the user has been kicked, then...
-		return res --return res and not the text
+		return true --return true and not the text
 	else ---else, the user haven't been kicked
-		local text = code2text(code)
-		return res, text --return the motivation too
+		return false, code, code2text(code) --return the motivation too
 	end
 end
 

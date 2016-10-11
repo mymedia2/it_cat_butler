@@ -27,7 +27,7 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	
 	db:select(config.db or 0) --select the redis db
 	
-	misc, roles = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
+	misc, roles, users = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
 	locale = dofile('languages.lua')
 	api = require('methods')
 	
@@ -88,13 +88,13 @@ local function extract_usernames(msg)
 	end
 	if msg.forward_from_chat and msg.forward_from_chat.username then
 		db:hset('bot:usernames', '@'..msg.forward_from_chat.username:lower(), msg.forward_from_chat.id)
-	end
+		end
 	if msg.new_chat_member then
 		if msg.new_chat_member.username then
 			db:hset('bot:usernames', '@'..msg.new_chat_member.username:lower(), msg.new_chat_member.id)
-		end
-		db:sadd(string.format('chat:%d:members', msg.chat.id), msg.new_chat_member.id)
 	end
+		db:sadd(string.format('chat:%d:members', msg.chat.id), msg.new_chat_member.id)
+		end
 	if msg.left_chat_member then
 		if msg.left_chat_member.username then
 			db:hset('bot:usernames', '@'..msg.left_chat_member.username:lower(), msg.left_chat_member.id)
@@ -293,7 +293,7 @@ local function media_to_msg(msg)
 					db:hset('bot:usernames', '@'..entity.user.username:lower(), entity.user.id)
 				end
 			end
-			if entity.type == 'mention' and entity.offset == 0 then
+		   if entity.type == 'mention' and entity.offset == 0 then
 				-- FIXME: cut the username taking into consideration length of unicode characters
 				local username = msg.text:sub(entity.offset + 1, entity.offset + entity.length)
 				local user_id = misc.resolve_user(username, msg.chat.id)
