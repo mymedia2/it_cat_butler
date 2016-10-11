@@ -2,8 +2,8 @@ local function do_keyboard_vote(user_id)
 	return {
 		inline_keyboard = {
 			{
-				{text = _("Yes"), callback_data = string.format('voteban:increase:%d', user_id)},
-				{text = _("No"), callback_data = string.format('voteban:decrease:%d', user_id)},
+				{text = _("☑ Yes"), callback_data = string.format('voteban:increase:%d', user_id)},
+				{text = _("❎ No"), callback_data = string.format('voteban:decrease:%d', user_id)},
 			},
 			{
 				{text = _("Revoke the vote"), callback_data = string.format('voteban:revoke:%d', user_id)},
@@ -24,22 +24,22 @@ local function get_header(initiator, defendant, supports, oppositionists, quorum
 	local lines = {}
 	
 	if previous_exists then
-		table.insert(lines, _("This is _continuation_ of the previous poll."))
+		table.insert(lines, _("ℹ This is _continuation_ of the previous poll."))
 	end
 
 	if defendant.id == initiator.id then
 		table.insert(lines, _("%s suggests to ban himself. Ban him?\n"):format(users.full_name(initiator)))
 	elseif defendant.id == bot.id then
-		table.insert(lines, _("%s suggests to ban me. Are you really want to ban me?\n"):format(users.full_name(initiator)))
+		table.insert(lines, _("%s suggests to ban me. Are you really want to ban me? 😓\n"):format(users.full_name(initiator)))
 	else
 		table.insert(lines, _("%s suggests to ban %s. Ban him?\n"):format(users.full_name(initiator), users.full_name(defendant)))
 	end
 
 	-- TODO: make plural forms
-	table.insert(lines, _("%d users voted *for ban*."):format(supports))
-	table.insert(lines, _("%d users voted *against ban*."):format(oppositionists))
-	table.insert(lines, _("Requires additional %d users."):format(quorum - supports - oppositionists))
-	table.insert(lines, _("The poll will be automatically closed in %d minutes"):format((expired - os.time()) / 60))
+	table.insert(lines, _("🔨 %d users voted *for ban*."):format(supports))
+	table.insert(lines, _("❎ %d users voted *against ban*."):format(oppositionists))
+	table.insert(lines, _("❗ Requires additional %d users."):format(quorum - supports - oppositionists))
+	table.insert(lines, _("🕒 The poll will be automatically closed in %d minutes"):format((expired - os.time()) / 60))
 
 	if informative == 'against bot' then
 		table.insert(lines, _("\n*Informative poll*. You can't vote for ban me."))
@@ -87,12 +87,12 @@ local function conclusion(initiator, defendant, supports, oppositionists, quorum
 			.. "to decision of community. The results:\n"):format(defendant_name))
 	end
 	if upshot == 'bot not admin' then
-		table.insert(lines, _("The voting was closed, a community decided ban %s, "
+		table.insert(lines, _("⚠ The voting was closed, a community decided ban %s, "
 			.. "but error ocured while ban this user, because I ceased to be "
 			.. "_an admin_. The results:\n"):format(defendant_name))
 	end
 	if upshot == 'already admin' then
-		table.insert(lines, _("The voting was closed, a community decided ban %s, "
+		table.insert(lines, _("⚠ The voting was closed, a community decided ban %s, "
 			.. "but error ocured while ban this user, because he became "
 			.. "_an admin_. The results:\n"):format(defendant_name))
 	end
@@ -109,15 +109,15 @@ local function conclusion(initiator, defendant, supports, oppositionists, quorum
 		table.insert(lines, _("The poll against %s was closed by initiator. The results:\n"):format(users.full_name(defendant)))
 	end
 	if informative and not upshot then
-		table.insert(lines, _("The voting was closed, but it was informative so the user hadn't "
+		table.insert(lines, _("The voting was closed, but it was informative so %s hadn't "
 			.. "been banned. The results:\n"):format(users.full_name(defendant)))
 	end
 
 	-- TODO: make plural forms
-	table.insert(lines, _("%d users voted *for ban*."):format(supports))
-	table.insert(lines, _("%d users voted *against ban*."):format(oppositionists))
+	table.insert(lines, _("🔨 %d users voted *for ban*."):format(supports))
+	table.insert(lines, _("❎ %d users voted *against ban*."):format(oppositionists))
 	if upshot == 'no decision' then
-		table.insert(lines, _("It was not enough votes from %d users"):format(quorum - supports - oppositionists))
+		table.insert(lines, _("❗ It was not enough votes from %d users"):format(quorum - supports - oppositionists))
 	end
 
 	if upshot ~= 'was protected' then
@@ -189,9 +189,11 @@ local function generate_poll(msg, defendant)
 		local text
 		if res.result.chat.username then
 			local link = string.format('https://telegram.me/%s/%d', res.result.chat.username, res.result.message_id)
-			text = _("The poll for ban of %s was closed because [new poll](%s) was created"):format(users.full_name(defendant), link)
+			text = _("⬇ The poll for ban of %s was closed because [new poll](%s) was created")
+				:format(users.full_name(defendant), link)
 		else
-			text = _("The poll for ban of %s was closed because *new poll* was created"):format(users.full_name(defendant))
+			text = _("⬇ The poll for ban of %s was closed because *new poll* was created")
+				:format(users.full_name(defendant))
 		end
 		api.editMessageText(msg.chat.id, previous_id, text, nil, true)
 	end
@@ -222,34 +224,15 @@ local function rebuild_poll_message(chat_id, user_id, problems)
 
 	local supports = tonumber(db:scard(hash .. ':supports'))
 	local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
+	assert(supports + oppositionists < quorum)
 
 	local defendant = api.getChat(user_id).result
-	if supports + oppositionists < quorum then
-		initiator = api.getChat(initiator).result
+	initiator = api.getChat(initiator).result
 
-		local keyboard = do_keyboard_vote(defendant.id)
-		local text = get_header(initiator, defendant, supports, oppositionists,
-								quorum, expired, informative, was_active_previous)
-		return api.editMessageText(chat_id, msg_id, text, keyboard, true)
-	else
-		local lines = {}
-		if supports > oppositionists then
-			if not problems then
-				table.insert(lines, _("The voting was closed, and %s was banned according "
-					.. "to a rules. The results:"):format(users.full_name(defendant)))
-			else
-				table.insert(lines, _("The voting was closed, a community decided ban %s, "
-					.. "but error ocured while ban this user _(%s)_. The results:")
-					:format(users.full_name(defendant), problems))
-			end
-		else
-			table.insert(lines, _("The voting was closed, but %s was not banned, because "
-				.. "a community protected him. The results:"):format(users.full_name(defendant)))
-		end
-		table.insert(lines, _("%d users voted *for ban*."):format(supports))
-		table.insert(lines, _("%d users voted *against ban*."):format(oppositionists))
-		api.editMessageText(chat_id, msg_id, table.concat(lines, '\n'), nil, true)
-	end
+	local keyboard = do_keyboard_vote(defendant.id)
+	local text = get_header(initiator, defendant, supports, oppositionists,
+							quorum, expired, informative, was_active_previous)
+	return api.editMessageText(chat_id, msg_id, text, keyboard, true)
 end
 
 -- disposes the vote and returns true if decision has changed
@@ -273,7 +256,7 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 	local informative = db:hget(hash, 'informative')
 
 	if from_id == user_id and informative ~= 'against himself' then
-		return _("You can't vote about yourself")
+		return _("🚷 You can't vote about yourself")
 	end
 
 	local text, without_name
@@ -305,7 +288,7 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 			api.editMessageText(chat_id, msg_id, text, nil, true)
 
 			if send_confirmation then
-				local text = _("%s has banned"):format(users.full_name(defendant))
+				local text = _("%s has been banned ✨"):format(users.full_name(defendant))
 				api.sendMessage(chat_id, text, true, msg_id)
 			end
 			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
@@ -314,18 +297,18 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 		end
 
 		if value > 0 then
-			text = _("You have voted against %s")
+			text = _("☑ You have voted against %s")
 		elseif value < 0 then
-			text = _("You have voted to save %s")
+			text = _("❎ You have voted to save %s")
 		else
-			text, without_name = _("You have revoked your vote"), true
+			text, without_name = _("🔁 You have revoked your vote"), true
 		end
 	elseif value > 0 then
-		text = _("You already voted against %s")
+		text = _("☑ You already voted against %s")
 	elseif value < 0 then
-		text = _("You already voted to save %s")
+		text = _("❎ You already voted to save %s")
 	else
-		text, without_name = _("You already revoked your vote"), true
+		text, without_name = _("🔁 You already revoked your vote"), true
 	end
 
 	if not without_name then
@@ -440,7 +423,7 @@ local function action(msg, blocks)
 				api.editMessageText(msg.chat.id, msg.message_id, _("The poll was closed by administrator"))
 				db:del(hash, hash .. ':supports', hash .. ':oppositionists')
 			else
-				text = _("Only administrators or initiator can close the poll")
+				text = _("🚷 Only administrators or initiator can close the poll")
 			end
 		end
 		if text then
