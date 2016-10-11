@@ -151,11 +151,14 @@ local function generate_poll(msg, defendant)
 	-- Detect if previous poll was or not and set the initiator
 	local hash = string.format('chat:%d:voteban:%d', msg.chat.id, defendant.id)
 	local user_id = tonumber(db:hget(hash, 'initiator'))
-	local initiator
-	if user_id and user_id ~= msg.from.id then
-		initiator = api.getChat(user_id).result
+	local initiator, was_active_previous
+	if user_id and user_id ~= msg.from.id and user_id ~= defendant.id then
+		-- the poll already exists. Continue it
+		initiator, was_active_previous = api.getChat(user_id).result, true
 	else
+		-- new poll
 		initiator = msg.from
+		db:hdel(hash, 'informative')
 		db:hset(hash, 'initiator', msg.from.id)
 	end
 
