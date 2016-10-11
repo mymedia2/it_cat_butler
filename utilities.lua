@@ -644,6 +644,7 @@ function misc.changeSettingStatus(chat_id, field)
 		antibot = _("Bots won't be kicked if added by an user"),
 		reports = _("Now reports from normal users won't be sent to admins"),
 		silent = _("Now the bot will be answering in a group"),
+		voteban = _("Now /voteban will be available for admins only"),
 	}
 	local turned_on = {
 		welcome = _("Welcome message will be displayed"),
@@ -654,6 +655,7 @@ function misc.changeSettingStatus(chat_id, field)
 		antibot = _("Bots will be kicked if added by an user"),
 		reports = _("Now reports from normal users will be sent to admins"),
 		silent = _("Now the bot will be answering in PM only"),
+		voteban = _("Now /voteban will be available for everybody"),
 	}
 
 	local hash = 'chat:'..chat_id..':settings'

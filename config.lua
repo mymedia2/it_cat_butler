@@ -83,7 +83,8 @@ return {
 			['Flood'] = 'off',
 			['Silent'] = 'off',
 			['Rules'] = 'off',
-			['Reports'] = 'off'
+			['Reports'] = 'off',
+			['voteban'] = 'off',
 		},
 		['flood'] = {
 			['MaxFlood'] = 5,
@@ -116,9 +117,8 @@ return {
 			['type'] = 'custom'
 		},
 		['voteban'] = {
-			['status'] = 'off',
 			['quorum'] = 5,
-			['duration'] = 30,
+			['duration'] = 1800,  -- half an hour
 		},
 		['media'] = {
 			['image'] = 'ok', --'notok'

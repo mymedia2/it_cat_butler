@@ -19,10 +19,10 @@ local function changeWarnSettings(chat_id, action)
         local status = (db:hget('chat:'..chat_id..':warnsettings', 'type')) or 'kick'
         if status == 'kick' then
             db:hset('chat:'..chat_id..':warnsettings', 'type', 'ban')
-            return _("New action on max number of warns received: *ban*")
+            return _("New action on max number of warns received: ban")
         elseif status == 'ban' then
             db:hset('chat:'..chat_id..':warnsettings', 'type', 'kick')
-            return _("New action on max number of warns received: *kick*")
+            return _("New action on max number of warns received: kick")
         end
     end
 end
@@ -55,6 +55,49 @@ local function changeCharSettings(chat_id, field)
     end
 
     return text
+end
+
+local function step(count, direction)
+	assert(direction == -1 or direction == 1)
+	if count <= 5 and direction == -1 then return 5 end
+	if count >= 720 and direction == 1 then return 720 end
+
+	local ex = {5, 10, 15, 20, 30, 45, 60, 120, 180, 300, 360, 480, 600, 720}
+	local index
+	for i, v in pairs(ex) do
+		if v == count then
+			index = i
+			break
+		end
+	end
+	if not index then return 10 end
+	return ex[index + direction]
+end
+
+local function changeVotebanSetting(chat_id, action)
+	local hash = string.format('chat:%d:voteban', chat_id)
+
+	if action == 'DimDuration' or action == 'RaiseDuration' then
+		local old_value = tonumber(db:hget(hash, 'duration')) or settings['duration']
+		local direction = 1
+		if action == 'DimDuration' then direction = -1 end
+		local new_value = step(old_value / 60, direction) * 60
+		db:hset(hash, 'duration', new_value)
+		return old_value, new_value
+	end
+
+	if action == 'DimQuorum' or action == 'RaiseQuorum' then
+		local old_value = tonumber(db:hget(hash, 'quorum')) or settings['quorum']
+		local new_value = old_value + 1
+		if action == 'DimQuorum' then
+			new_value = old_value - 1
+		end
+		if new_value < 2 then new_value = old_value end
+		db:hset(hash, 'quorum', new_value)
+		return old_value, new_value
+	end
+
+	error('unreachable')
 end
 
 local function usersettings_table(settings, chat_id)
@@ -106,17 +149,54 @@ local function charsettings_table(settings, chat_id)
     return return_table
 end
 
+local function insert_voteban_section(keyboard, chat_id)
+	local hash = string.format('chat:%d:settings', chat_id)
+	local status = db:hget(hash, 'voteban') or config.chat_settings.voteban.status
+	if status == 'off' then
+		status = '👤'
+	else
+		status = '👥'
+	end
+	hash = string.format('chat:%d:voteban', chat_id)
+	local duration = tonumber(db:hget(hash, 'duration')) or config.chat_settings.voteban.duration
+	if duration < 70 * 60 then
+		-- TRANSLATORS: this is an abbreviation for minutes
+		duration = _("%d min"):format(duration / 60)
+	else
+		-- TODO: make plural forms
+		duration = _("%d hours"):format(duration / 3600)
+	end
+	local quorum = db:hget(hash, 'quorum') or config.chat_settings.voteban.quorum
+
+	table.insert(keyboard, {
+		{text = _("Polls for ban"), callback_data='menu:alert:settings'},
+		{text = status, callback_data='menu:voteban:'..chat_id},
+	})
+	table.insert(keyboard, {
+		{text = _("Duration"), callback_data='menu:alert:values'},
+		{text = '➖', callback_data='menu:DimDuration:'..chat_id},
+		{text = tostring(duration), callback_data='menu:alert:values'},
+		{text = '➕', callback_data='menu:RaiseDuration:'..chat_id},
+	})
+	table.insert(keyboard, {
+		{text = _("Quorum"), callback_data='menu:alert:values'},
+		{text = '➖', callback_data='menu:DimQuorum:'..chat_id},
+		{text = tostring(quorum), callback_data='menu:alert:values'},
+		{text = '➕', callback_data='menu:RaiseQuorum:'..chat_id},
+	})
+end
+
 local function insert_settings_section(keyboard, settings_section, chat_id)
 	local strings = {
-		Welcome = _("Welcome message"),
-		Goodbye = _("Goodbye message"),
+		Welcome = _("Welcome"),
+		Goodbye = _("Goodbye"),
 		Extra = _("Extra"),
 		Flood = _("Anti-flood"),
 		Silent = _("Silent mode"),
 		Rules = _("Rules"),
 		Arab = _("Arab"),
 		Rtl = _("RTL"),
-		Antibot = _("Ban bots")
+		Antibot = _("Ban bots"),
 	}
 
     for key, icon in pairs(settings_section) do
@@ -142,6 +222,8 @@ local function doKeyboard_menu(chat_id)
     settings_section = charsettings_table(config.chat_settings['char'], chat_id)
     keyboad = insert_settings_section(keyboard, settings_section, chat_id)
     
+	insert_voteban_section(keyboard.inline_keyboard, chat_id)
+
     --warn
     local max = (db:hget('chat:'..chat_id..':warnsettings', 'max')) or config.chat_settings['warnsettings']['max']
     local action = (db:hget('chat:'..chat_id..':warnsettings', 'type')) or config.chat_settings['warnsettings']['type']
@@ -167,7 +249,7 @@ end
 local function action(msg, blocks)
 	if not msg.cb then return end
 	local chat_id = msg.target_id or msg.chat.id
-	if not roles.is_admin_cached(chat_id, msg.from.id) then
+	if msg.target_id and not roles.is_admin_cached(msg.target_id, msg.from.id) then
 		api.answerCallbackQuery(msg.cb_id, _("You're no longer admin"))
 		return
 	end
@@ -183,6 +265,12 @@ Manage the settings of the group.
 *Silent mode*:
 If enabled, the bot won't send a confirmation message in the group when someone use /config or /dashboard.
 It will just send the message in private.
+
+*Polls for ban*:
+You can activate this feature for democratic chats, and group members will be able to start voting for ban another member of a chat, otherwise only admins will be able to start such polls.
+_Duration_ setting specifies the time after which the poll will be finished as having no decision of community.
+_Quorum_ specifies the minimal needed number of votes from members for the decision.
+If defendant has a sufficient number of votes (more then half), he will be automatically banned.
 ]])
 
     --get the interested chat id
@@ -199,8 +287,10 @@ It will just send the message in private.
                 text = _("⚠️ Tap on an icon!")
             elseif blocks[3] == 'warns' then
                 text = _("⚠️ Use the row below to change the warns settings!")
+			elseif blocks[3] == 'values' then
+				text = _("⚠️ Change the value via plus or minus!")
             end
-            api.answerCallbackQuery(msg.cb_id, text)
+            api.answerCallbackQuery(msg.cb_id, text or '')
             return
         end
         if blocks[2] == 'DimWarn' or blocks[2] == 'RaiseWarn' or blocks[2] == 'ActionWarn' then
@@ -213,6 +303,9 @@ It will just send the message in private.
             end
         elseif blocks[2] == 'Rtl' or blocks[2] == 'Arab' then
             text = changeCharSettings(chat_id, blocks[2])
+		elseif blocks[2] == 'DimDuration' or blocks[2] == 'RaiseDuration'
+			or blocks[2] == 'DimQuorum' or blocks[2] == 'RaiseQuorum' then
+			text = string.format('%d → %d', changeVotebanSetting(chat_id, blocks[2]))
         else
             text = misc.changeSettingStatus(chat_id, blocks[2])
         end
@@ -225,11 +318,8 @@ end
 return {
 	action = action,
 	triggers = {
-	    '^###cb:(menu):(alert):(settings)',
-    	'^###cb:(menu):(alert):(warns)',
-    	
+		'^###cb:(menu):(alert):(.*)',
     	'^###cb:(menu):(.*):',
-    	
     	'^###cb:(config):menu:(-?%d+)$'
 	}
 }

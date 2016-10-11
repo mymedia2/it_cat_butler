@@ -147,7 +147,6 @@ local function generate_poll(msg, defendant)
 	local hash = string.format('chat:%d:voteban', msg.chat.id)
 	local quorum = tonumber(db:hget(hash, 'quorum') or config.chat_settings.voteban.quorum)
 	local duration = tonumber(db:hget(hash, 'duration') or config.chat_settings.voteban.duration)
-	duration = duration * 60  -- convert to seconds
 
 	-- Detect if previous poll was or not and set the initiator
 	local hash = string.format('chat:%d:voteban:%d', msg.chat.id, defendant.id)
@@ -363,9 +362,10 @@ end
 
 local function action(msg, blocks)
 	if blocks[1] == 'voteban' then
-		local hash = string.format('chat:%d:voteban', msg.chat.id)
-		local status = db:hget(hash, 'status') or config.chat_settings.voteban.status
+		local hash = string.format('chat:%d:settings', msg.chat.id)
+		local status = db:hget(hash, 'voteban') or config.chat_settings.settings.voteban
 		if status == 'off' and not roles.is_admin_cached(msg) then return end
+		hash = string.format('chat:%d:voteban', msg.chat.id)
 
 		-- choose the hero
 		local nominated
@@ -453,9 +453,6 @@ return {
 		config.cmd..'(voteban) ([^%s]*) ?(.*)',
 		config.cmd..'(voteban)$',
 
-		'^###cb:voteban:(increase):(-?%d+)$',
-		'^###cb:voteban:(decrease):(-?%d+)$',
-		'^###cb:voteban:(revoke):(-?%d+)$',
-		'^###cb:voteban:(cancel):(-?%d+)$',
+		'^###cb:voteban:(.*):(-?%d+)$',
 	}
 }
