@@ -159,12 +159,18 @@ function save_data(filename, data) -- Saves a table to a JSON file.
 
 end
 
-function vardump(value)
-  print(serpent.block(value, {comment=false}))
+function vardump(...)
+	for i, value in pairs{...} do
+		print(serpent.block(value, {comment=false}))
+	end
 end
 
-function vtext(value)
-  return serpent.block(value, {comment=false})
+function vtext(...)
+	local lines = {}
+	for i, value in pairs{...} do
+		table.insert(lines, serpent.block(value, {comment=false}))
+	end
+	return table.concat(lines, '\n')
 end
 
 function misc.deeplink_constructor(chat_id, what)
@@ -337,27 +343,30 @@ function misc.migrate_chat_info(old, new, on_request)
 end
 
 function string:replaceholders(msg) -- Returns the string after the first space.
+	local user = msg.from
 	if msg.added then
-		msg.from = msg.added
+		user = msg.added
 	end
-	
-	msg.from.first_name = msg.from.first_name:gsub('%%', '')
-	
-	self = self:gsub('$name', msg.from.first_name:escape())
-	if msg.from.username then
-		self = self:gsub('$username', '@'..msg.from.username:escape())
-	else
-		self = self:gsub('$username', '@-')
+	if msg.removed then
+		user = msg.removed
 	end
-	if msg.from.last_name then
-		self = self:gsub('$surname', '@'..msg.from.last_name:escape())
-	else
-		self = self:gsub('$surname', '-')
+
+	local substitutions = {
+		name = user.first_name:escape(),
+		surname = '',
+		username = '-',
+		id = msg.from.id,
+		title = msg.chat.title:escape(),
+		rules = misc.deeplink_constructor(msg.chat.id, 'rules'),
+	}
+	if user.last_name then
+		substitutions['surname'] = user.last_name:escape()
 	end
-	self = self:gsub('$id', msg.from.id)
-	self = self:gsub('$title', msg.chat.title:escape())
-	self = self:gsub('$rules', misc.deeplink_constructor(msg.chat.id, 'rules'))
-	return self
+	if user.username then
+		substitutions['username'] = '@' .. user.username:escape()
+	end
+
+	return self:gsub('%$(%w+)', substitutions)
 end
 
 function misc.to_supergroup(msg)
