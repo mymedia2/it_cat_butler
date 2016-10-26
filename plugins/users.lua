@@ -249,7 +249,7 @@ function plugin.onCallbackQuery(msg, blocks)
 	if blocks[1] == 'banuser' then
 		local user_id = msg.target_id
 		
-		local res, text = api.banUser(msg.chat.id, user_id)
+		local res, code, text = api.banUser(msg.chat.id, user_id)
 		if res then
 			misc.saveBan(user_id, 'ban')
 			local name = misc.getname_link(msg.from.first_name, msg.from.username) or msg.from.first_name:escape()

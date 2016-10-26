@@ -531,20 +531,32 @@ function misc.getRules(chat_id)
     end
 end
 
-function users.get_link(user)
-	if user.username then
-		return string.format('https://telegram.me/%s', user.username)
+-- Make mention of the user or the chat room to display. The first parameter is
+-- the user object or the chat object, the second specifies how it will use the
+-- result: for send in a message body (false) or for answer to a callback query
+-- (true). In first case the name will be escaped, otherwise the function won't
+-- escape it.
+function users.full_name(chat, without_link)
+	if chat.first_name == '' then
+		-- if the user deleted his account, API returns an User object with id
+		-- and first_name fields
+		return _("Deleted account")
 	end
-	return false
-end
-
-function users.full_name(user, without_link)
-	local result = user.first_name
-	if user.last_name then
-		result = result .. ' ' .. user.last_name
+	local result = chat.first_name or chat.title
+	if chat.last_name then
+		result = result .. ' ' .. chat.last_name
 	end
-	if not without_link and user.username then
-		return string.format('[%s](%s)', result:escape_hard('link'), users.get_link(user))
+	if without_link then
+		return result
+	end
+	if chat.username then
+		local name = result:escape_hard('link')
+		if name:match('^%s*$') then
+			-- this condition will be true, if name contains only right square
+			-- brackets and spaces
+			return '@' .. chat.username:escape()
+		end
+		return string.format('[%s](https://telegram.me/%s)', name, chat.username)
 	end
 	return result:escape()
 end

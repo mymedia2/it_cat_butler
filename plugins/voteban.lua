@@ -32,7 +32,7 @@ local function get_header(initiator, defendant, supports, oppositionists, quorum
 	if defendant.id == initiator.id then
 		table.insert(lines, _("%s suggests to ban himself. Ban him?\n"):format(users.full_name(initiator)))
 	elseif defendant.id == bot.id then
-		table.insert(lines, _("%s suggests to ban me. Are you really want to ban me? 😓\n"):format(users.full_name(initiator)))
+		table.insert(lines, _("%s suggests to ban me. Do you really want to ban me? 😓\n"):format(users.full_name(initiator)))
 	else
 		table.insert(lines, _("%s suggests to ban %s. Ban him?\n"):format(users.full_name(initiator), users.full_name(defendant)))
 	end
@@ -291,7 +291,7 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 
 			if send_confirmation then
 				local text = _("%s has been banned ✨"):format(users.full_name(defendant))
-				api.sendMessage(chat_id, text, true, msg_id)
+				api.sendMessage(chat_id, text, true, nil, msg_id)
 			end
 			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
 		else
@@ -319,7 +319,7 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 	return text
 end
 
-local function update()
+function plugin.cron()
 	-- FIXME: they don't recommend use keys function
 	for i, hash in pairs(db:keys('chat:*:voteban:*')) do
 		local chat_id, user_id = hash:match('chat:(-?%d+):voteban:(-?%d+)$')

@@ -92,7 +92,7 @@ function plugin.onTextMessage(msg, blocks)
 				local unban_time = os.time() + (temp * 60 * 60)
 				
 				--try to kick
-				local res, motivation = api.banUser(chat_id, user_id)
+				local res, code, motivation = api.banUser(chat_id, user_id)
 		    	if not res then
 		    		if not motivation then
 		    			motivation = _("I can't kick this user.\n"
@@ -128,7 +128,7 @@ function plugin.onTextMessage(msg, blocks)
 		    	end
 	    	end
 	   		if blocks[1] == 'ban' then
-	   			local res, motivation = api.banUser(chat_id, user_id)
+				local res, code, motivation = api.banUser(chat_id, user_id)
 		    	if not res then
 		    		if not motivation then
 		    			motivation = _("I can't kick this user.\n"
@@ -161,7 +161,7 @@ function plugin.onTextMessage(msg, blocks)
 				local unban_time = os.time() + 60 * 60 -- ban for one hour
 
 				local answ = api.sendMessage(msg.chat.id, _("Happy f*cking!")).result
-				local res, motivation = api.banUser(msg.chat.id, msg.from.id)
+				local res, code, motivation = api.banUser(msg.chat.id, msg.from.id)
 				if not res then
 					if not motivation then
 						motivation = _("I can't kick this user.\n"

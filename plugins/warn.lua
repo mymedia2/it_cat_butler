@@ -44,7 +44,7 @@ function plugin.onTextMessage(msg, blocks)
 		local hash = 'chat:'..msg.chat.id..':warns'
 		local num = db:hincrby(hash, msg.reply.from.id, 1) --add one warn
 		local nmax = (db:hget('chat:'..msg.chat.id..':warnsettings', 'max')) or 3 --get the max num of warnings
-		local text, res, motivation
+		local text, res, code, motivation
 		num, nmax = tonumber(num), tonumber(nmax)
 
 		if num >= nmax then
@@ -52,7 +52,7 @@ function plugin.onTextMessage(msg, blocks)
 			--try to kick/ban
 			if type == 'ban' then
 				text = _("%s *banned*: reached the max number of warnings (%d/%d)"):format(name, num , nmax)
-				res, motivation = api.banUser(msg.chat.id, msg.reply.from.id)
+				res, code, motivation = api.banUser(msg.chat.id, msg.reply.from.id)
 	    	else --kick
 				text = _("%s *kicked*: reached the max number of warnings (%d/%d)"):format(name, num , nmax)
 		    	res, motivation = api.kickUser(msg.chat.id, msg.reply.from.id)

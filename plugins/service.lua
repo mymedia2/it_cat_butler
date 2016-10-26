@@ -6,8 +6,8 @@ function plugin.onTextMessage(msg, blocks)
 	
 	if blocks[1] == 'new_chat_member:bot' then
 		
-		if misc.is_blocked_global(msg.adder.id) then
-			api.sendMessage(msg.chat.id, _("_You (user ID: %d) are in the blocked list_"):format(msg.adder.id), true)
+		if misc.is_blocked_global(msg.from.id) then
+			api.sendMessage(msg.chat.id, _("_You (user ID: %d) are in the blocked list_"):format(msg.from.id), true)
 			api.leaveChat(msg.chat.id)
 			return
 		end
