@@ -223,13 +223,12 @@ function misc.resolve_user(username)
 	if not stored_id then return false end
 	local user_obj = api.getChat(stored_id)
 	if not user_obj then return stored_id end
+	if not user_obj.result.username then return false end
 
 	-- User could change his username
 	if username ~= '@' .. user_obj.result.username then
-		if user_obj.result.username then
-			-- Update it if it exists
-			db:hset('bot:usernames', user_obj.result.username:lower(), user_obj.result.id)
-		end
+		-- Update it
+		db:hset('bot:usernames', user_obj.result.username:lower(), user_obj.result.id)
 		-- And return false because this user not the same that asked
 		return false
 	end
