@@ -1,3 +1,5 @@
+local plugin = {}
+
 local triggers2 = {
 	'^%$(init)$',
 	'^%$(stop)$',
@@ -12,7 +14,6 @@ local triggers2 = {
 	'^%$(unblock) (%d+)$',
 	'^%$(leave) (-%d+)$',
 	'^%$(leave)$',
-	'^%###(forward)',
 	'^%$(api errors)$',
 	'^%$(rediscli) (.*)$',
 	'^%$(sendfile) (.*)$',
@@ -36,30 +37,15 @@ local triggers2 = {
 	'^%$(remgroup) (true) (-%d+)$',
 	'^%$(cache) (.*)$',
 	'^%$(cacheinit) (.*)$',
-	'^%$(arestore) (.*)?',
-	'^%$(active) (%d)$'
+	'^%$(active) (%d)$',
+	'^%$(getid)$'
 }
 
-local logtxt = ''
-local failed = 0
-
-local function cron()
-	local current_hour = os.date('%H')
-	if last_database_save ~= current_hour then
-		last_database_save = current_hour
-		db:bgsave()
-	end
+function plugin.cron()
+	db:bgsave()
 end
 
-local function save_in_redis(hash, text)
-    local redis_res = db:set(hash, text)
-    if redis_res == true then
-	    return 'Saved on redis (res: true)'
-	else
-	    failed = failed + 1
-	    return 'Something went wrong with redis, res -> '..res
-	end
-end
+plugin.cron = nil
 
 local function bot_leave(chat_id)
 	local res = api.leaveChat(chat_id)
@@ -72,13 +58,13 @@ local function bot_leave(chat_id)
 	end
 end
 
-function round(num, decimals)
+local function round(num, decimals)
   local mult = 10^(decimals or 0)
   return math.floor(num * mult + 0.5) / mult
 end
 
-local function load_lua(code)
-	local output = loadstring(code)()
+local function load_lua(code, msg)
+	local output = loadstring('local msg = '..vtext(msg)..'\n'..code)()
 	if not output then
 		output = '`Done! (no output)`'
 	else
@@ -89,56 +75,6 @@ local function load_lua(code)
 	end
 	return output
 end	
-
-local function rude_restore(chat_id)
-	local text = ''
-	local old_db = 0
-	local new_db = 2
-	db:select(old_db)
-	local extra = db:hgetall('chat:'..chat_id..':extra')
-	local rules = db:get('chat:'..chat_id..':rules')
-	local about = db:get('chat:'..chat_id..':about')
-	local welcome = db:hgetall('chat:'..chat_id..':welcome')
-	
-	db:select(new_db)
-	if next(extra) then
-		local count = 0
-		for key, val in pairs(extra) do
-			db:hset('chat:'..chat_id..':extra', key, val)
-			count = count + 1
-		end
-		text = text..'Extra x'..count..'\n'
-	else
-		text = text..'Extra x0\n'
-	end
-	
-	if next(welcome) then
-		local count = 0
-		for key, val in pairs(extra) do
-			db:hset('chat:'..chat_id..':welcome', key, val)
-			count = count + 1
-		end
-		text = text..'Welcome x'..count..'\n'
-	else
-		text = text..'Welcome x0\n'
-	end
-	
-	if rules then
-		db:hset('chat:'..chat_id..':info', 'rules', rules)
-		text = text..'Rules V'
-	else
-		text = text..'Rules X'
-	end
-	
-	if about then
-		db:hset('chat:'..chat_id..':info', 'about', about)
-		text = text..'About V'
-	else
-		text = text..'About X'
-	end
-	
-	return text
-end
 
 local function match_pattern(pattern, text)
   if text then
@@ -151,7 +87,7 @@ local function match_pattern(pattern, text)
   end
 end
 
-local action = function(msg, blocks)
+function plugin.onTextMessage(msg, blocks)
 	
 	if not roles.is_superadmin(msg.from.id) then return end
 	
@@ -206,10 +142,6 @@ local action = function(msg, blocks)
 	    text = text..'- *last hour msgs*: `'..last.h..'`\n'
 	    text = text..'   • *average msgs/minute*: `'..round((last.h/60), 3)..'`\n'
 	    text = text..'   • *average msgs/second*: `'..round((last.h/(60*60)), 3)..'`\n'
-	    text = text..'- *last day msgs*: `'..last.h..'`\n'
-	    text = text..'   • *average msgs/hour*: `'..round((last.d/24), 3)..'`\n'
-	    text = text..'   • *average msgs/minute*: `'..round((last.d/(24*60)), 3)..'`\n'
-	    text = text..'   • *average msgs/second*: `'..round((last.d/(24*60*60)), 3)..'`\n'
 	    
 	    local usernames = db:hkeys('bot:usernames')
 	    text = text..'- *usernames cache*: `'..#usernames..'`\n'
@@ -234,11 +166,10 @@ local action = function(msg, blocks)
 	if blocks[1] == 'lua' then
 		if not blocks[2] then
 			api.sendReply(msg, 'Enter a string')
-			return
-		end
-		--execute
-		local output = load_lua(blocks[2])
+		else
+			local output = load_lua(blocks[2], msg)
 		api.sendMessage(msg.chat.id, output, true)
+	end
 	end
 	if blocks[1] == 'run' then
 		--read the output
@@ -361,23 +292,24 @@ local action = function(msg, blocks)
 		api.sendReply(msg, 'Not found')
 	end
 	if blocks[1] == 'update' then
-		db:hdel('bot:general', 'adminmode')
-		db:hdel('bot:general', 'ban')
-		db:hdel('bot:general', 'groups')
-		db:hdel('bot:general', 'kick')
-		db:hdel('bot:general', 'query')
-		db:hdel('bot:general', 'users')
-		db:hdel('bot:general', 'starts')
 		local groups = db:smembers('bot:groupsid')
+		local n = 0
 		for chat_id in pairs(groups) do
-			db:del('chat:'..chat_id..':banned')
-			db:hdel('chat:'..chat_id..':settings', 'Antibot')
-			local about = db:hget('chat:'..chat_id..':info', 'about')
-			if about then
-				db:hset('chat:'..chat_id..':extra', '#about', about)
-				db:hdel('chat:'..chat_id..':info', 'about')
+			local hash = 'chat:'..chat_id..':media'
+			local image = db:hget(hash, 'image')
+			db:hdel(hash, 'image')
+			local file = db:hget(hash, 'file')
+			db:hdel(hash, 'file')
+			if image and type(image) == 'string' then
+				db:hset(hash, 'photo', image)
+				n = n + 1
+			end
+			if file and type(file) == 'string' then
+				db:hset(hash, 'document', file)
+				n = n + 1
 			end
 	end
+		api.sendReply(msg, 'Done. Replaced '..n..' key(s)')
 	end
 	if blocks[1] == 'subadmin' then
 		--the status will be resetted at the next stop
@@ -480,7 +412,7 @@ local action = function(msg, blocks)
 			chat_id = blocks[2]
 		end
 		local members = db:smembers('cache:chat:'..chat_id..':admins')
-		api.sendMessage(msg.chat.id, chat_id..' '..tostring(#members)..'\n'..vtext(members))
+		api.sendMessage(msg.chat.id, chat_id..' ➤ '..tostring(#members)..'\n'..vtext(members))
 	end
 	if blocks[1] == 'cacheinit' then
 		local chat_id, text
@@ -491,20 +423,10 @@ local action = function(msg, blocks)
 		end
 		local res, code = misc.cache_adminlist(chat_id)
 		if res then
-			text = 'Cached'
+			text = 'Cached ➤ '..code..' admins stored'
 		else
 			text = 'Failed: '..tostring(code)
 		end
-		api.sendMessage(msg.chat.id, text)
-	end
-	if blocks[1] == 'arestore' then
-		local chat_id
-		if blocks[2] == '$chat' then
-			chat_id = msg.chat.id
-		else
-			chat_id = blocks[2]
-		end
-		local text = rude_restore(chat_id)
 		api.sendMessage(msg.chat.id, text)
 	end
 	if blocks[1] == 'active' then
@@ -520,10 +442,15 @@ local action = function(msg, blocks)
 		end
 		api.sendMessage(msg.chat.id, 'Active groups in the last '..days..' days: '..n)
 	end
+	if blocks[1] == 'getid' then
+		if msg.forward_from then
+			api.sendMessage(msg.chat.id, '`'..msg.forward_from.id..'`', true)
+		end
+	end
 end
 
-return {
-	action = action,
-	cron = cron,
-	triggers = {'^%$', '^###(forward)'}
+plugin.triggers = {
+	onTextMessage = {'^%$'}
 }
+		
+return plugin

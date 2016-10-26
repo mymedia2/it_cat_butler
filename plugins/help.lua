@@ -1,3 +1,5 @@
+local plugin = {}
+
 local function get_helped_string(key)
 	if key == 'private' then
 		return _([[
@@ -56,7 +58,7 @@ If you are going to use it in a public supergroup, you do not need to write the 
 *Admins: banhammer powers*
 
 `/kick [by reply|username|id|text mention]` = kick a user from the group (he can be added again).
-`/ban [by reply|username|id|text mention]` = ban a user from the group (also from normal groups).
+`/ban [by reply|username|id|text mention]` = ban a user from the group.
 `/tempban [hours|nd nh]` = ban an user for a specific amount of hours (max: one week). For now, only by reply. Short form: `/tempban 1d 7h`
 `/unban [by reply|username|id|text mention]` = unban the user from the group.
 `/user [by reply|username|id|text mention]` = shows how many times the user has been banned *in all the groups*, and the warns received.
@@ -84,26 +86,27 @@ _Note_ : the number must be higher than 3 and lower than 26.
 		return _([[
 *Admins: welcome settings*
 
-`/config`, then `menu` tab = receive in private the menu keyboard. You will find an option to enable/disable welcome and goodbye messages.
+The bot can salute new members and say goodbye to left. You will find an option for enable / disable these features in the group menu. To get it in PM, send `/config` command to the group and tap on "Menu" button.
 
 *Custom welcome message*:
-`/welcome Welcome $name, enjoy the group!`
-Write after `/welcome` your welcome message. You can use some placeholders to include the name/username/id of the new member of the group
-Placeholders:
-`$username`: _will be replaced with the username_
+Example: `/welcome Welcome $name, enjoy the group!`
+Write after `/welcome` your welcome message. You can use some placeholders to include the name / username / id of the new member of the group. At the moment placeholders inside markdown markup isn't supported.
+
+*Placeholders*:
 `$name`: _will be replaced with the name_
+`$surname`: _will be replaced by the user's last name_
+`$username`: _will be replaced with the username_
 `$id`: _will be replaced with the id_
 `$title`: _will be replaced with the group title_
-`$surname`: _will be replaced by the user's last name_
 `$rules`: _will be replaced by a link to the rules of the group. Please read_ [here](https://telegram.me/GroupButler_beta/26) _how to use it, or you will get an error for sure_
 
-*GIF/sticker as welcome message*
-You can use a particular gif/sticker as welcome message. To set it, reply to the gif/sticker you want to set as welcome message with `/welcome`
+*GIF / sticker as welcome message*
+You can use a particular gif/sticker as welcome message. To set it, reply to the gif / sticker which you want to set as welcome message with `/welcome`.
 
 *Goodbye message*
 Also you can set the custom goodbye message:
 `/goodbye` _message_
-Same placeholders and media are available
+Same placeholders and media are available.
 ]])
 	elseif key == 'mods_extra' then
 		return _([[
@@ -147,11 +150,10 @@ When Rtl is not allowed (🚫), everyone that writes this character (or that has
 		return _([[
 *Admins: pin*
 
-`/pin [text]`: the bot will send you back the text you used as argument, with markdown. You can pin the message and use `/editpin [new text]` to edit it
-`/editpin [new text]`: edit the previously generated message. Useful if you often need to make small/big changes to the pinned message but you don't like to send a wall of text that can't be deleted because you have to pin it
-`/pin`: the bot will find the latest message generate by `/pin [text]`, if it still exists
+`/pin [text]`: the bot will send you back the text you used as argument, with markdown. You can pin the message and use `/pin [text]` again to edit it
+`/pin`: the bot will find the latest message generate by `/pin`, if it still exists
 
-*Note*: `/pin` and `/editpin` support markdown and `$rules` placeholder
+*Note*: `/pin` supports markdown and `$rules` placeholder only
 ]])
 	elseif key == 'mods_langs' then
 		-- TRANSLATORS: leave your contact information for reports mistakes in translation
@@ -218,14 +220,14 @@ local function make_keyboard(mod, mod_current_position)
 	for i, v in pairs(order) do
 		k = list[v]
 		if next(line) then
-			local button = {text = '📍'..k, callback_data = v}
+                local button = {text = '📍'..k, callback_data = 'help:'..v}
 			--change emoji if it's the current position button
 			if mod_current_position == v then button.text = '💡 '..k end
 			table.insert(line, button)
 			table.insert(keyboard.inline_keyboard, line)
 			line = {}
 		else
-			local button = {text = '📍'..k, callback_data = v}
+                local button = {text = '📍'..k, callback_data = 'help:'..v}
 			--change emoji if it's the current position button
 			if mod_current_position == v:gsub('!', '') then button.text = '💡 '..k end
 			table.insert(line, button)
@@ -238,9 +240,9 @@ local function make_keyboard(mod, mod_current_position)
 
     local bottom_bar
     if mod then
-		bottom_bar = {{text = _("🔰 User commands"), callback_data = 'user'}}
+		bottom_bar = {{text = _("🔰 User commands"), callback_data = 'help:user'}}
 	else
-	    bottom_bar = {{text = _("🔰 Admin commands"), callback_data = 'mod'}}
+	    bottom_bar = {{text = _("🔰 Admin commands"), callback_data = 'help:mod'}}
 	end
 	table.insert(bottom_bar, {text = _("Info"), callback_data = 'fromhelp:about'}) --insert the "Info" button
 	table.insert(keyboard.inline_keyboard, bottom_bar)
@@ -251,38 +253,39 @@ local function do_keyboard_private()
     local keyboard = {}
     keyboard.inline_keyboard = {
     	{
-    		{text = _("👥 Add me to a group"), url = 'https://telegram.me/'..bot.username..'?startgroup=new'},
     		{text = _("📢 Bot channel"), url = 'https://telegram.me/'..config.channel:gsub('@', '')},
+    		{text = _("🌍 Select you language"), callback_data = 'selectlang'},
 	    },
 	    {
-	        {text = _("📕 All the commands"), callback_data = 'user'}
+	        {text = _("📕 All the commands"), callback_data = 'help:user'}
         }
     }
     return keyboard
 end
 
-local action = function(msg, blocks)
-    -- save stats
+function plugin.onTextMessage(msg, blocks)
     if blocks[1] == 'start' then
         if msg.chat.type == 'private' then
             local message = get_helped_string('private'):format(msg.from.first_name:escape())
             local keyboard = do_keyboard_private()
-            api.sendKeyboard(msg.from.id, message, keyboard, true)
+            api.sendMessage(msg.from.id, message, true, keyboard)
         end
-        return
     end
-    if blocks[1] == 'help' and msg.chat.type == 'private' then
+    if blocks[1] == 'help' then
 		local keyboard = make_keyboard()
-		api.sendKeyboard(msg.from.id, get_helped_string('all'), keyboard, true)
+        local text = get_helped_string('all')
+    	local res = api.sendMessage(msg.from.id, text, true, keyboard)
+    	if not res and msg.chat.type ~= 'private' and db:hget('chat:'..msg.chat.id..':settings', 'Silent') ~= 'on' then
+    	    api.sendMessage(msg.chat.id, _('[Start me](%s) _to get the list of commands_'):format(misc.deeplink_constructor('', 'help')), true)
+		end
     end
+end
+
+function plugin.onCallbackQuery(msg, blocks)
     if msg.cb then
         local query = blocks[1]
         local text
-        if query == 'info_button' then
-            local keyboard = do_keybaord_credits()
-		    api.editMessageText(msg.chat.id, msg.message_id, _("Some useful *links*:"), keyboard, true)
-		    return
-		end
+        
         local with_mods_lines = true
         if query == 'user' then
             text = _("Tap on a button to see the *related commands*")
@@ -319,7 +322,7 @@ local action = function(msg, blocks)
         	text = get_helped_string('mods_settings')
         end
         local keyboard = make_keyboard(with_mods_lines, query)
-        local res, code = api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
+        local res, code = api.editMessageText(msg.chat.id, msg.message_id, text, true, keyboard)
         if not res and code and code == 111 then
             api.answerCallbackQuery(msg.cb_id, _("❗️ Already on this tab"))
 		else
@@ -328,28 +331,15 @@ local action = function(msg, blocks)
     end
 end
 
-return {
-	action = action,
-	admin_not_needed = true,
-	triggers = {
+plugin.triggers = {
+	onTextMessage = {
 	    config.cmd..'(start)$',
 	    config.cmd..'(help)$',
-
-		'^###cb:(common)$',
-		'^###cb:(subscribe)$',
-		'^###cb:(settings)$',
-		'^###cb:(warns)$',
-		'^###cb:(banhammer)$',
-		'^###cb:(media)$',
-		'^###cb:(flood)$',
-		'^###cb:(char)$',
-		'^###cb:(info)$',
-		'^###cb:(welcome)$',
-	    '^###cb:(pin)$',
-		'^###cb:(lang)$',
-		'^###cb:(extra)$',
-
-	    '^###cb:(user)$',
-	    '^###cb:(mod)$',
+		'^/start :(help)$'
+	},
+	onCallbackQuery = {
+		'^###cb:help:(.*)$'
     }
 }
+
+return plugin

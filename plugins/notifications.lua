@@ -1,3 +1,5 @@
+local plugin = {}
+
 -- Sends to the mentioned user the notification with message
 local function notify(recipient, msg)
 	local text
@@ -7,7 +9,7 @@ local function notify(recipient, msg)
 	else
 		text = _('%s mentioned you in the group "%s"'):format(msg.from.first_name:escape(), msg.chat.title:escape())
 	end
-	local clue1 = api.sendMessage(recipient, text, true, nil, true)
+	local clue1 = api.sendMessage(recipient, text, true)
 	local clue2 = api.forwardMessage(recipient, msg.chat.id, msg.message_id, true)
 
 	-- save IDs messages to allow the user to unsubscribe in private
@@ -19,7 +21,7 @@ local function notify(recipient, msg)
 end
 
 -- Examines for the presence of mentions
-local function scan_mentions(msg)
+function plugin.onEveryMessage(msg)
 	if msg.chat.type ~= 'private' and msg.mentions then
 		for user_id in pairs(msg.mentions) do
 			local hash = string.format('chat:%d:subscribtions', msg.chat.id)
@@ -69,7 +71,7 @@ local function find_source(msg)
 end
 
 -- Processes control commands and sends answers
-local function control(msg, blocks)
+function plugin.onTextMessage(msg, blocks)
 	if blocks[1] == 'subscribe' then
 		if msg.chat.type == 'private' then return end
 		local text, start_me = subscribe(msg.chat.id, msg.from.id)
@@ -98,12 +100,12 @@ local function control(msg, blocks)
 	end
 end
 
-return {
-	onmessage = scan_mentions,
-	action = control,
-	triggers = {
+plugin.triggers = {
+	onTextMessage = {
 		config.cmd..'(subscribe)$',
 		config.cmd..'(unscribe)$',
 		config.cmd..'(unsubscribe)$',
 	}
 }
+
+return plugin

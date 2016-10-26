@@ -9,19 +9,20 @@ return {
 	},
 	bot_settings = {
 		cache_time = {
-			adminlist = 18000, --5 hours (18000s)
+			adminlist = 18000, --5 hours (18000s) Admin Cache time, in seconds.
 		},
-		multipurpose_mode = false,
-		notify_bug = true,
-		log_api_errors = true,
+		multipurpose_mode = false, --If this is enabled, the bot will activate the plugins from plugins/multipurpose
+		notify_bug = true, --Notify if a bug occurs!
+		log_api_errors = true, --Log errors, which happening whilst interacting with the bot api.
 		stream_commands = true,
 		admin_mode = false,
 		debug_connections = false,
+		realm_max_members = 60
 	},
 	channel = '@it_cat_encrypted', --channel username with the '@'
 	source_code = 'https://github.com/mymedia2/it_cat_butler',
 	help_groups = {
-		['Internatonal (English)'] = 'https://telegram.me/joinchat/EKBQLj7Zf6lE2K_Pk0Epcg', --group link, not username!
+		['Internatonal (English)'] = 'https://telegram.me/joinchat/EKBQLj7Zf6lE2K_Pk0Epcg', --group link, not (at)username! If you have your own support group, modify here!
 		['Italian'] = 'https://telegram.me/joinchat/ITAgroupbutler',
 		['Persian'] = 'https://telegram.me/joinchat/CTDUTkCOsEt4DZT-SUQdBQ',
 		['Russian'] = 'https://telegram.me/rubutler',
@@ -49,17 +50,13 @@ return {
 		'mediasettings.lua',
 		'private.lua',
 		'admin.lua',
-		'test.lua',
+		--'test.lua',
 		--'logchannel.lua',
 		'report.lua',
 		'private_settings.lua',
-		'extra.lua', --must be the last
+		'extra.lua', --must be the last plugin in the list.
 	},
-	multipurpose_plugins = {
-		'commit.lua',
-		'eightball.lua',
-		'patterns.lua'
-	},
+	multipurpose_plugins = {},
 	available_languages = {
 		['en'] = 'English 🇬🇧',
 		['it'] = 'Italiano 🇮🇹',
@@ -71,11 +68,12 @@ return {
 		['ar'] = 'العربية 🇸🇩',
 		['fr'] = 'Français 🇫🇷',
 		['zh'] = '中文 🇨🇳',
-		['fa'] = 'فارسی 🇮🇷'
-		-- more to come
+		['fa'] = 'فارسی 🇮🇷',
+		['id'] = 'Bahasa Indonesia 🇮🇩'
+		-- more languages will come
 	},
 	allow_fuzzy_translations = false,
-	chat_settings = {
+	chat_settings = { --default chat_settings for groups.
 		['settings'] = {
 			['Welcome'] = 'on',
 			['Goodbye'] = 'on',
@@ -85,6 +83,7 @@ return {
 			['Rules'] = 'off',
 			['Reports'] = 'off',
 			['voteban'] = 'off',
+			['Welbut'] = 'off',
 		},
 		['flood'] = {
 			['MaxFlood'] = 5,
@@ -92,16 +91,16 @@ return {
 			['TempBanDuration'] = 10,
 		},
 		['char'] = {
-			['Arab'] = 'allowed',
+			['Arab'] = 'allowed', --'kick'/'ban'
 			['Rtl'] = 'allowed'
 		},
 		['floodexceptions'] = {
 			['text'] = 'no',
-			['image'] = 'no',
 			['forward'] = 'no',
-			['video'] = 'no',
+			['photo'] = 'no', -- image
+			['gif'] = 'no',
 			['sticker'] = 'no',
-			['gif'] = 'no'
+			['video'] = 'no',
 		},
 		['warnsettings'] = {
 			['type'] = 'ban',
@@ -121,17 +120,18 @@ return {
 			['duration'] = 1800,  -- half an hour
 		},
 		['media'] = {
-			['image'] = 'ok', --'notok'
+			['photo'] = 'ok', --'notok' | image
 			['audio'] = 'ok',
 			['video'] = 'ok',
 			['sticker'] = 'ok',
 			['gif'] = 'ok',
 			['voice'] = 'ok',
 			['contact'] = 'ok',
-			['file'] = 'ok',
+			['document'] = 'ok', -- file
 			['link'] = 'ok',
 			['TGlink'] = 'ok',
 			['game'] = 'ok',
+			['location'] = 'ok'
 		},
 		['tolog'] = {
 			['ban'] = 'yes',
@@ -192,6 +192,8 @@ return {
 		[138] = 'Message was not forwarded',
 		[139] = 'Can\'t parse inline keyboard button: Field \\\"text\\\" must be of type String', --"text" field in a button object is not a string
 		[140] = 'Channel invalid', --/shrug
+		[141] = 'Wrong message entity: Unsupproted URL protocol', --username in an inline link [word](@username) (only?)
+		[142] = 'Wrong message entity: URL host is empty', --inline link without link [word]()
 		[403] = 'Bot was blocked by the user', --user blocked the bot
 		[429] = 'Too many requests: retry later', --the bot is hitting api limits
 		[430] = 'Too big total timeout', --too many callback_data requests

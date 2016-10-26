@@ -1,3 +1,5 @@
+local plugin = {}
+
 local function doKeyboard_media(chat_id)
 	if not ln then ln = 'en' end
     local keyboard = {}
@@ -11,11 +13,10 @@ local function doKeyboard_media(chat_id)
         end
 
 		local media_texts = {
-			forward = _("Forward"),
-			image = _("Images"),
+			photo = _("Images"),
 			gif = _("GIFs"),
 			video = _("Videos"),
-			file = _("Documents"),
+			document = _("Documents"),
 			TGlink = _("telegram.me links"),
 			voice = _("Vocal messages"),
 			link = _("Links"),
@@ -23,10 +24,11 @@ local function doKeyboard_media(chat_id)
 			sticker = _("Stickers"),
 			contact = _("Contacts"),
 			game = _("Games"),
+			location = _("Locations")
 		}
         local media_text = media_texts[media] or media
         local line = {
-            {text = media_text, callback_data = 'mediallert'},
+            {text = media_text, callback_data = 'mediallert:'..chat_id},
             {text = status, callback_data = 'media:'..media..':'..chat_id}
         }
         table.insert(keyboard.inline_keyboard, line)
@@ -56,14 +58,15 @@ local function doKeyboard_media(chat_id)
     return keyboard
 end
 
-local function action(msg, blocks)
-	if not msg.cb then return end
-	local chat_id = msg.target_id or msg.chat.id
-	if msg.target_id and not roles.is_admin_cached(msg.target_id, msg.from.id) then
-		api.answerCallbackQuery(msg.cb_id, _("You're no longer admin"))
-		return
+function plugin.onCallbackQuery(msg, blocks)
+	local chat_id = msg.target_id
+	if not chat_id then
+		api.sendAdmin('msg.target_id missing -> mediasettings') return
 	end
 
+	if not roles.is_admin_cached(chat_id, msg.from.id) then
+		api.answerCallbackQuery(msg.cb_id, _("You're no longer admin"))
+	else
 	local media_first = _([[
 Tap on a voice in the right colon to *change the setting*
 You can use the last line to change how many warnings should the bot give before kick / ban someone for a forbidden media
@@ -72,7 +75,7 @@ The number is not related the the normal `/warn` command
 	
 	if  blocks[1] == 'config' then
 		local keyboard = doKeyboard_media(chat_id)
-	    api.editMessageText(msg.chat.id, msg.message_id, media_first, keyboard, true)
+		    api.editMessageText(msg.chat.id, msg.message_id, media_first, true, keyboard)
 	else
 		if blocks[1] == 'mediallert' then
 			api.answerCallbackQuery(msg.cb_id, _("⚠️ Tap on the right column"))
@@ -113,14 +116,14 @@ The number is not related the the normal `/warn` command
 	    	cb_text = '⚡️ '..misc.changeMediaStatus(chat_id, media, 'next')
         end
         keyboard = doKeyboard_media(chat_id)
-		api.editMessageText(msg.chat.id, msg.message_id, media_first, keyboard, true)
+			api.editMessageText(msg.chat.id, msg.message_id, media_first, true, keyboard)
         api.answerCallbackQuery(msg.cb_id, cb_text)
     end
+	end
 end
 
-return {
-	action = action,
-	triggers = {
+plugin.triggers = {
+	onCallbackQuery = {
 		'^###cb:(media):(%a+):(-?%d+)',
 		'^###cb:(mediatype):(-?%d+)',
 		'^###cb:(mediawarn):(%a+):(-?%d+)',
@@ -129,3 +132,5 @@ return {
 		'^###cb:(config):media:(-?%d+)$'
 	}
 }
+
+return plugin

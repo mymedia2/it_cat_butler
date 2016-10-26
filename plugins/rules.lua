@@ -1,3 +1,5 @@
+local plugin = {}
+
 local function send_in_group(chat_id)
 	local res = db:hget('chat:'..chat_id..':settings', 'Rules')
 	if res == 'on' then
@@ -7,14 +9,14 @@ local function send_in_group(chat_id)
 	end
 end
 
-local action = function(msg, blocks)
+function plugin.onTextMessage(msg, blocks)
     if msg.chat.type == 'private' then
     	if blocks[1] == 'start' then
     		msg.chat.id = tonumber(blocks[2])
 
 			local res = api.getChat(msg.chat.id)
 			if not res then
-				api.sendMessage(msg.from.id, _("🚫 Unknown or already non-existent group"))
+				api.sendMessage(msg.from.id, _("🚫 Unknown or non-existent group"))
 				return
 			end
 			-- Private chats have no an username
@@ -22,8 +24,8 @@ local action = function(msg, blocks)
 
 			local res = api.getChatMember(msg.chat.id, msg.from.id)
 			if not res or (res.result.status == 'left' or res.result.status == 'kicked') and private then
-				api.sendMessage(msg.from.id, _("🚷 You aren't member chat. " ..
-					"You can't watch rules of the private group."))
+				api.sendMessage(msg.from.id, _("🚷 You are not a member of this chat. " ..
+					"You can't read the rules of a private group."))
 				return
 			end
     	else
@@ -53,7 +55,7 @@ local action = function(msg, blocks)
     	--check if a mod want to clean the rules
 		if input == '-' then
 			db:hdel(hash, 'rules')
-			api.sendReply(msg, _("Rules has been wiped."))
+			api.sendReply(msg, _("Rules has been deleted."))
 			return
 		end
 		
@@ -70,18 +72,31 @@ local action = function(msg, blocks)
 		else
 			db:hset(hash, 'rules', input)
 			local id = res.result.message_id
-			api.editMessageText(msg.chat.id, id, _("New rules *saved successfully*!"), false, true)
+			api.editMessageText(msg.chat.id, id, _("New rules *saved successfully*!"), true)
 		end
 	end
-
 end
 
-return {
-	action = action,
-	triggers = {
+function plugin.onCallbackQuery(msg, nlocks)
+	local rules = db:hget('chat:'..msg.chat.id..':info', 'rules')
+	if not rules then
+		api.answerCallbackQuery(msg.cb_id, _('❌ Rules not set'))
+	else
+		local res = api.sendMessage(msg.from.id, rules, true)
+		if not res then
+			api.answerCallbackQuery(msg.cb_id, _('❗️ You have to start me first, so I can send you the rules'), true)
+		end
+	end
+end
+
+plugin.triggers = {
+	onTextMessage = {
 		config.cmd..'(setrules)$',
 		config.cmd..'(setrules) (.*)',
 		config.cmd..'(rules)$',
 		'^/(start) (-?%d+):rules$'
-	}
+	},
+	onCallbackQuery = {'^###cb:rulesbutton:(-%d+)$'}
 }
+
+return plugin

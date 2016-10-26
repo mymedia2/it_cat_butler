@@ -1,4 +1,6 @@
-local function cron()
+local plugin = {}
+
+function plugin.cron()
 	local all = db:hgetall('tempbanned')
 	if next(all) then
 		for unban_time,info in pairs(all) do
@@ -53,7 +55,7 @@ local function get_time_reply(hours)
 	return time_string, time_table
 end
 
-local action = function(msg, blocks)
+function plugin.onTextMessage(msg, blocks)
 	if msg.chat.type ~= 'private' then
 		if roles.is_admin_cached(msg) then
 			if blocks[1] == 'kickme' or blocks[1] == 'fuckme' then return end
@@ -104,9 +106,9 @@ local action = function(msg, blocks)
 					local is_already_tempbanned = db:sismember('chat:'..chat_id..':tempbanned', user_id) --hash needed to check if an user is already tempbanned or not
 					local text
 					if is_already_tempbanned then
-						text = _("Ban time was updated for %s. Ban expiration: %s"):format(kicked, time_reply)
+						text = _("Ban time was updated for %s. Ban expiration: %s\n*Admin:* %s"):format(kicked, time_reply, admin)
 					else
-						text = _("User %s was banned. Ban expiration: %s"):format(kicked, time_reply)
+						text = _("User %s was banned. Ban expiration: %s\n*Admin:* %s"):format(kicked, time_reply, admin)
 						db:sadd('chat:'..chat_id..':tempbanned', user_id) --hash needed to check if an user is already tempbanned or not
 					end
 					api.sendMessage(chat_id, text, true)
@@ -174,10 +176,8 @@ local action = function(msg, blocks)
 	end
 end
 
-return {
-	action = action,
-	cron = cron,
-	triggers = {
+plugin.triggers = {
+	onTextMessage = {
 		config.cmd..'(kickme) (.*)',
 		config.cmd..'(kickme)$',
 		config.cmd..'(fuckme) (.*)',
@@ -191,3 +191,5 @@ return {
 		config.cmd..'(unban)$',
 	}
 }
+
+return plugin

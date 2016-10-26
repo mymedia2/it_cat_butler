@@ -1,4 +1,6 @@
-local action = function(msg, blocks)
+local plugin = {}
+
+function plugin.onTextMessage(msg, blocks)
     if msg.chat.type == 'private' then return end
 	if not roles.is_admin_cached(msg) then return end
 	
@@ -14,7 +16,7 @@ local action = function(msg, blocks)
 		if not link then
 			text = _("*No link* for this group. Ask the owner to generate one")
 		else
-			local title = msg.chat.title:escape_hard()
+			local title = msg.chat.title:escape_hard('link')
 			text = string.format('[%s](%s)', title, link)
 		end
 		api.sendReply(msg, text, true)
@@ -46,7 +48,7 @@ local action = function(msg, blocks)
 			text = _("Link *unsetted*")
 		else
 			local succ = db:hset(hash, key, link)
-			local title = msg.chat.title:escape_hard()
+			local title = msg.chat.title:escape_hard('link')
 			local substitution = '['..title..']('..link..')'
 			if succ == false then
 				text = _("The link has been updated.\n*Here's the new link*: %s"):format(substitution)
@@ -58,12 +60,13 @@ local action = function(msg, blocks)
 	end
 end
 
-return {
-	action = action,
-	triggers = {
+plugin.triggers = {
+	onTextMessage = {
 		config.cmd..'(link)$',
 		config.cmd..'(setlink)$',
 		config.cmd..'(setlink) https://telegram%.me/joinchat/(.*)',
 		config.cmd..'(setlink) (-)'
 	}
 }
+
+return plugin

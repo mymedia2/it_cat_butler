@@ -1,3 +1,5 @@
+local plugin = {}
+
 local function max_reached(chat_id, user_id)
     local max = tonumber(db:hget('chat:'..chat_id..':warnsettings', 'mediamax')) or 2
     local n = tonumber(db:hincrby('chat:'..chat_id..':mediawarn', user_id, 1))
@@ -44,11 +46,13 @@ local function is_blocked(id)
 	end
 end
 
-local function onmessage(msg)
+function plugin.onEveryMessage(msg)
+    
+    if not msg.inline then
     
     local msg_type = 'text'
 	if msg.forward_from or msg.forward_from_chat then msg_type = 'forward' end
-    if not is_ignored(msg.chat.id, msg_type) or msg.media and not is_ignored(msg.chat.id, msg.media_type) then
+	if not is_ignored(msg.chat.id, msg_type) or msg.media and not is_ignored(msg.chat.id, msg.media_type) then
         local is_flooding, msgs_sent, msgs_max = is_flooding_funct(msg)
         if is_flooding then
             local status = (db:hget('chat:'..msg.chat.id..':settings', 'Flood')) or config.chat_settings['settings']['Flood']
@@ -147,6 +151,7 @@ local function onmessage(msg)
 					message = _("%s *banned*: RTL character in names / messages not allowed!"):format(name)
     	        end
     	        api.sendMessage(msg.chat.id, message, true)
+				return false -- not execute command already kicked out and not welcome him
     	    end
 			return false -- not welcome
         end
@@ -170,10 +175,13 @@ local function onmessage(msg)
 						message = _("%s *banned*: arab message detected!"):format(name)
     	            end
     	            api.sendMessage(msg.chat.id, message, true)
+					return false
     	        end
             end
         end
     end
+    
+    end --if not msg.inline then
     
     if is_blocked(msg.from.id) then --ignore blocked users
         return false --if an user is blocked, don't go through plugins
@@ -182,6 +190,4 @@ local function onmessage(msg)
     return true
 end
 
-return {
-    onmessage = onmessage
-}
+return plugin

@@ -1,3 +1,5 @@
+local plugin = {}
+
 local function do_keybaord_credits()
 	local keyboard = {}
     keyboard.inline_keyboard = {
@@ -24,8 +26,7 @@ local function doKeyboard_strings()
 	return keyboard
 end
 
-local action = function(msg, blocks)
-    
+function plugin.onTextMessage(msg, blocks)
     if msg.chat.type ~= 'private' then return end
     
 	if blocks[1] == 'ping' then
@@ -55,15 +56,11 @@ local action = function(msg, blocks)
 				.. "The owner of this bot is @bac0nnn, do not PM him. Instead, join one of his groups.\n\n"
 				.. "🕔 Current bot version: `%s`\n"
 				.. "🔗 *Some useful links*:"):format(bot.version)
-		if msg.cb then
-			api.editMessageText(msg.chat.id, msg.message_id, text, keyboard, true)
-		else
-			api.sendKeyboard(msg.chat.id, text, keyboard, true)
-		end
+		api.sendMessage(msg.chat.id, text, true, keyboard)
 	end
 	if blocks[1] == 'groups' then
 		if config.help_groups and next(config.help_groups) then
-			keyboard = {inline_keyboard = {}}
+			local keyboard = {inline_keyboard = {}}
 			for group, link in pairs(config.help_groups) do
 				if link then
 					local line = {{text = group, url = link}}
@@ -71,32 +68,49 @@ local action = function(msg, blocks)
 				end
 			end
 			if next(keyboard.inline_keyboard) then
-				if msg.cb then
-					api.editMessageText(msg.chat.id, msg.message_id, _("Select a group:"), keyboard, true)
-				else
-					api.sendKeyboard(msg.chat.id, _("Select a group:"), keyboard, true)
+				api.sendMessage(msg.chat.id, _("Select a group:"), true, keyboard)
 				end
 			end
 		end
-	end
-	if blocks[1] == 'strings' then
-		keyboard = doKeyboard_strings()
+end
 		
-		api.sendKeyboard(msg.chat.id, _("*Choose your language:*"), keyboard, true)
+function plugin.onCallbackQuery(msg, blocks)
+	if blocks[1] == 'about' then
+		local keyboard = do_keybaord_credits()
+		local text = _("This bot is based on [otouto](https://github.com/topkecleon/otouto) "
+				.. "(AKA @mokubot, channel: @otouto), a multipurpose Lua bot.\n"
+				.. "Group Butler wouldn't exist without it.\n\n"
+				.. "The owner of this bot is @bac0nnn, do not PM him. Instead, join one of his groups.\n\n"
+				.. "🕔 Current bot version: `%s`\n"
+				.. "🔗 *Some useful links*:"):format(bot.version)
+		api.editMessageText(msg.chat.id, msg.message_id, text, true, keyboard)
+	end
+	if blocks[1] == 'groups' then
+		if config.help_groups and next(config.help_groups) then
+			local keyboard = {inline_keyboard = {}}
+			for group, link in pairs(config.help_groups) do
+				if link then
+					local line = {{text = group, url = link}}
+					table.insert(keyboard.inline_keyboard, line)
+				end
+			end
+			if next(keyboard.inline_keyboard) then
+				api.editMessageText(msg.chat.id, msg.message_id, _("Select a group:"), true, keyboard)
+			end
+		end
 		end
 	if blocks[1] == 'sendpo' then
 		local lang = blocks[2]
 		local instr_url = 'telegram.me/groupbutler_ch'
 		local path = 'locales/'..lang..'.po'
 		local button = {inline_keyboard = {{{text = _("Instructions"), url = instr_url}}}}
-		api.editMessageText(msg.chat.id, msg.message_id, _("Sending `%s.po` file..."):format(lang), button, true)
+		api.editMessageText(msg.chat.id, msg.message_id, _("Sending `%s.po` file..."):format(lang), true, button)
 		api.sendDocument(msg.chat.id, path)
 	end
 end
 
-return {
-	action = action,
-	triggers = {
+plugin.triggers = {
+	onTextMessage = {
 		config.cmd..'(ping)$',
 		config.cmd..'(strings)$',
 		config.cmd..'(strings) (%a%a)$',
@@ -104,10 +118,13 @@ return {
 		config.cmd..'(about)$',
 		config.cmd..'(info)$',
 		config.cmd..'(groups)$',
-		'^/start (groups)$',
-		
+		'^/start (groups)$'
+	},
+	onCallbackQuery = {
 		'^###cb:fromhelp:(about)$',
 		'^###cb:private:(groups)$',
-		'^###cb:(sendpo):(.*)$',
+		'^###cb:(sendpo):(.*)$'
 	}
 }
+
+return plugin

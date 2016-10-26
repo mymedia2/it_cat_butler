@@ -24,12 +24,30 @@ function string:input() -- Returns the string after the first space.
 	return self:sub(self:find(' ')+1)
 end
 
-function string:escape()
-	return self:gsub('%*', '\\*'):gsub('_', '\\_'):gsub('`', '\\`'):gsub('%]', '\\]'):gsub('%[', '\\[')
+-- Escape markdown for Telegram. This function makes non-clickable usernames,
+-- hashtags, commands, links and emails, if only_markup flag isn't setted.
+function string:escape(only_markup)
+	if not only_markup then
+		-- insert word joiner
+		self = self:gsub('([@#/.])(%w)', '%1⁠%2')
+	end
+	return self:gsub('[*_`[]', '\\%0')
 end
 
-function string:escape_hard() -- Remove the markdown.
-	return self:gsub('*', ''):gsub('_', ''):gsub('`', ''):gsub('%[', ''):gsub('%]', '')
+-- Remove specified formating or all markdown. This function useful for put
+-- names into message. It seems not possible send arbitrary text via markdown.
+function string:escape_hard(ft)
+	if ft == 'bold' then
+		return self:gsub('%*', '')
+	elseif ft == 'italic' then
+		return self:gsub('_', '')
+	elseif ft == 'fixed' then
+		return self:gsub('`', '')
+	elseif ft == 'link' then
+		return self:gsub(']', '')
+	else
+		return self:gsub('[*_`[%]]', '')
+	end
 end
 
 function roles.is_superadmin(user_id) --if real owner is true, the function will return true only if msg.from.id == config.admin.owner
@@ -101,6 +119,31 @@ function roles.is_owner(msg)
 	end
 end
 
+function roles.is_owner_cached(chat_id, user_id)
+	if type(chat_id) == 'table' then
+		local msg = chat_id
+		chat_id = msg.chat.id
+		user_id = msg.from.id
+	end
+	
+	local hash = 'cache:chat:'..chat_id..':owner'
+	local owner_id, res = nil, true
+	repeat
+		owner_id = db:get(hash)
+		if not owner_id then
+			res = misc.cache_adminlist(chat_id)
+		end
+	until owner_id or not res
+
+	if owner_id then
+		if tonumber(owner_id) == tonumber(user_id) then
+			return true
+		end
+	end
+	
+	return false
+end	
+
 function roles.is_owner2(chat_id, user_id)
 	local status = api.getChatMember(chat_id, user_id).result.status
 	if status == 'creator' then
@@ -117,10 +160,14 @@ function misc.cache_adminlist(chat_id)
 	end
 	local hash = 'cache:chat:'..chat_id..':admins'
 	for _, admin in pairs(res.result) do
+		if admin.status == 'creator' then
+			db:set('cache:chat:'..chat_id..':owner', admin.user.id)
+		end
 		db:sadd(hash, admin.user.id)
 	end
 	db:expire(hash, config.bot_settings.cache_time.adminlist)
-	return true
+	
+	return true, #res.result or 0
 end
 
 function misc.is_blocked_global(id)
@@ -160,21 +207,21 @@ function save_data(filename, data) -- Saves a table to a JSON file.
 end
 
 function vardump(...)
-	for i, value in pairs{...} do
+	for _, value in pairs{...} do
 		print(serpent.block(value, {comment=false}))
 	end
 end
 
 function vtext(...)
 	local lines = {}
-	for i, value in pairs{...} do
+	for _, value in pairs{...} do
 		table.insert(lines, serpent.block(value, {comment=false}))
 	end
 	return table.concat(lines, '\n')
 end
 
 function misc.deeplink_constructor(chat_id, what)
-	return 'telegram.me/'..bot.username..'?start='..chat_id..':'..what
+	return 'https://telegram.me/'..bot.username..'?start='..chat_id..':'..what
 end
 
 function misc.clone_table(t) --doing "table1 = table2" in lua = create a pointer to table2
@@ -341,31 +388,31 @@ function misc.migrate_chat_info(old, new, on_request)
 	end
 end
 
-function string:replaceholders(msg) -- Returns the string after the first space.
-	local user = msg.from
-	if msg.added then
-		user = msg.added
-	end
-	if msg.removed then
-		user = msg.removed
+-- Perform substitution of placeholders in the text according given the
+-- message. If placeholders to replacing are specified, this function processes
+-- only them, otherwise it processes all available placeholders.
+function string:replaceholders(msg, ...)
+	if msg.new_chat_member then
+		msg.from = msg.new_chat_member
+	elseif msg.left_chat_member then
+		msg.from = msg.left_chat_member
 	end
 
-	local substitutions = {
-		name = user.first_name:escape(),
-		surname = '',
-		username = '-',
+	local replace_map = {
+		name = msg.from.first_name:escape(),
+		surname = msg.from.last_name and msg.from.last_name:escape() or '',
+		username = msg.from.username and '@'..msg.from.username:escape() or '-',
 		id = msg.from.id,
 		title = msg.chat.title:escape(),
-		rules = misc.deeplink_constructor(msg.chat.id, 'rules'),
+		rules = misc.deeplink_constructor(msg.chat.id, 'rules')
 	}
-	if user.last_name then
-		substitutions['surname'] = user.last_name:escape()
-	end
-	if user.username then
-		substitutions['username'] = '@' .. user.username:escape()
+
+	local substitutions = next{...} and {} or replace_map
+	for _, placeholder in pairs{...} do
+		substitutions[placeholder] = replace_map[placeholder]
 	end
 
-	return self:gsub('%$(%w+)', substitutions)
+	return self:gsub('$(%w+)', substitutions)
 end
 
 function misc.to_supergroup(msg)
@@ -384,7 +431,7 @@ function div()
 	print('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX')
 end
 
-function misc.log_error(method, code, extras)
+function misc.log_error(method, code, extras, description)
 	if not method or not code then return end
 	
 	local ignored_errors = {403, 429, 110, 111, 116, 131}
@@ -393,7 +440,11 @@ function misc.log_error(method, code, extras)
 		if tonumber(code) == tonumber(ignored_code) then return end
 	end
 	
-	local text = 'Type: #badrequest\nCode: #n'..code
+	local text = 'Type: #badrequest\nMethod: #'..method..'\nCode: #n'..code
+	
+	if description then
+		text = text..'\nDesc: '..description
+	end
 	
 	if extras then
 		if next(extras) then
@@ -410,24 +461,16 @@ function misc.log_error(method, code, extras)
 	api.sendLog(text)
 end
 
-function misc.getname(msg)
-    local name = msg.from.first_name
-	if msg.from.username then name = name..' (@'..msg.from.username..')' end
-    return name
-end
-
+-- Return user mention for output a text
 function misc.getname_final(user)
-	return misc.getname_link(user.first_name, user.username) or '`'..user.first_name:escape()..'`'
+	return misc.getname_link(user.first_name, user.username) or user.first_name:escape()
 end
 
-function misc.getname_id(msg)
-    return msg.from.first_name..' ('..msg.from.id..')'
-end
-
+-- Return link to user profile or false, if he doesn't have login
 function misc.getname_link(name, username)
 	if not name or not username then return false end
 	username = username:gsub('@', '')
-	return '['..name..'](https://telegram.me/'..username..')'
+	return '['..name:escape_hard('link')..'](https://telegram.me/'..username..')'
 end
 
 function misc.bash(str)
@@ -496,26 +539,21 @@ function users.get_link(user)
 end
 
 function users.full_name(user, without_link)
-	local result = user.first_name:escape_hard()
+	local result = user.first_name
 	if user.last_name then
-		result = result .. ' ' .. user.last_name:escape_hard()
+		result = result .. ' ' .. user.last_name
 	end
 	if not without_link and user.username then
-		result = string.format('[%s](%s)', result, users.get_link(user))
+		return string.format('[%s](%s)', result:escape_hard('link'), users.get_link(user))
 	end
-	return result
+	return result:escape()
 end
 
 function misc.getAdminlist(chat_id, user_id)
 	--- ???
 	local list, code = api.getChatAdministrators(chat_id)
 	if not list then
-		if code == 107 then
-			--- what is it?
-			return false, code
-		else
-			return false, false
-		end
+		return false, code
 	end
 
 	local creator, adminlist = nil, {}
@@ -559,14 +597,14 @@ end
 function misc.getExtraList(chat_id)
 	local hash = 'chat:'..chat_id..':extra'
 	local commands = db:hkeys(hash)
-	local text = ''
-	if commands[1] == nil then
-		return _("No commands set!")
+	if not next(commands) then
+		return _("No commands set")
 	else
-	    for k,v in pairs(commands) do
-	    	text = text..v..'\n'
-	    end
-		return _("List of *custom commands*:\n") .. text
+		local lines = {}
+		for k, v in pairs(commands) do
+			table.insert(lines, (v:gsub('_', '\\_')))
+		end
+		return _("List of *custom commands*:\n") .. table.concat(lines, '\n')
 	end
 end
 
@@ -589,6 +627,7 @@ function misc.getSettings(chat_id)
 		Arab = _("Arab"),
 		Rtl = _("RTL"),
 		Reports = _("Reports"),
+		Welbut = _("Welcome button"),
 	}
     for key, default in pairs(config.chat_settings['settings']) do
         
@@ -644,26 +683,28 @@ end
 
 function misc.changeSettingStatus(chat_id, field)
 	local turned_off = {
+		reports = _("@admin command disabled"),
 		welcome = _("Welcome message won't be displayed from now"),
 		goodbye = _("Goodbye message won't be displayed from now"),
 		extra = _("#extra commands are now available only for moderator"),
 		flood = _("Anti-flood is now off"),
 		rules = _("/rules will reply in private (for users)"),
 		antibot = _("Bots won't be kicked if added by an user"),
-		reports = _("Now reports from normal users won't be sent to admins"),
 		silent = _("Now the bot will be answering in a group"),
 		voteban = _("Now /voteban will be available for admins only"),
+		welbut = _("Welcome message without a button for the rules"),
 	}
 	local turned_on = {
+		reports = _("@admin command enabled"),
 		welcome = _("Welcome message will be displayed"),
 		goodbye = _("Goodbye message will be displayed"),
 		extra = _("#extra commands are now available for all"),
 		flood = _("Anti-flood is now on"),
 		rules = _("/rules will reply in the group (with everyone)"),
 		antibot = _("Bots will be kicked if added by an user"),
-		reports = _("Now reports from normal users will be sent to admins"),
 		silent = _("Now the bot will be answering in PM only"),
 		voteban = _("Now /voteban will be available for everybody"),
+		welbut = _("The welcome message will have a button for the rules"),
 	}
 
 	local hash = 'chat:'..chat_id..':settings'
@@ -698,7 +739,7 @@ end
 
 function misc.sendStartMe(chat_id, text)
 	local keyboard = {inline_keyboard = {{{text = _("Start me"), url = 'https://telegram.me/'..bot.username}}}}
-	api.sendKeyboard(chat_id, text, keyboard, true)
+	api.sendKeyboard(chat_id, text, true, keyboard)
 end
 
 function misc.initGroup(chat_id)
@@ -729,6 +770,7 @@ function misc.remGroup(chat_id, full, call)
 	end
 	
 	db:del('cache:chat:'..chat_id..':admins') --delete the cache
+	db:del('cache:chat:'..chat_id..':owner')
 	db:hdel('bot:logchats', chat_id) --delete the associated log chat
 	db:del('chat:'..chat_id..':pin') --delete the msg id of the (maybe) pinned message
 	
@@ -739,14 +781,14 @@ function misc.remGroup(chat_id, full, call)
 		db:del('lang:'..chat_id)
 	end
 	
-	local msg_text = '#removed '..chat_id
+	--[[local msg_text = '#removed '..chat_id
 	if full then
 		msg_text = msg_text..'\nfull: true'
 	else
 		msg_text = msg_text..'\nfull: false'
 	end
 	if call then msg_text = msg_text..'\ncall: '..call end
-	api.sendAdmin(msg_text)
+	api.sendAdmin(msg_text)]]
 end
 
 function misc.getnames_complete(msg, blocks)
@@ -755,14 +797,14 @@ function misc.getnames_complete(msg, blocks)
 	if msg.from.username then
 		admin = misc.getname_link(msg.from.first_name, msg.from.username)
 	else
-		admin = '`'..msg.from.first_name:escape()..'`'
+		admin = '`'..msg.from.first_name:escape_hard('fixed')..'`'
 	end
 	
 	if msg.reply then
 		if msg.reply.from.username then
 			kicked = misc.getname_link(msg.reply.from.first_name, msg.reply.from.username)
 		else
-			kicked = '`'..msg.reply.from.first_name:escape()..'`'
+			kicked = '`'..msg.reply.from.first_name:escape_hard('fixed')..'`'
 		end
 	elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%s(@[%w_]+)%s?') then
 		local username = msg.text:match('%s(@[%w_]+)')
@@ -770,7 +812,7 @@ function misc.getnames_complete(msg, blocks)
 	elseif msg.mentions then
 		for _, entity in pairs(msg.entities) do
 			if entity.user then
-				kicked = '`'..entity.user.first_name:escape()..'`'
+				kicked = '`'..entity.user.first_name:escape_hard('fixed')..'`'
 			end
 		end
 	elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%s(%d+)') then
@@ -822,7 +864,7 @@ function misc.logEvent(event, msg, blocks, extra)
 		if admin and banned and admin_id and banned_id then
 			text = '#BAN\n*Admin*: '..admin..'  #'..admin_id..'\n*User*: '..banned..'  #'..banned_id
 			if extra.motivation then
-				text = text..'\n\n> _'..extra.motivation:escape()..'_'
+				text = text..'\n\n> _'..extra.motivation:escape_hard('italic')..'_'
 			end
 		end
 	end
@@ -832,13 +874,13 @@ function misc.logEvent(event, msg, blocks, extra)
 		if admin and kicked and admin_id and kicked_id then
 			text = '#KICK\n*Admin*: '..admin..'  #'..admin_id..'\n*User*: '..banned..'  #'..banned_id
 			if extra.motivation then
-				text = text..'\n\n> _'..extra.motivation:escape()..'_'
+				text = text..'\n\n> _'..extra.motivation:escape_hard('italic')..'_'
 			end
 		end
 	end
 	if event == 'join' then
-		local member = misc.getname_link(msg.added.first_name, msg.added.username) or '`'..msg.added.first_name:escape()..'`'
-		text = '#NEW_MEMBER\n'..member.. '  #'..msg.added.id
+		local member = misc.getname_link(msg.new_chat_member.first_name, msg.new_chat_member.username) or '`'..msg.new_chat_member.first_name:escape_hard('fixed')..'`'
+		text = '#NEW_MEMBER\n'..member.. '  #'..msg.new_chat_member.id
 	end
 	if event == 'warn' then
 		local admin, warned = misc.getnames_complete(msg, blocks)
@@ -846,19 +888,19 @@ function misc.logEvent(event, msg, blocks, extra)
 		if admin and warned and admin_id and warned_id then
 			text = '#WARN ('..extra.warns..'/'..extra.warnmax..') ('..type..')\n*Admin*: '..admin..'  #'..admin_id..']\n*User*: '..banned..'  #'..banned_id..']'
 			if extra.motivation then
-				text = text..'\n\n> _'..extra.motivation:escape()..'_'
+				text = text..'\n\n> _'..extra.motivation:escape_hard('italic')..'_'
 			end
 		end
 	end
 	if event == 'mediawarn' then
-		local name = misc.getname_link(msg.from.first_name, msg.from.username) or '`'..msg.from.first_name:escape()..'`'
+		local name = misc.getname_link(msg.from.first_name, msg.from.username) or '`'..msg.from.first_name:escape_hard('fixed')..'`'
 		text = '#MEDIAWARN ('..extra.warns..'/'..extra.warnmax..') '..extra.media..'\n'..name..'  #'..msg.from.id
 		if extra.hammered then
 			text = text..'\n*'..extra.hammered..'*'
 		end
 	end
 	if event == 'flood' then
-		local name = misc.getname_link(msg.from.first_name, msg.from.username) or '`'..msg.from.first_name:escape()..'`'
+		local name = misc.getname_link(msg.from.first_name, msg.from.username) or '`'..msg.from.first_name:escape_hard('fixed')..'`'
 		text = '#FLOOD\n'..name..'  #'..msg.from.id
 		if extra.hammered then
 			text = text..'\n*'..extra.hammered..'*'

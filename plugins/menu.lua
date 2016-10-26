@@ -1,3 +1,5 @@
+local plugin = {}
+
 local function changeWarnSettings(chat_id, action)
     local current = tonumber(db:hget('chat:'..chat_id..':warnsettings', 'max')) or 3
     local new_val
@@ -119,7 +121,7 @@ end
 
 local function adminsettings_table(settings, chat_id)
     local return_table = {}
-    local icon_off, icon_on = '🚫', '✅'
+    local icon_off, icon_on = '☑️', '✅'
     for field, default in pairs(settings) do
         if field ~= 'Extra' and field ~= 'Rules' and field ~= 'voteban' then
             local status = (db:hget('chat:'..chat_id..':settings', field)) or default
@@ -197,11 +199,12 @@ local function insert_settings_section(keyboard, settings_section, chat_id)
 		Arab = _("Arab"),
 		Rtl = _("RTL"),
 		Antibot = _("Ban bots"),
+		Welbut = _("Welcome + rules button"),
 	}
 
     for key, icon in pairs(settings_section) do
         local current = {
-            {text = strings[key] or key, callback_data = 'menu:alert:settings'},
+            {text = strings[key] or key, callback_data = 'menu:alert:settings:'..chat_id},
             {text = icon, callback_data = 'menu:'..key..':'..chat_id}
         }
         table.insert(keyboard.inline_keyboard, current)
@@ -228,16 +231,16 @@ local function doKeyboard_menu(chat_id)
     local max = (db:hget('chat:'..chat_id..':warnsettings', 'max')) or config.chat_settings['warnsettings']['max']
     local action = (db:hget('chat:'..chat_id..':warnsettings', 'type')) or config.chat_settings['warnsettings']['type']
 	if action == 'kick' then
-		action = _("📍 %d 🔨️ kick"):format(tonumber(max))
+		action = _("👞 kick")
 	else
-		action = _("📍 %d 🔨️ ban"):format(tonumber(max))
+		action = _("🔨️ ban")
 	end
     local warn = {
 		{text = '➖', callback_data = 'menu:DimWarn:'..chat_id},
+		{text = '#'..max, callback_data = 'menu:alert:warns:'..chat_id},
 		{text = action, callback_data = 'menu:ActionWarn:'..chat_id},
 		{text = '➕', callback_data = 'menu:RaiseWarn:'..chat_id},
     }
-    table.insert(keyboard.inline_keyboard, {{text = _("Warns 👇🏼"), callback_data = 'menu:alert:warns:'}})
     table.insert(keyboard.inline_keyboard, warn)
     
     --back button
@@ -246,12 +249,13 @@ local function doKeyboard_menu(chat_id)
     return keyboard
 end
 
-local function action(msg, blocks)
-	if not msg.cb then return end
-	local chat_id = msg.target_id or msg.chat.id
-	if msg.target_id and not roles.is_admin_cached(msg.target_id, msg.from.id) then
+function plugin.onCallbackQuery(msg, blocks)
+    local chat_id = msg.target_id
+	if not roles.is_admin_cached(chat_id, msg.from.id) then
 		api.answerCallbackQuery(msg.cb_id, _("You're no longer admin"))
-		return
+	else
+	    if not chat_id then
+	        api.sendAdmin('Not msg.target_id -> menu') return
 	end
 
 	local menu_first = _([[
@@ -273,14 +277,11 @@ _Quorum_ specifies the minimal needed number of votes from members for the decis
 If defendant has a sufficient number of votes (more then half), he will be automatically banned.
 ]])
 
-    --get the interested chat id
-    local chat_id = msg.target_id
-    
     local keyboard, text
     
     if blocks[1] == 'config' then
         keyboard = doKeyboard_menu(chat_id)
-        api.editMessageText(msg.chat.id, msg.message_id, menu_first, keyboard, true)
+            api.editMessageText(msg.chat.id, msg.message_id, menu_first, true, keyboard)
     else
 	    if blocks[2] == 'alert' then
 	        if blocks[3] == 'settings' then
@@ -310,16 +311,20 @@ If defendant has a sufficient number of votes (more then half), he will be autom
             text = misc.changeSettingStatus(chat_id, blocks[2])
         end
         keyboard = doKeyboard_menu(chat_id)
-        api.editMessageText(msg.chat.id, msg.message_id, menu_first, keyboard, true)
+            api.editMessageText(msg.chat.id, msg.message_id, menu_first, true, keyboard)
         if text then api.answerCallbackQuery(msg.cb_id, '⚙ '..text) end --workaround to avoid to send an error to users who are using an old inline keyboard
+    end
     end
 end
 
-return {
-	action = action,
-	triggers = {
-		'^###cb:(menu):(alert):(.*)',
+plugin.triggers = {
+    onCallbackQuery = {
+        '^###cb:(menu):(alert):(settings)',
+    	'^###cb:(menu):(alert):(warns)',
+    	
     	'^###cb:(menu):(.*):',
     	'^###cb:(config):menu:(-?%d+)$'
 	}
 }
+
+return plugin

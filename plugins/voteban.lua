@@ -1,3 +1,5 @@
+local plugin = {}
+
 local function do_keyboard_vote(user_id)
 	return {
 		inline_keyboard = {
@@ -346,7 +348,7 @@ local function update()
 	end
 end
 
-local function action(msg, blocks)
+function plugin.onTextMessage(msg, blocks)
 	if blocks[1] == 'voteban' then
 		local hash = string.format('chat:%d:settings', msg.chat.id)
 		local status = db:hget(hash, 'voteban') or config.chat_settings.settings.voteban
@@ -394,51 +396,53 @@ local function action(msg, blocks)
 
 		generate_poll(msg, nominated)
 	end
-	if msg.cb then
-		local defendant = tonumber(blocks[2])
-		local text
-		if blocks[1] == 'increase' then
-			text = change_votes_machinery(msg.chat.id, defendant, msg.from.id, 1)
-		end
-		if blocks[1] == 'decrease' then
-			text = change_votes_machinery(msg.chat.id, defendant, msg.from.id, -1)
-		end
-		if blocks[1] == 'revoke' then
-			text = change_votes_machinery(msg.chat.id, defendant, msg.from.id, 0)
-		end
-		if blocks[1] == 'cancel' then
-			local hash = string.format('chat:%d:voteban:%d', msg.chat.id, defendant)
-			local initiator = tonumber(db:hget(hash, 'initiator'))
-			if msg.from.id == initiator then
-				defendant = api.getChat(defendant).result
-				local supports = tonumber(db:scard(hash .. ':supports'))
-				local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
-				local quorum = tonumber(db:hget(hash, 'quorum'))
-				local informative = db:hget(hash, 'informative')
+end
 
-				local text = conclusion(nil, defendant, supports, oppositionists, quorum, 'canceled', informative)
-				api.editMessageText(msg.chat.id, msg.message_id, text, nil, true)
-				db:del(hash, hash .. ':supports', hash .. ':oppositionists')
-			elseif roles.is_admin_cached(msg.chat.id, msg.from.id) then
-				api.editMessageText(msg.chat.id, msg.message_id, _("The poll was closed by administrator"))
-				db:del(hash, hash .. ':supports', hash .. ':oppositionists')
-			else
-				text = _("🚷 Only administrators or initiator can close the poll")
-			end
+function plugin.onCallbackQuery(msg, blocks)
+	local defendant = tonumber(blocks[2])
+	local text
+	if blocks[1] == 'increase' then
+		text = change_votes_machinery(msg.chat.id, defendant, msg.from.id, 1)
+	end
+	if blocks[1] == 'decrease' then
+		text = change_votes_machinery(msg.chat.id, defendant, msg.from.id, -1)
+	end
+	if blocks[1] == 'revoke' then
+		text = change_votes_machinery(msg.chat.id, defendant, msg.from.id, 0)
+	end
+	if blocks[1] == 'cancel' then
+		local hash = string.format('chat:%d:voteban:%d', msg.chat.id, defendant)
+		local initiator = tonumber(db:hget(hash, 'initiator'))
+		if msg.from.id == initiator then
+			defendant = api.getChat(defendant).result
+			local supports = tonumber(db:scard(hash .. ':supports'))
+			local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
+			local quorum = tonumber(db:hget(hash, 'quorum'))
+			local informative = db:hget(hash, 'informative')
+
+			local text = conclusion(nil, defendant, supports, oppositionists, quorum, 'canceled', informative)
+			api.editMessageText(msg.chat.id, msg.message_id, text, nil, true)
+			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
+		elseif roles.is_admin_cached(msg.chat.id, msg.from.id) then
+			api.editMessageText(msg.chat.id, msg.message_id, _("The poll was closed by administrator"))
+			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
+		else
+			text = _("🚷 Only administrators or initiator can close the poll")
 		end
-		if text then
-			api.answerCallbackQuery(msg.cb_id, text)
-		end
+	end
+	if text then
+		api.answerCallbackQuery(msg.cb_id, text)
 	end
 end
 
-return {
-	cron = update,
-	action = action,
-	triggers = {
+plugin.triggers = {
+	onTextMessage = {
 		config.cmd..'(voteban) ([^%s]*) ?(.*)',
 		config.cmd..'(voteban)$',
-
+	},
+	onCallbackQuery = {
 		'^###cb:voteban:(.*):(-?%d+)$',
-	}
+	},
 }
+
+return plugin

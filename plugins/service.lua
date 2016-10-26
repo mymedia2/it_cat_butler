@@ -1,8 +1,10 @@
-local function action(msg, blocks)
+local plugin = {}
+
+function plugin.onTextMessage(msg, blocks)
 	
 	if not msg.service then return end
 	
-	if blocks[1] == 'botadded' then
+	if blocks[1] == 'new_chat_member:bot' then
 		
 		if misc.is_blocked_global(msg.adder.id) then
 			api.sendMessage(msg.chat.id, _("_You (user ID: %d) are in the blocked list_"):format(msg.adder.id), true)
@@ -14,7 +16,7 @@ local function action(msg, blocks)
 			api.leaveChat(msg.chat.id)
 			return
 		end
-		if config.bot_settings.admin_mode and not roles.is_superadmin(msg.adder.id) then
+		if config.bot_settings.admin_mode and not roles.is_superadmin(msg.from.id) then
 			api.sendMessage(msg.chat.id, '_Admin mode is on: only the bot admin can add me to a new group_', true)
 			api.leaveChat(msg.chat.id)
 			return
@@ -22,15 +24,16 @@ local function action(msg, blocks)
 		
 		misc.initGroup(msg.chat.id)
 	end
-	if blocks[1] == 'botremoved' then
+	if blocks[1] == 'left_chat_member:bot' then
 		misc.remGroup(msg.chat.id, nil, 'bot removed')
 	end
 end
 
-return {
-	action = action,
-	triggers = {
-		'^###(botadded)',
-		'^###(botremoved)',
+plugin.triggers = {
+	onTextMessage = {
+		'^###(new_chat_member:bot)',
+		'^###(left_chat_member:bot)',
 	}
 }
+
+return plugin

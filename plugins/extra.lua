@@ -1,3 +1,5 @@
+local plugin = {}
+
 local function is_locked(chat_id)
   	local hash = 'chat:'..chat_id..':settings'
   	local current = db:hget(hash, 'Extra')
@@ -8,7 +10,7 @@ local function is_locked(chat_id)
   	end
 end
 
-local action = function(msg, blocks)
+function plugin.onTextMessage(msg, blocks)
 	
 	if msg.chat.type == 'private' then return end
 	
@@ -47,24 +49,16 @@ local action = function(msg, blocks)
     		else
 	    		db:hset(hash, blocks[2], blocks[3])
 	    		local msg_id = res.result.message_id
-				api.editMessageText(msg.chat.id, msg_id, _("Command '%s' saved!"):format(blocks[2]), false)
+				api.editMessageText(msg.chat.id, msg_id, _("Command '%s' saved!"):format(blocks[2]))
     		end
     	end
 	elseif blocks[1] == 'extra list' then
-	    if not roles.is_admin_cached(msg) then return end
-	    
-	    local hash = 'chat:'..msg.chat.id..':extra'
-	    local commands = db:hkeys(hash)
-	    local text = ''
-	    if commands[1] == nil then
-	        api.sendReply(msg, _("No commands set"))
-	    else
-	        for k,v in pairs(commands) do
-	            text = text..v..'\n'
-	        end
-	        local out = _("List of *custom commands*:\n") .. text
-	        api.sendReply(msg, out, true)
-	    end
+		local text = misc.getExtraList(msg.chat.id)
+	    if not roles.is_admin_cached(msg) and misc.is_silentmode_on(msg.chat.id) then
+			api.sendMessage(msg.from.id, text, true)
+		else
+			api.sendReply(msg, text, true)
+		end
     elseif blocks[1] == 'extra del' then
         if not roles.is_admin_cached(msg) then return end
 	    
@@ -85,7 +79,7 @@ local action = function(msg, blocks)
         local special_method = text:match('^###file_id!(.*)###') --photo, voices, video need their method to be sent by file_id
         if is_locked(msg.chat.id) and not roles.is_admin_cached(msg) then --send it in private
         	if not file_id then
-            	api.sendMessage(msg.from.id, text, true)
+            	api.sendMessage(msg.from.id, text:replaceholders(msg.reply or msg), true)
             else
             	if special_method then
             		api.sendMediaId(msg.from.id, file_id, special_method) --photo, voices, video need their method to be sent by file_id
@@ -107,15 +101,14 @@ local action = function(msg, blocks)
         			api.sendDocumentId(msg.chat.id, file_id, msg_to_reply)
         		end
         	else
-        		api.sendMessage(msg.chat.id, text:replaceholders(msg.reply or msg), true, msg_to_reply) --if the mod replies to an user, the bot will reply to the user too
+        		api.sendMessage(msg.chat.id, text:replaceholders(msg.reply or msg), true, nil, msg_to_reply) --if the mod replies to an user, the bot will reply to the user too
         	end
         end
     end
 end
 
-return {
-	action = action,
-	triggers = {
+plugin.triggers = {
+	onTextMessage = {
 		config.cmd..'(extra)$',
 		config.cmd..'(extra) (#[%w_]*)%s(.*)$',
 		config.cmd..'(extra) (#[%w_]*)',
@@ -124,3 +117,5 @@ return {
 		'^(#[%w_]*)$'
 	}
 }
+
+return plugin
