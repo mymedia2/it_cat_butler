@@ -739,7 +739,7 @@ end
 
 function misc.sendStartMe(chat_id, text)
 	local keyboard = {inline_keyboard = {{{text = _("Start me"), url = 'https://telegram.me/'..bot.username}}}}
-	api.sendKeyboard(chat_id, text, true, keyboard)
+	api.sendMessage(chat_id, text, true, keyboard)
 end
 
 function misc.initGroup(chat_id)

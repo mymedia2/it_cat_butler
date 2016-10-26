@@ -182,7 +182,7 @@ local function generate_poll(msg, defendant)
 	local keyboard = do_keyboard_vote(defendant.id)
 	local text = get_header(initiator, defendant, supports, oppositionists,
 							quorum, os.time() + duration, informative, was_active_previous)
-	local res = api.sendKeyboard(msg.chat.id, text, keyboard, true)
+	local res = api.sendMessage(msg.chat.id, text, true, keyboard)
 	if not res then return false end
 
 	-- Close previous poll if it exists
@@ -197,7 +197,7 @@ local function generate_poll(msg, defendant)
 			text = _("⬇ The poll for ban of %s was closed because *new poll* was created")
 				:format(users.full_name(defendant))
 		end
-		api.editMessageText(msg.chat.id, previous_id, text, nil, true)
+		api.editMessageText(msg.chat.id, previous_id, text, true)
 	end
 
 	-- Store information about new poll
@@ -234,7 +234,7 @@ local function rebuild_poll_message(chat_id, user_id, problems)
 	local keyboard = do_keyboard_vote(defendant.id)
 	local text = get_header(initiator, defendant, supports, oppositionists,
 							quorum, expired, informative, was_active_previous)
-	return api.editMessageText(chat_id, msg_id, text, keyboard, true)
+	return api.editMessageText(chat_id, msg_id, text, true, keyboard)
 end
 
 -- disposes the vote and returns true if decision has changed
@@ -287,7 +287,7 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 			local defendant = api.getChat(user_id).result
 
 			local text = conclusion(initiator, defendant, supports, oppositionists, quorum, upshot, informative)
-			api.editMessageText(chat_id, msg_id, text, nil, true)
+			api.editMessageText(chat_id, msg_id, text, true)
 
 			if send_confirmation then
 				local text = _("%s has been banned ✨"):format(users.full_name(defendant))
@@ -337,7 +337,7 @@ local function update()
 			local informative = db:hget(hash, 'informative')
 
 			local text = conclusion(nil, defendant, supports, oppositionists, quorum, 'no decision', informative)
-			api.editMessageText(chat_id, msg_id, text, nil, true)
+			api.editMessageText(chat_id, msg_id, text, true)
 
 			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
 		else
@@ -421,7 +421,7 @@ function plugin.onCallbackQuery(msg, blocks)
 			local informative = db:hget(hash, 'informative')
 
 			local text = conclusion(nil, defendant, supports, oppositionists, quorum, 'canceled', informative)
-			api.editMessageText(msg.chat.id, msg.message_id, text, nil, true)
+			api.editMessageText(msg.chat.id, msg.message_id, text, true)
 			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
 		elseif roles.is_admin_cached(msg.chat.id, msg.from.id) then
 			api.editMessageText(msg.chat.id, msg.message_id, _("The poll was closed by administrator"))
