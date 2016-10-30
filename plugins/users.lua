@@ -158,7 +158,7 @@ function plugin.onTextMessage(msg, blocks)
 	
 	if blocks[1] == 'adminlist' then
 		local text = misc.getAdminlist(msg.chat.id, msg.from.id)
-        if not roles.is_admin_cached(msg) and mis.is_silentmode_on(msg.chat.id) then
+        if not roles.is_admin_cached(msg) and misc.is_silentmode_on(msg.chat.id) then
         	api.sendMessage(msg.from.id, text, true)
         else
 			api.sendMessage(msg.chat.id, text, true)
