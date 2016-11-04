@@ -1,5 +1,17 @@
 local plugin = {}
 
+local function get_button_description(key)
+    if key == 'num' then
+        return _("⚖ Current sensitivity. Tap on the + or the - to change it")
+    elseif key == 'voice' then
+        return _([[Choose which media must be ignored by the antiflood (the bot won't consider them).
+✅: ignored
+❌: not ignored]])
+    else
+        return _("Description not available")
+    end
+end
+
 local function do_keyboard_flood(chat_id)
     --no: enabled, yes: disabled
     local status = db:hget('chat:'..chat_id..':settings', 'Flood') or config.chat_settings['settings']['Flood'] --check (default: disabled)
@@ -12,9 +24,9 @@ local function do_keyboard_flood(chat_id)
     local hash = 'chat:'..chat_id..':flood'
     local action = (db:hget(hash, 'ActionFlood')) or config.chat_settings['flood']['ActionFlood']
     if action == 'kick' then
-        action_label = _("⚡️ kick")
+        action_label = _("👞️ kick")
     elseif action == 'ban' then
-        action_label = _("⛔ ️ban")
+        action_label = _("🔨 ️ban")
 	elseif action == 'tempban' then
 		action_label = _("🔑 tempban")
     end
@@ -61,7 +73,7 @@ local function do_keyboard_flood(chat_id)
 	local order = { 'text', 'forward', 'photo', 'gif', 'sticker', 'video' }
     local exceptions = {
 		text = _("Texts"),
-		forward = _("Forward"),
+		forward = _("Forwards"),
         sticker = _("Stickers"),
         photo = _("Images"),
         gif = _("GIFs"),
@@ -120,13 +132,13 @@ local function changeFloodSettings(chat_id, screm)
 	if type(screm) == 'string' then
 		if screm == 'kick' then
 			db:hset(hash, 'ActionFlood', 'ban')
-			return _("Now flooders will be banned")
+			return _("Flooders will be banned")
         elseif screm == 'ban' then
 			db:hset(hash, 'ActionFlood', 'tempban')
-			return _("Now flooders will be temporary banned")
+			return _("Flooders will be temporary banned")
 		elseif screm == 'tempban' then
         	db:hset(hash, 'ActionFlood', 'kick')
-			return _("Now flooders will be kicked")
+            return _("Flooders will be kicked")
         end
     elseif type(screm) == 'number' then
     	local old = tonumber(db:hget(hash, 'MaxFlood')) or 5
@@ -157,26 +169,9 @@ function plugin.onCallbackQuery(msg, blocks)
 	end
 
 	if not roles.is_admin_cached(chat_id, msg.from.id) then
-		api.answerCallbackQuery(msg.cb_id, _("You're no longer admin"))
+		api.answerCallbackQuery(msg.cb_id, _("You're no longer an admin"))
 	else
-	local header = _([[
-You can manage the group flood settings from here.
-
-*1st row*
-• *ON/OFF*: the current status of the anti-flood
-• *Kick/Ban*: what to do when someone is flooding
-
-*2nd row*
-• you can use *+/-* to change the current sensitivity of the antiflood system
-• the number it's the max number of messages that can be sent in _5 seconds_
-• max value: _25_, min value: _4_
-
-*3rd row* and below
-You can set some exceptions for the antiflood:
-• ✅: the media will be ignored by the anti-flood
-• ❌: the media won't be ignored by the anti-flood
-• *Note*: in "_texts_" are included all the other types of media (file, audio...)
-]])
+	local header = _("You can manage the antiflood settings from here")
 
     local text
         
@@ -185,13 +180,8 @@ You can set some exceptions for the antiflood:
 	end
 	
 	if blocks[1] == 'alert' then
-		if blocks[2] == 'num' then
-			text = _("⚖ Current sensitivity. Tap on the + or the -")
-		elseif blocks[2] == 'voice' then
-			text = _("⚠️ Tap on an icon!")
-		end
-		api.answerCallbackQuery(msg.cb_id, text)
-		return
+            text = get_button_description(blocks[2])
+            api.answerCallbackQuery(msg.cb_id, text, true) return
 	end
 	
 	if blocks[1] == 'exc' then
@@ -248,8 +238,8 @@ end
 
 plugin.triggers = {
     onCallbackQuery = {
-        '^###cb:flood:(alert):(num)$',
-        '^###cb:flood:(alert):(voice)$',
+        '^###cb:flood:(alert):(num)',
+        '^###cb:flood:(alert):(voice)',
         '^###cb:flood:(status):(-?%d+)$',
         '^###cb:flood:(action):(-?%d+)$',
         '^###cb:flood:(dim):(-?%d+)$',

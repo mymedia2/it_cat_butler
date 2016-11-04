@@ -6,7 +6,6 @@ local triggers2 = {
 	'^%$(backup)$',
 	'^%$(save)$',
 	'^%$(stats)$',
-	'^%$(lua)$',
 	'^%$(lua) (.*)$',
 	'^%$(run) (.*)$',
 	'^%$(admin)$',
@@ -20,8 +19,6 @@ local triggers2 = {
 	'^%$(download)$',
 	'^%$(resid) (%d+)$',
 	'^%$(update)$',
-	'^%$(subadmin) (yes)$',
-	'^%$(subadmin) (no)$',
 	'^%$(tban) (get)$',
 	'^%$(tban) (flush)$',
 	'^%$(selectdb) (.*)$',
@@ -36,9 +33,11 @@ local triggers2 = {
 	'^%$(remgroup) (-%d+)$',
 	'^%$(remgroup) (true) (-%d+)$',
 	'^%$(cache) (.*)$',
-	'^%$(cacheinit) (.*)$',
-	'^%$(active) (%d)$',
-	'^%$(getid)$'
+	'^%$(initcache) (.*)$',
+	'^%$(active) (%d%d?)$',
+	'^%$(active)$',
+	'^%$(getid)$',
+	'^%$(updatelocale) (.*)$'
 }
 
 function plugin.cron()
@@ -74,7 +73,7 @@ local function load_lua(code, msg)
 		output = '```\n' .. output .. '\n```'
 	end
 	return output
-end	
+end
 
 local function match_pattern(pattern, text)
   if text then
@@ -164,12 +163,8 @@ function plugin.onTextMessage(msg, blocks)
 		api.sendMessage(msg.chat.id, text, true)
 	end
 	if blocks[1] == 'lua' then
-		if not blocks[2] then
-			api.sendReply(msg, 'Enter a string')
-		else
-			local output = load_lua(blocks[2], msg)
+		local output = load_lua(blocks[2], msg)
 		api.sendMessage(msg.chat.id, output, true)
-	end
 	end
 	if blocks[1] == 'run' then
 		--read the output
@@ -308,22 +303,8 @@ function plugin.onTextMessage(msg, blocks)
 				db:hset(hash, 'document', file)
 				n = n + 1
 			end
-	end
+		end
 		api.sendReply(msg, 'Done. Replaced '..n..' key(s)')
-	end
-	if blocks[1] == 'subadmin' then
-		--the status will be resetted at the next stop
-		if not msg.reply then
-			api.sendAdmin('Reply to someone')
-			return
-		end
-		local user_id = msg.reply.from.id
-		if blocks[2] == 'yes' then
-			config.admin.admins[user_id] = true
-		else
-			config.admin.admins[user_id] = false
-		end
-		api.sendAdmin('Changed')
 	end
 	if blocks[1] == 'tban' then
 		if blocks[2] == 'flush' then
@@ -414,7 +395,7 @@ function plugin.onTextMessage(msg, blocks)
 		local members = db:smembers('cache:chat:'..chat_id..':admins')
 		api.sendMessage(msg.chat.id, chat_id..' ➤ '..tostring(#members)..'\n'..vtext(members))
 	end
-	if blocks[1] == 'cacheinit' then
+	if blocks[1] == 'initcache' then
 		local chat_id, text
 		if blocks[2] == '$chat' then
 			chat_id = msg.chat.id
@@ -430,7 +411,7 @@ function plugin.onTextMessage(msg, blocks)
 		api.sendMessage(msg.chat.id, text)
 	end
 	if blocks[1] == 'active' then
-		local days = tonumber(blocks[2])
+		local days = tonumber(blocks[2]) or 7
 		local now = os.time()
 		local seconds_per_day = 60*60*24
 		local groups = db:hgetall('bot:chats:latsmsg')
@@ -446,6 +427,11 @@ function plugin.onTextMessage(msg, blocks)
 		if msg.forward_from then
 			api.sendMessage(msg.chat.id, '`'..msg.forward_from.id..'`', true)
 		end
+	end
+	if blocks[1] == 'updatelocale' then
+		local lang = blocks[2]
+		misc.bash('./launch.sh update-locale '..lang)
+		api.sendMessage(msg.chat.id, 'Updating `'..lang..'`... (check by yourself)', true)
 	end
 end
 

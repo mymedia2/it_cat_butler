@@ -30,7 +30,7 @@ function plugin.onTextMessage(msg, blocks)
     if msg.chat.type ~= 'private' then return end
     
 	if blocks[1] == 'ping' then
-		local res = api.sendMessage(msg.from.id, 'Pong!', true)
+		local res = api.sendMessage(msg.from.id, _("Pong!"), true)
 		--[[if res then
 			api.editMessageText(msg.chat.id, res.result.message_id, 'Response time: '..(os.clock() - clocktime_last_update))
 		end]]
@@ -38,24 +38,12 @@ function plugin.onTextMessage(msg, blocks)
 	if blocks[1] == 'echo' then
 		local res, code = api.sendMessage(msg.chat.id, blocks[2], true)
 		if not res then
-			if code == 118 then
-				api.sendMessage(msg.chat.id, _("This text is too long, I can't send it"))
-			else
-				local message_text = _("This text breaks the markdown.\n"
-						.. "More info about a proper use of markdown "
-						.. "[here](https://telegram.me/GroupButler_ch/46).")
-				api.sendMessage(msg.chat.id, message_text, true)
-			end
+			api.sendMessage(msg.chat.id, misc.get_sm_error_string(code), true)
 		end
 	end
 	if blocks[1] == 'about' or blocks[1] == 'info' then
 		local keyboard = do_keybaord_credits()
-		local text = _("This bot is based on [otouto](https://github.com/topkecleon/otouto) "
-				.. "(AKA @mokubot, channel: @otouto), a multipurpose Lua bot.\n"
-				.. "Group Butler wouldn't exist without it.\n\n"
-				.. "The owner of this bot is @bac0nnn, do not PM him. Instead, join one of his groups.\n\n"
-				.. "🕔 Current bot version: `%s`\n"
-				.. "🔗 *Some useful links*:"):format(bot.version)
+		local text = _("This bot is based on [otouto](https://github.com/topkecleon/otouto) (AKA @mokubot, channel: @otouto), a multipurpose Lua bot.\nGroup Butler wouldn't exist without it.\n\nThe owner of this bot is @bac0nnn, do not pm him: use /groups command instead.\n\nBot version: `%s`\n*Some useful links:*"):format(config.human_readable_version .. ' rev.' .. bot.revision)
 		api.sendMessage(msg.chat.id, text, true, keyboard)
 	end
 	if blocks[1] == 'groups' then
@@ -77,12 +65,7 @@ end
 function plugin.onCallbackQuery(msg, blocks)
 	if blocks[1] == 'about' then
 		local keyboard = do_keybaord_credits()
-		local text = _("This bot is based on [otouto](https://github.com/topkecleon/otouto) "
-				.. "(AKA @mokubot, channel: @otouto), a multipurpose Lua bot.\n"
-				.. "Group Butler wouldn't exist without it.\n\n"
-				.. "The owner of this bot is @bac0nnn, do not PM him. Instead, join one of his groups.\n\n"
-				.. "🕔 Current bot version: `%s`\n"
-				.. "🔗 *Some useful links*:"):format(bot.version)
+		local text = _("This bot is based on [otouto](https://github.com/topkecleon/otouto) (AKA @mokubot, channel: @otouto), a multipurpose Lua bot.\nGroup Butler wouldn't exist without it.\n\nThe owner of this bot is @bac0nnn, do not pm him: use /groups command instead.\n\nBot version: `%s`\n*Some useful links:*"):format(config.human_readable_version .. ' rev.' .. bot.revision)
 		api.editMessageText(msg.chat.id, msg.message_id, text, true, keyboard)
 	end
 	if blocks[1] == 'groups' then

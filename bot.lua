@@ -20,7 +20,7 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	api = require('methods')
 	
 	bot = api.getMe().result -- Get bot info
-	bot.version = io.popen('git rev-parse --short HEAD'):read()
+	bot.revision = io.popen('git rev-parse --short HEAD'):read()
 
 	plugins = {} -- Load plugins.
 	for i,v in ipairs(config.plugins) do
@@ -98,9 +98,6 @@ end
 
 local function collect_stats(msg)
 	
-	--count the number of messages
-	db:hincrby('bot:general', 'messages', 1)
-
 	extract_usernames(msg)
 	
 	if msg.chat.type ~= 'private' and msg.chat.type ~= 'inline' and msg.from then
@@ -137,10 +134,6 @@ local function on_msg_receive(msg, callback) -- The fn run whenever a message is
 		
 	if msg.date < os.time() - 7 then return end -- Do not process old messages.
 	if not msg.text then msg.text = msg.caption or '' end
-	
-	--[[if msg.text:match('^/start .+') then
-		msg.text = '/' .. msg.text:input()
-	end]]
 	
 	locale.language = db:get('lang:'..msg.chat.id) or 'en' --group language
 	if not config.available_languages[locale.language] then
@@ -181,7 +174,7 @@ local function on_msg_receive(msg, callback) -- The fn run whenever a message is
 						if not success then --if a bug happens
 							print(result)
 							if config.bot_settings.notify_bug then
-								api.sendReply(msg, _("Sorry, a *bug* occurred"), true)
+								api.sendReply(msg, _("🐛 Sorry, a *bug* occurred"), true)
 							end
           					api.sendAdmin('An #error occurred.\n'..result..'\n'..locale.language..'\n'..msg.text)
 							return
@@ -196,16 +189,49 @@ local function on_msg_receive(msg, callback) -- The fn run whenever a message is
 
 		end
 		end
+	else
+		if msg.group_chat_created or (msg.new_chat_member and msg.new_chat_member.id == bot.id) then
+			-- set the language
+			--[[locale.language = db:get(string.format('lang:%d', msg.from.id)) or 'en'
+			if not config.available_languages[locale.language] then
+				locale.language = 'en'
+			end]]
+			
+			-- send disclamer
+			api.sendMessage(msg.chat.id, _([[
+Hello everyone!
+My name is %s, and I'm a bot made to help administrators in their hard work.
+Unfortunately I can't work in normal groups, please ask the creator to convert this group to a supergroup.
+]]):format(bot.first_name))
+			
+			-- log this event
+			if config.bot_settings.stream_commands then
+				print(string.format('%s[%s]%s Bot was added to a normal group %s%s [%d] -> [%d]',
+					  clr.blue, os.date('%X'), clr.yellow, clr.reset, msg.from.first_name, msg.from.id, msg.chat.id))
+			end
+		end
 	end
 end
 
 local function parseMessageFunction(update)
 
+	db:hincrby('bot:general', 'messages', 1)
+	
 	local msg, function_key
 	
-	if update.message then
-		msg = update.message
+	if update.message or update.edited_message then
+		
 		function_key = 'onTextMessage'
+		
+		if update.edited_message then
+			update.edited_message.edited = true
+			update.edited_message.original_date = update.edited_message.date
+			update.edited_message.date = update.edited_message.edit_date
+			function_key = 'onEditedMessage'
+		end
+		
+		msg = update.message or update.edited_message
+		
 		if msg.text then
 		elseif msg.photo then
 	msg.media = true
@@ -299,7 +325,7 @@ local function parseMessageFunction(update)
 				end
 			end
 			if entity.type == 'url' or entity.type == 'text_link' then
-				if msg.text:match('[Tt][Ee][Ll][Ee][Gg][Rr][Aa][Mm]%.[Mm][Ee]') then
+					if msg.text:lower():match('telegram%.me') then
 					msg.media_type = 'TGlink'
 				else
 					msg.media_type = 'link'
@@ -314,10 +340,7 @@ local function parseMessageFunction(update)
 		msg.reply.text = msg.reply.caption
 	end
 		end
-	--[[elseif update.edited_message then
-		msg = update.edited_message
-		function_key = 'onEditedMessage'
-	elseif update.inline_query then
+	--[[elseif update.inline_query then
 		msg = update.inline_query
 		msg.inline = true
 		msg.chat = {id = msg.from.id, type = 'inline', title = 'inline'}

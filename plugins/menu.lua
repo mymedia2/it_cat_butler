@@ -1,5 +1,40 @@
 local plugin = {}
 
+local function get_button_description(key)
+    if key == 'Reports' then
+		-- TRANSLATORS: these strings should be shorter than 200 characters
+        return _("When enabled, users will be able to report messages with the @admin command")
+    elseif key == 'Goodbye' then
+        return _("Enable or disable the goodbye message. Can't be sent in large groups")
+    elseif key == 'Welcome' then
+        return _("Enable or disable the welcome message")
+    elseif key == 'Silent' then
+        return _("When enabled, the bot doesn't answer in the group to /dashboard, /config and /help commands (it will just answer in private)")
+    elseif key == 'Flood' then
+        return _("Enable and disable the anti-flood system (more info in the /help message)")
+    elseif key == 'Welbut' then
+        return _("If the welcome message is enabled, it will include an inline button that will send to the user the rules in private")
+    elseif key == 'Rules' then
+        return _([[When someone uses /rules
+👥: the bot will answer in the group (always, with admins)
+👤: the bot will answer in private]])
+    elseif key == 'Extra' then
+        return _([[When someone uses an #extra
+👥: the bot will answer in the group (always, with admins)
+👤: the bot will answer in private]])
+    elseif key == 'Arab' then
+        return _("Select what the bot should do when someone sends a message with arab characters")
+    elseif key == 'Rtl' then
+        return _("Select what the bot should do when someone sends a message with the RTL character, or has it in his name")
+    elseif key == 'warnsnum' then
+        return _("Change how many times an user has to be warned before being kicked/banned")
+    elseif key == 'warnsact' then
+        return _("Change the action to perform when an user reaches the max. number of warnings")
+    else
+        return _("Description not available")
+    end
+end 
+
 local function changeWarnSettings(chat_id, action)
     local current = tonumber(db:hget('chat:'..chat_id..':warnsettings', 'max')) or 3
     local new_val
@@ -199,12 +234,13 @@ local function insert_settings_section(keyboard, settings_section, chat_id)
 		Arab = _("Arab"),
 		Rtl = _("RTL"),
 		Antibot = _("Ban bots"),
+		Reports = _("Reports"),
 		Welbut = _("Welcome + rules button"),
 	}
 
     for key, icon in pairs(settings_section) do
         local current = {
-            {text = strings[key] or key, callback_data = 'menu:alert:settings:'..chat_id},
+            {text = strings[key] or key, callback_data = 'menu:alert:settings:'..key..':'..chat_id},
             {text = icon, callback_data = 'menu:'..key..':'..chat_id}
         }
         table.insert(keyboard.inline_keyboard, current)
@@ -236,12 +272,19 @@ local function doKeyboard_menu(chat_id)
 		action = _("🔨️ ban")
 	end
     local warn = {
+        {
+            {text = _('Warns: ')..max, callback_data = 'menu:alert:settings:warnsnum:'..chat_id},
 		{text = '➖', callback_data = 'menu:DimWarn:'..chat_id},
-		{text = '#'..max, callback_data = 'menu:alert:warns:'..chat_id},
-		{text = action, callback_data = 'menu:ActionWarn:'..chat_id},
 		{text = '➕', callback_data = 'menu:RaiseWarn:'..chat_id},
+        },
+        {
+            {text = _('Action:'), callback_data = 'menu:alert:settings:warnsact:'..chat_id},
+            {text = action, callback_data = 'menu:ActionWarn:'..chat_id}
+        }
     }
-    table.insert(keyboard.inline_keyboard, warn)
+    for i, button in pairs(warn) do
+        table.insert(keyboard.inline_keyboard, button)
+    end
     
     --back button
     table.insert(keyboard.inline_keyboard, {{text = '🔙', callback_data = 'config:back:'..chat_id}})
@@ -252,46 +295,23 @@ end
 function plugin.onCallbackQuery(msg, blocks)
     local chat_id = msg.target_id
 	if not roles.is_admin_cached(chat_id, msg.from.id) then
-		api.answerCallbackQuery(msg.cb_id, _("You're no longer admin"))
+		api.answerCallbackQuery(msg.cb_id, _("You're no longer an admin"))
 	else
 	    if not chat_id then
 	        api.sendAdmin('Not msg.target_id -> menu') return
-	end
+		end
 
-	local menu_first = _([[
-Manage the settings of the group.
-📘 _Short legenda_:
+	    local menu_first = _("Manage the settings of the group")
 
-*Extra*:
-• 👥: the bot will reply *in the group*, with everyone
-• 👤: the bot will reply *in private* with normal users and in the group with admins
-
-*Silent mode*:
-If enabled, the bot won't send a confirmation message in the group when someone use /config or /dashboard.
-It will just send the message in private.
-
-*Polls for ban*:
-You can activate this feature for democratic chats, and group members will be able to start voting for ban another member of a chat, otherwise only admins will be able to start such polls.
-_Duration_ setting specifies the time after which the poll will be finished as having no decision of community.
-_Quorum_ specifies the minimal needed number of votes from members for the decision.
-If defendant has a sufficient number of votes (more then half), he will be automatically banned.
-]])
-
-    local keyboard, text
+        local keyboard, text, show_alert
     
-    if blocks[1] == 'config' then
-        keyboard = doKeyboard_menu(chat_id)
+		if blocks[1] == 'config' then
+			keyboard = doKeyboard_menu(chat_id)
             api.editMessageText(msg.chat.id, msg.message_id, menu_first, true, keyboard)
-    else
-	    if blocks[2] == 'alert' then
-	        if blocks[3] == 'settings' then
-                text = _("⚠️ Tap on an icon!")
-            elseif blocks[3] == 'warns' then
-                text = _("⚠️ Use the row below to change the warns settings!")
-			elseif blocks[3] == 'values' then
-				text = _("⚠️ Change the value via plus or minus!")
-            end
-            api.answerCallbackQuery(msg.cb_id, text or '')
+		else
+			if blocks[2] == 'alert' then
+                text = get_button_description(blocks[3])
+                api.answerCallbackQuery(msg.cb_id, text, true)
             return
         end
         if blocks[2] == 'DimWarn' or blocks[2] == 'RaiseWarn' or blocks[2] == 'ActionWarn' then
@@ -308,19 +328,21 @@ If defendant has a sufficient number of votes (more then half), he will be autom
 			or blocks[2] == 'DimQuorum' or blocks[2] == 'RaiseQuorum' then
 			text = string.format('%d → %d', changeVotebanSetting(chat_id, blocks[2]))
         else
-            text = misc.changeSettingStatus(chat_id, blocks[2])
+			text, show_alert = misc.changeSettingStatus(chat_id, blocks[2])
         end
-        keyboard = doKeyboard_menu(chat_id)
+			keyboard = doKeyboard_menu(chat_id)
             api.editMessageText(msg.chat.id, msg.message_id, menu_first, true, keyboard)
-        if text then api.answerCallbackQuery(msg.cb_id, '⚙ '..text) end --workaround to avoid to send an error to users who are using an old inline keyboard
-    end
+			if text then
+				--workaround to avoid to send an error to users who are using an old inline keyboard
+				api.answerCallbackQuery(msg.cb_id, '⚙ '..text, show_alert)
+			end
+		end
     end
 end
 
 plugin.triggers = {
     onCallbackQuery = {
-        '^###cb:(menu):(alert):(settings)',
-    	'^###cb:(menu):(alert):(warns)',
+        '^###cb:(menu):(alert):settings:([%w_]+):',
     	
     	'^###cb:(menu):(.*):',
     	'^###cb:(config):menu:(-?%d+)$'

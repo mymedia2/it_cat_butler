@@ -138,18 +138,13 @@ function plugin.onTextMessage(msg, blocks)
 		    	else
 		    		--save the ban
 		    		misc.saveBan(user_id, 'ban')
-		    		local why
-		    		if msg.reply then
-		    			why = msg.text:input()
-		    		else
-		    			why = msg.text:gsub(config.cmd..'ban @[%w_]+%s?', '')
-		    		end
-		    		api.sendMessage(msg.chat.id, _("%s banned %s"):format(admin, kicked), true)
+		    		--misc.logEvent('ban', msg, blocks, 'cnhdc cbhdhcbhcd bcdhcdbc')
+		    		api.sendMessage(msg.chat.id, _("%s banned %s!"):format(admin, kicked), true)
 		    	end
     		end
    			if blocks[1] == 'unban' then
    				api.unbanUser(chat_id, user_id)
-   				local text = _("User unbanned by %s!"):format(admin)
+   				local text = _("User %s unbanned by %s!"):format(kicked, admin)
    					api.sendReply(msg, text, true)
    			end
 		else

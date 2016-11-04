@@ -7,6 +7,7 @@ return {
 		chat = -1001086427803,
 		admin = -1001086427803,
 	},
+	human_readable_version = '4.2.0',
 	bot_settings = {
 		cache_time = {
 			adminlist = 18000, --5 hours (18000s) Admin Cache time, in seconds.
@@ -75,8 +76,8 @@ return {
 	allow_fuzzy_translations = false,
 	chat_settings = { --default chat_settings for groups.
 		['settings'] = {
-			['Welcome'] = 'on',
-			['Goodbye'] = 'on',
+			['Welcome'] = 'off',
+			['Goodbye'] = 'off',
 			['Extra'] = 'on',
 			['Flood'] = 'off',
 			['Silent'] = 'off',
