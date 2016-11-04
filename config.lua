@@ -20,7 +20,7 @@ return {
 		debug_connections = false,
 		realm_max_members = 60
 	},
-	channel = '@it_cat_encrypted', --channel username with the '@'
+	channel = '@it_cat', --channel username with the '@'
 	source_code = 'https://github.com/mymedia2/it_cat_butler',
 	help_groups = {
 		['Internatonal (English)'] = 'https://telegram.me/joinchat/EKBQLj7Zf6lE2K_Pk0Epcg', --group link, not (at)username! If you have your own support group, modify here!

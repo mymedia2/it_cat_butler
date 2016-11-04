@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: GroupButler 4.0\n"
 "Report-Msgid-Bugs-To: https://telegram.me/bac0nnn\n"
 "POT-Creation-Date: 2016-11-04 20:01+0300\n"
-"PO-Revision-Date: 2016-11-03 11:51+0300\n"
+"PO-Revision-Date: 2016-11-04 20:40+0300\n"
 "Last-Translator: Николай Гурьев <guriev-ns@ya.ru, https://telegram.me/"
 "mymedia>\n"
 "Language-Team: Russian\n"
@@ -109,7 +109,7 @@ msgstr ""
 "*Админ:* %s"
 
 #: plugins/banhammer.lua:127
-#, fuzzy, lua-format
+#, lua-format
 msgid "%s kicked %s"
 msgstr "%s кикнул пользователя %s!"
 
@@ -126,10 +126,9 @@ msgstr "%s разбанен админом %s!"
 
 #: plugins/banhammer.lua:158
 msgid "Happy f*cking!"
-msgstr ""
+msgstr "Приятной е*ли!"
 
 #: plugins/banhammer.lua:162
-#, fuzzy
 msgid ""
 "I can't kick this user.\n"
 "Probably I'm not an Amdin, or the user is an Admin iself"
@@ -404,9 +403,8 @@ msgid "Flooders will be banned"
 msgstr "Флудеры будут забанены"
 
 #: plugins/floodmanager.lua:138
-#, fuzzy
 msgid "Flooders will be temporary banned"
-msgstr "Теперь флудеры будут забаниваться на время"
+msgstr "Флудеры будут забанены на время"
 
 #: plugins/floodmanager.lua:141
 msgid "Flooders will be kicked"
@@ -1326,12 +1324,12 @@ msgstr "RTL символ разрешён"
 #: plugins/menu.lua:201
 #, lua-format
 msgid "%d min"
-msgstr ""
+msgstr "%d мин"
 
 #: plugins/menu.lua:204
 #, lua-format
 msgid "%d hours"
-msgstr ""
+msgstr "%d часов"
 
 #: plugins/menu.lua:209
 msgid "Polls for ban"
@@ -1339,7 +1337,7 @@ msgstr ""
 
 #: plugins/menu.lua:219
 msgid "Quorum"
-msgstr ""
+msgstr "Кворум"
 
 #: plugins/menu.lua:228
 msgid "Welcome"
@@ -1802,19 +1800,16 @@ msgid "Removed for RTL char: *%d*"
 msgstr "Удалений за RTL: *%d*"
 
 #: plugins/users.lua:93
-#, fuzzy
 msgid "_No bans to display_"
 msgstr "Ничего нету для отображения"
 
-# не помещается,
-# не видно текущее значение предупреждений
 #: plugins/users.lua:98
-#, fuzzy, lua-format
+#, lua-format
 msgid "Warnings: %d"
-msgstr "Предупреждений: "
+msgstr "Предупреждений: %d"
 
 #: plugins/users.lua:102
-#, fuzzy, lua-format
+#, lua-format
 msgid "Media warnings: %d"
 msgstr "Медиа предупреждений: %d"
 
@@ -1943,82 +1938,92 @@ msgstr "✅ Обновлено. Следующее обновление чере
 
 #: plugins/voteban.lua:7
 msgid "☑ Yes"
-msgstr ""
+msgstr "☑ Да"
 
 #: plugins/voteban.lua:8
 msgid "❎ No"
-msgstr ""
+msgstr "❎ Нет"
 
 #: plugins/voteban.lua:11
 msgid "Revoke the vote"
-msgstr ""
+msgstr "Отозвать голос"
 
 #: plugins/voteban.lua:12
 msgid "Cancel the poll"
-msgstr ""
+msgstr "Отменить опрос"
 
 #: plugins/voteban.lua:29
 msgid "ℹ This is _continuation_ of the previous poll."
-msgstr ""
+msgstr "ℹ Это _продолжение_ предыдущего опроса."
 
 #: plugins/voteban.lua:33
 #, lua-format
 msgid "%s suggests to ban himself. Ban him?\n"
-msgstr ""
+msgstr "%s предлагает забанить самого себя. Забанить его?\n"
 
 #: plugins/voteban.lua:35
 #, lua-format
 msgid "%s suggests to ban me. Do you really want to ban me? 😓\n"
 msgstr ""
+"%s предлагает забанить меня. Ты действительно хочешь забанить меня? 😓\n"
+"\n"
 
 #: plugins/voteban.lua:37
 #, lua-format
 msgid "%s suggests to ban %s. Ban him?\n"
-msgstr ""
+msgstr "%s предлагает забанить пользователя %s. Забанить его?\n"
 
 #: plugins/voteban.lua:41 plugins/voteban.lua:119
 #, lua-format
 msgid "🔨 %d users voted *for ban*."
-msgstr ""
+msgstr "🔨 %d пользователей проголосовали *за бан*."
 
 #: plugins/voteban.lua:42 plugins/voteban.lua:120
 #, lua-format
 msgid "❎ %d users voted *against ban*."
-msgstr ""
+msgstr "❎ %d пользователей проголосовали *против бана*."
 
 #: plugins/voteban.lua:43
 #, lua-format
 msgid "❗ Requires additional %d users."
-msgstr ""
+msgstr "❗ Требуется ещё %d пользователей."
 
 #: plugins/voteban.lua:44
 #, lua-format
 msgid "🕒 The poll will be automatically closed in %d minutes"
-msgstr ""
+msgstr "🕒 Опрос будет автоматически закрыт через %d минут"
 
 #: plugins/voteban.lua:47
 msgid ""
 "\n"
 "*Informative poll*. You can't vote for ban me."
 msgstr ""
+"\n"
+"*Информативный опрос*. Ты не можешь голосовать за бан меня."
 
 #: plugins/voteban.lua:50
 msgid ""
 "\n"
 "*Informative poll*. You can't vote for ban yourself."
 msgstr ""
+"\n"
+"*Информативный опрос*. Ты не можешь голосовать за бан самого себя."
 
 #: plugins/voteban.lua:53
 msgid ""
 "\n"
 "*Informative poll*. User won't banned because he is an admin."
 msgstr ""
+"\n"
+"*Информативный опрос*. Пользователь не будет забанен, потому что он админ."
 
 #: plugins/voteban.lua:57
 msgid ""
 "\n"
 "*Informative poll*. User won't banned because I'am not an admin."
 msgstr ""
+"\n"
+"*Информативный опрос*. Пользователь не будет забанен, потому что я не админ."
 
 #: plugins/voteban.lua:88
 #, lua-format
@@ -2026,6 +2031,8 @@ msgid ""
 "The voting was closed, and %s was banned according to decision of community. "
 "The results:\n"
 msgstr ""
+"Голосование закрыто, и %s был забанен в соответствии с решением сообщества. "
+"Результаты:\n"
 
 #: plugins/voteban.lua:92
 #, lua-format
@@ -2033,6 +2040,8 @@ msgid ""
 "⚠ The voting was closed, a community decided ban %s, but error ocured while "
 "ban this user, because I ceased to be _an admin_. The results:\n"
 msgstr ""
+"⚠ Голосование закрыто, сообщество решило забанить пользователя %s, но "
+"произошла ошибка, потому что я перестал быть _админом_.\n"
 
 #: plugins/voteban.lua:97
 #, lua-format
@@ -2040,6 +2049,8 @@ msgid ""
 "⚠ The voting was closed, a community decided ban %s, but error ocured while "
 "ban this user, because he became _an admin_. The results:\n"
 msgstr ""
+"⚠ Голосование закрыто, сообщество решило забанить пользователя %s, но "
+"произошла ошибка, потому что он стал _админом_.\n"
 
 #: plugins/voteban.lua:102
 #, lua-format
@@ -2047,6 +2058,8 @@ msgid ""
 "The voting was closed. %s suggested to ban %s, but a community protected "
 "him. The results:\n"
 msgstr ""
+"Голосование закрыто. %s предлагал забанить пользователя %s, но сообщество "
+"отстояло его. Результаты:\n"
 
 #: plugins/voteban.lua:107
 #, lua-format
@@ -2054,11 +2067,13 @@ msgid ""
 "The voting was closed, because not get enough number of people for ban %s. "
 "The results:\n"
 msgstr ""
+"Голосование закрыто, потому что не набралось достаточного количества людей, "
+"чтобы забанить пользователя %s. Результаты:\n"
 
 #: plugins/voteban.lua:111
 #, lua-format
 msgid "The poll against %s was closed by initiator. The results:\n"
-msgstr ""
+msgstr "Опрос против пользователя %s был закрыт инициатором. Результаты:\n"
 
 #: plugins/voteban.lua:114
 #, lua-format
@@ -2066,98 +2081,112 @@ msgid ""
 "The voting was closed, but it was informative so %s hadn't been banned. The "
 "results:\n"
 msgstr ""
+"Голосование закрыто, но %s не был забанен, поскольку опрос был "
+"информативным. Результаты:\n"
 
 #: plugins/voteban.lua:122
 #, lua-format
 msgid "❗ It was not enough votes from %d users"
-msgstr ""
+msgstr "❗ Не хватило голосов %d пользователей"
 
 #: plugins/voteban.lua:127
 msgid ""
 "\n"
 "*That was informative poll*. Against me they can't vote."
 msgstr ""
+"\n"
+"*Это был информативный опрос*. Против меня голосовать нельзя."
 
 #: plugins/voteban.lua:130
 msgid ""
 "\n"
 "*That was informative poll*. The user wanted to ban himself."
 msgstr ""
+"\n"
+"*Это был информативный опрос*. Пользователь хотел забанить самого себя."
 
 #: plugins/voteban.lua:133
 msgid ""
 "\n"
 "*That was informative poll*. User was not banned because he is an admin."
 msgstr ""
+"\n"
+"*Это был информативный опрос*. Пользователь не был забанен, поскольку он "
+"админ."
 
 #: plugins/voteban.lua:136
 msgid ""
 "\n"
 "*That was informative poll*. User was banned because I'am not an admin."
 msgstr ""
+"\n"
+"*Это был информативный опрос*. Пользователь был забанен, поскольку я не "
+"админ."
 
 #: plugins/voteban.lua:145
 msgid "Against whom do you vote?"
-msgstr ""
+msgstr "Против кого ты хочешь проголосовать?"
 
 #: plugins/voteban.lua:194
 #, lua-format
 msgid "⬇ The poll for ban of %s was closed because [new poll](%s) was created"
 msgstr ""
+"⬇ Опрос за бан пользователя %s был закрыт, потому что был создан [новый "
+"опрос](%s)"
 
 #: plugins/voteban.lua:197
 #, lua-format
 msgid "⬇ The poll for ban of %s was closed because *new poll* was created"
 msgstr ""
+"⬇ Опрос за бан пользователя %s был закрыт, потому что был создан *новый "
+"опрос*"
 
 #: plugins/voteban.lua:261
 msgid "🚷 You can't vote about yourself"
-msgstr ""
+msgstr "🚷 Ты не можешь голосовать про себя"
 
 #: plugins/voteban.lua:293
-#, fuzzy, lua-format
+#, lua-format
 msgid "%s has been banned ✨"
-msgstr "%s *предупреждён* (%d / %d)"
+msgstr "%s забанен! ✨"
 
 #: plugins/voteban.lua:302
 #, lua-format
 msgid "☑ You have voted against %s"
-msgstr ""
+msgstr "☑ Ты проголосовал против %s"
 
 #: plugins/voteban.lua:304
 #, lua-format
 msgid "❎ You have voted to save %s"
-msgstr ""
+msgstr "❎ Ты проголосовал за %s"
 
 #: plugins/voteban.lua:306
 msgid "🔁 You have revoked your vote"
-msgstr ""
+msgstr "🔁 Ты отозвал свой голос"
 
 #: plugins/voteban.lua:309
 #, lua-format
 msgid "☑ You already voted against %s"
-msgstr ""
+msgstr "☑ Ты уже проголосовал против %s"
 
 #: plugins/voteban.lua:311
 #, lua-format
 msgid "❎ You already voted to save %s"
-msgstr ""
+msgstr "❎ Ты уже проголосовал за %s"
 
 #: plugins/voteban.lua:313
 msgid "🔁 You already revoked your vote"
-msgstr ""
+msgstr "🔁 Ты уже отозвал свой голос"
 
 #: plugins/voteban.lua:363
 msgid "*Warning*: Multiple mentions still isn't supported"
-msgstr ""
+msgstr "*Предупреждение*: Множественные упоминания пока не поддерживаются"
 
 #: plugins/voteban.lua:375 plugins/voteban.lua:392
-#, fuzzy
 msgid "This user isn't a chat member"
 msgstr "Этот пользователь не состоит в чате"
 
 #: plugins/voteban.lua:382 utilities.lua:802 utilities.lua:813
-#, fuzzy
 msgid ""
 "I've never seen this user before.\n"
 "If you want to teach me who is he, forward me a message from him"
@@ -2166,13 +2195,12 @@ msgstr ""
 "Если ты хочешь объяснить, кто он, перешли мне его сообщение"
 
 #: plugins/voteban.lua:427
-#, fuzzy
 msgid "The poll was closed by administrator"
-msgstr "_Тут нет администраторов_"
+msgstr "Опрос был закрыт администратором"
 
 #: plugins/voteban.lua:430
 msgid "🚷 Only administrators or initiator can close the poll"
-msgstr ""
+msgstr "🚷 Только администраторы или инициатор могут закрыть опрос"
 
 #: plugins/warn.lua:7
 msgid "Reset warns"
@@ -2331,7 +2359,7 @@ msgstr "-*пусто*-"
 
 #: utilities.lua:489
 msgid "Deleted account"
-msgstr ""
+msgstr "Удалённый аккаунт"
 
 #: utilities.lua:529
 msgid "*Creator*:"
@@ -2342,15 +2370,14 @@ msgid "*Admins*:"
 msgstr "*Администраторы*:"
 
 #: utilities.lua:543
-#, fuzzy
 msgid ""
 "*I'm not an admin*. I can't fully perform my functions until group creator "
 "hasn't made me admin. See [this post](https://telegram.me/"
 "GroupButler_ch/104) for to learn how to make a bot administrator."
 msgstr ""
-"Хмм… кажется, я не администратор. Я могу быть более полезным, если ты "
-"сделаешь меня админом. Посмотри [тут](https://telegram.me/"
-"GroupButler_ch/104) как сделать это.\n"
+"*Я не админ*. Я не могу выполнять все свои функции, пока ты не сделаешь меня "
+"админом. Посмотри [здесь](https://telegram.me/GroupButler_ch/104), как "
+"сделать бота администратором."
 
 #: utilities.lua:548
 msgid "*I'm not an admin* 😞"
@@ -2461,11 +2488,11 @@ msgstr "Пользователям разрешено добавлять бот�
 
 #: utilities.lua:651
 msgid "Now the bot will be answering in a group"
-msgstr ""
+msgstr "Теперь бот будет отвечать в группу"
 
 #: utilities.lua:652
 msgid "Now /voteban will be available for admins only"
-msgstr ""
+msgstr "Теперь /voteban будет работать только для админов"
 
 #: utilities.lua:653
 msgid "Welcome message without a button for the rules"
@@ -2501,11 +2528,11 @@ msgstr "Пользователям запрещено добавлять бот�
 
 #: utilities.lua:663
 msgid "Now the bot will be answering in PM only"
-msgstr ""
+msgstr "Теперь бот будет отвечать толко в личку"
 
 #: utilities.lua:664
 msgid "Now /voteban will be available for everybody"
-msgstr ""
+msgstr "Теперь /voteban будет работать для всех"
 
 #: utilities.lua:665
 msgid "The welcome message will have a button for the rules"
