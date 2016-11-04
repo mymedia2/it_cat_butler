@@ -586,6 +586,7 @@ function misc.getSettings(chat_id)
 		Rtl = _("RTL"),
 		Reports = _("Reports"),
 		Welbut = _("Welcome button"),
+		voteban = _("Polls for ban"),
 	}
     for key, default in pairs(config.chat_settings['settings']) do
         

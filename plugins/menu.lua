@@ -206,19 +206,19 @@ local function insert_voteban_section(keyboard, chat_id)
 	local quorum = db:hget(hash, 'quorum') or config.chat_settings.voteban.quorum
 
 	table.insert(keyboard, {
-		{text = _("Polls for ban"), callback_data='menu:alert:settings'},
+		{text = _("Polls for ban"), callback_data='menu:alert:settings:'..chat_id},
 		{text = status, callback_data='menu:voteban:'..chat_id},
 	})
 	table.insert(keyboard, {
-		{text = _("Duration"), callback_data='menu:alert:values'},
+		{text = _("Duration"), callback_data='menu:alert:values:'..chat_id},
 		{text = '➖', callback_data='menu:DimDuration:'..chat_id},
-		{text = tostring(duration), callback_data='menu:alert:values'},
+		{text = tostring(duration), callback_data='menu:alert:values:'..chat_id},
 		{text = '➕', callback_data='menu:RaiseDuration:'..chat_id},
 	})
 	table.insert(keyboard, {
-		{text = _("Quorum"), callback_data='menu:alert:values'},
+		{text = _("Quorum"), callback_data='menu:alert:values:'..chat_id},
 		{text = '➖', callback_data='menu:DimQuorum:'..chat_id},
-		{text = tostring(quorum), callback_data='menu:alert:values'},
+		{text = tostring(quorum), callback_data='menu:alert:values:'..chat_id},
 		{text = '➕', callback_data='menu:RaiseQuorum:'..chat_id},
 	})
 end
