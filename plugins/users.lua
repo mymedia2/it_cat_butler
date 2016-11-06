@@ -101,6 +101,10 @@ local function get_ban_info(user_id, chat_id)
 	local media_warns = tonumber(db:hget(hash, user_id)) or 0
 	table.insert(lines, _("Media warnings: %d"):format(media_warns))
 
+	local hash = string.format('chat:%d:spamwarns', chat_id)
+	local spam_warns = tonumber(db:hget(hash, user_id)) or 0
+	table.insert(lines, _("Spam warnings: %d"):format(spam_warns))
+
 	return table.concat(lines, '\n')
 end
 
@@ -267,8 +271,8 @@ function plugin.onCallbackQuery(msg, blocks)
     end
     if blocks[1] == 'recache' then
 		local missing_sec = tonumber(db:ttl('cache:chat:'..msg.target_id..':admins') or 0)
-		if config.bot_settings.cache_time.adminlist - missing_sec < 3600 then
-			api.answerCallbackQuery(msg.cb_id, _("The adminlist has just been updated. This button will be available for an hour after the last update."), true)
+		if config.bot_settings.cache_time.adminlist - missing_sec < 180 then
+			api.answerCallbackQuery(msg.cb_id, _("The adminlist has just been updated. You must wait 3 minutes from the last refresh"), true)
 		elseif misc.cache_adminlist(msg.target_id) then
     			local cached_admins = db:smembers('cache:chat:'..msg.target_id..':admins')
     			local time = get_time_remaining(config.bot_settings.cache_time.adminlist)

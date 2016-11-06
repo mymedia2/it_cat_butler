@@ -3,7 +3,7 @@ URL = require('socket.url')
 JSON = require('dkjson')
 redis = require('redis')
 clr = require 'term.colors'
-db = Redis.connect('127.0.0.1', 6379)
+db = redis.connect('127.0.0.1', 6379)
 serpent = require('serpent')
 
 function bot_init(on_reload) -- The function run when the bot is started or reloaded.
@@ -18,6 +18,7 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	misc, roles, users = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
 	locale = dofile('languages.lua')
 	api = require('methods')
+	now_ms = require('socket').gettime
 	
 	bot = api.getMe().result -- Get bot info
 	bot.revision = io.popen('git rev-parse --short HEAD'):read()
@@ -26,9 +27,13 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	for i,v in ipairs(config.plugins) do
 		local p = dofile('plugins/'..v)
 		if p.triggers then
-			for funct, triggers in pairs(p.triggers) do
+			for funct, trgs in pairs(p.triggers) do
+				for i = 1, #trgs do
+					-- interpret any whitespace character in commands just as space
+					trgs[i] = trgs[i]:gsub(' ', '%%s+')
+				end
 				if not p[funct] then
-					p.triggers[funct] = nil
+					p.trgs[funct] = nil
 					print(clr.red..funct..' triggers ignored in '..v..': '..funct..' function not defined'..clr.reset)
 				end
 			end
@@ -113,7 +118,7 @@ end
 
 local function match_triggers(triggers, text)
   	if text and triggers then
-  		text = text:gsub('@'..bot.username, '')
+		text = text:gsub('^(/[%w_]+)@'..bot.username, '%1')
 		for i, trigger in pairs(triggers) do
     	local matches = {}
 	    	matches = { string.match(text, trigger) }
@@ -307,6 +312,17 @@ local function parseMessageFunction(update)
 			print('Unknown update type') return
 	end
 	
+		if msg.forward_from_chat then
+			if msg.forward_from_chat.type == 'channel' then
+				msg.spam = 'forwards'
+			end
+		end
+		if msg.caption then
+			local caption_lower = msg.caption:lower()
+			if caption_lower:match('telegram%.me') or caption_lower:match('telegram%.dog') then
+				msg.spam = 'links'
+			end
+		end
 	if msg.entities then
 			for i, entity in pairs(msg.entities) do
 			if entity.type == 'text_mention' then
@@ -326,15 +342,17 @@ local function parseMessageFunction(update)
 				end
 			end
 			if entity.type == 'url' or entity.type == 'text_link' then
-					if msg.text:lower():match('telegram%.me') then
-					msg.media_type = 'TGlink'
+					local text_lower = msg.text or msg.caption
+					text_lower = text_lower:lower()
+					if text_lower:match('telegram%.me') or text_lower:match('telegram%.dog') then
+						msg.spam = 'links'
 				else
 					msg.media_type = 'link'
-				end
 				msg.media = true
 			end
 		end
 	end
+		end
 	if msg.reply_to_message then
 		msg.reply = msg.reply_to_message
 	if msg.reply.caption then

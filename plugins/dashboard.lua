@@ -10,9 +10,9 @@ local function getFloodSettings_text(chat_id)
     local hash = 'chat:'..chat_id..':flood'
     local action = (db:hget(hash, 'ActionFlood')) or 'kick'
     if action == 'kick' then
-        action = _("⚡️ kick")
+        action = _("👞 kick")
     elseif action == 'ban' then
-        action = _("⛔ ️ban")
+        action = _("🔨️ ️ban")
 	elseif action == 'tempban' then
 			action = _("🔑 tempban")
     end
@@ -21,7 +21,7 @@ local function getFloodSettings_text(chat_id)
         text = _("Texts"),
 		forward = _("Forwards"),
         sticker = _("Stickers"),
-        image = _("Images"),
+        photo = _("Images"),
         gif = _("GIFs"),
         video = _("Videos"),
     }
