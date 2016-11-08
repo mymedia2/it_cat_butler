@@ -1,6 +1,6 @@
 return {
 	bot_api_key = os.getenv('BOT_TOKEN'),
-	cmd = '^[/!#]',
+	cmd = '^[/!]',
 	db = 2, --default redis db: 0
 	superadmins = {119416836, 93158165},
 	log = {
@@ -16,7 +16,7 @@ return {
 		notify_bug = true, --Notify if a bug occurs!
 		log_api_errors = true, --Log errors, which happening whilst interacting with the bot api.
 		stream_commands = true,
-		admin_mode = false,
+		admin_mode = true,
 		debug_connections = false,
 		realm_max_members = 60
 	},

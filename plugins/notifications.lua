@@ -1,3 +1,5 @@
+-- Deprecated features. Use @TagAlertBot or @mentions_bot instead.
+
 local plugin = {}
 
 -- Sends to the mentioned user the notification with message
@@ -102,7 +104,7 @@ end
 
 plugin.triggers = {
 	onTextMessage = {
-		config.cmd..'(subscribe)$',
+		-- config.cmd..'(subscribe)$',
 		config.cmd..'(unscribe)$',
 		config.cmd..'(unsubscribe)$',
 	}
