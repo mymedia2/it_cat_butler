@@ -39,6 +39,7 @@ return {
 		'dashboard.lua',
 		'banhammer.lua',
 		'voteban.lua',
+		'votefuck.lua',
 		'users.lua',
 		'help.lua',
 		'rules.lua',
