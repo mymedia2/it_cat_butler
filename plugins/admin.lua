@@ -1,3 +1,8 @@
+local config = require 'config'
+local misc = require 'utilities'.misc
+local roles = require 'utilities'.roles
+local api = require 'methods'
+
 local plugin = {}
 
 local triggers2 = {
@@ -9,6 +14,7 @@ local triggers2 = {
 	'^%$(lua) (.*)$',
 	'^%$(run) (.*)$',
 	'^%$(admin)$',
+	'^%$(block)$',
 	'^%$(block) (%d+)$',
 	'^%$(unblock) (%d+)$',
 	'^%$(leave) (-%d+)$',
@@ -16,18 +22,13 @@ local triggers2 = {
 	'^%$(api errors)$',
 	'^%$(rediscli) (.*)$',
 	'^%$(sendfile) (.*)$',
-	'^%$(download)$',
 	'^%$(resid) (%d+)$',
 	'^%$(update)$',
 	'^%$(tban) (get)$',
 	'^%$(tban) (flush)$',
-	'^%$(selectdb) (.*)$',
-	'^%$(aa)$',
-	'^%$(remold)$',
 	'^%$(remban) (@[%w_]+)$',
-	'^%$(info) (%d+)$',
-	'^%$(prevban) (.*)$',
 	'^%$(rawinfo) (.*)$',
+	'^%$(rawinfo2) (.*)$',
 	'^%$(cleandeadgroups)$',
 	'^%$(initgroup) (-%d+)$',
 	'^%$(remgroup) (-%d+)$',
@@ -37,7 +38,8 @@ local triggers2 = {
 	'^%$(active) (%d%d?)$',
 	'^%$(active)$',
 	'^%$(getid)$',
-	'^%$(updatelocale) (.*)$'
+	'^%$(redisbackup)$',
+	'^%$(realm) (.+)$'
 }
 
 function plugin.cron()
@@ -63,12 +65,12 @@ local function round(num, decimals)
 end
 
 local function load_lua(code, msg)
-	local output = loadstring('local msg = '..vtext(msg)..'\n'..code)()
+	local output = loadstring('local msg = '..misc.vtext(msg)..'\n'..code)()
 	if not output then
 		output = '`Done! (no output)`'
 	else
 		if type(output) == 'table' then
-			output = vtext(output)
+			output = misc.vtext(output)
 		end
 		output = '```\n' .. output .. '\n```'
 	end
@@ -135,8 +137,6 @@ function plugin.onTextMessage(msg, blocks)
 	    for i=1, #names do
 	        text = text..'- *'..names[i]..'*: `'..num[i]..'`\n'
 	    end
-	    local kb = collectgarbage("count")
-	    text = text..'- *kilobytes used*: `'..kb..'`\n'
 	    text = text..'- *uptime*: `from '..(os.date("%c", start_timestamp))..' (GMT+2)`\n'
 	    text = text..'- *last hour msgs*: `'..last.h..'`\n'
 	    text = text..'   • *average msgs/minute*: `'..round((last.h/60), 3)..'`\n'
@@ -178,7 +178,12 @@ function plugin.onTextMessage(msg, blocks)
 		api.sendMessage(msg.chat.id, output, true, msg.message_id, true)
 	end
 	if blocks[1] == 'block' then
-		local id = blocks[2]
+		local id
+		if blocks[2] then
+			id = blocks[2]
+		else
+			id = msg.reply.forward_from.id
+		end
 		local response = db:sadd('bot:blocked', id)
 		local text
 		if response == 1 then
@@ -242,39 +247,6 @@ function plugin.onTextMessage(msg, blocks)
 		local path = './'..blocks[2]
 		api.sendDocument(msg.from.id, path)
 	end
-	if blocks[1] == 'download' then
-		if not msg.reply then
-			api.sendMessage(msg.chat.id, 'Reply to a message')
-		else
-			local type
-			local file_id
-			local file_name
-			local text
-			msg = msg.reply
-			if msg.document then
-				type = 'document'
-				file_id = msg.document.file_id
-				file_name = msg.document.file_name
-			elseif msg.sticker then
-				type = 'sticker'
-				file_id = msg.sticker.file_id
-				file_name = 'sticker.png'
-			elseif msg.audio then
-				type = 'audio'
-				file_id = msg.audio.file_id
-				file_name = msg.audio.title or msg.audio.performer or 'audio.mp3'
-			end
-			local res = api.getFile(file_id)
-			local download_link = misc.telegram_file_link(res)
-			path, code = misc.download_to_file(download_link, file_name)
-			if path then
-				text = 'Saved to:\n'..path
-			else
-				text = 'Download failed\nCode: '..code
-			end
-			api.sendMessage(msg.chat.id, text)
-		end
-	end
 	if blocks[1] == 'resid' then
 		local user_id = blocks[2]
 		local all = db:hgetall('bot:usernames')
@@ -314,16 +286,8 @@ function plugin.onTextMessage(msg, blocks)
 			api.sendReply(msg, 'Flushed!')
 		end
 		if blocks[2] == 'get' then
-			api.sendMessage(msg.chat.id, vtext(db:hgetall('tempbanned')))
+			api.sendMessage(msg.chat.id, misc.vtext(db:hgetall('tempbanned')))
 		end
-	end
-	if blocks[1] == 'selectdb' then
-		local db_number = tonumber(blocks[2])
-		db:select(db_number)
-		api.sendReply(msg, 'Current database: *'..db_number..'*\n(Main: *0*)', true)
-	end
-	if blocks[1] == 'aa' then
-		api.sendAdmin(msg.chat.id)
 	end
 	if blocks[1] == 'remban' then
 		local user_id = misc.resolve_user(blocks[2])
@@ -341,12 +305,34 @@ function plugin.onTextMessage(msg, blocks)
 		if blocks[2] == '$chat' then
 			chat_id = msg.chat.id
 		end
-		local text = '`'..chat_id..'\n'
+		local text = '<code>'..chat_id..'\n'
 		for set, info in pairs(config.chat_settings) do
-			text = text..vtext(db:hgetall('chat:'..chat_id..':'..set))
+			text = text..misc.vtext(db:hgetall('chat:'..chat_id..':'..set))
 		end
-		text = text..'`'
-		api.sendMessage(msg.chat.id, text, true)
+		
+		local log_channel = db:hget('bot:chatlogs', chat_id)
+		if log_channel then text = text..'\nLog channel: '..log_channel end
+		local realm = db:hget('chat:'..chat_id..':realm', chat_id)
+		if realm then text = text..'\nRealm: '..realm end
+		
+		text = text..'</code>'
+		
+		api.sendMessage(msg.chat.id, text, 'html')
+	end
+	if blocks[1] == 'rawinfo2' then
+		local chat_id
+		if blocks[2] == '$chat' then
+			chat_id = msg.chat.id
+		else
+			chat_id = blocks[2]
+		end
+		local text = chat_id..'\n'
+		local section
+		for i=1, #config.chat_custom_texts do
+			section = misc.vtext(db:hgetall(('chat:%s:%s'):format(tostring(chat_id), config.chat_custom_texts[i]))) or '{}'
+			text = text..section
+		end
+		api.sendMessage(msg.chat.id, text)
 	end
 	if blocks[1] == 'cleandeadgroups' then
 		--not tested
@@ -370,23 +356,6 @@ function plugin.onTextMessage(msg, blocks)
 		misc.remGroup(chat_id, full)
 		api.sendMessage(msg.chat.id, 'Removed (heavy: '..tostring(full)..')')
 	end
-	if blocks[1] == 'remold' then
-		local hash = 'bot:chat:latsmsg'
-		local removed_groups = 0
-		local today_n = tonumber(os.date("%j"))
-		print('TODAY N°\t'..today_n..'\nRemoved groups:\n')
-		for chat_id, group_timestamp in pairs(db:hgetall(hash)) do
-			local groupday_n = tonumber(os.date("%j", group_timestamp))
-			if 7 < (today_n - groupday_n) then
-				print(chat_id, 'day n° '..groupday_n)
-				misc.remGroup(chat_id, true)
-				--db:hdel(hash, chat_id)
-				--db:sadd('remolden_chats', chat_id)
-				removed_groups = removed_groups + 1
-			end
-		end
-		api.sendReply(msg, 'Groups older than 7 days removed from the db: '..removed_groups)
-	end
 	if blocks[1] == 'cache' then
 		local chat_id
 		if blocks[2] == '$chat' then
@@ -395,7 +364,7 @@ function plugin.onTextMessage(msg, blocks)
 			chat_id = blocks[2]
 		end
 		local members = db:smembers('cache:chat:'..chat_id..':admins')
-		api.sendMessage(msg.chat.id, chat_id..' ➤ '..tostring(#members)..'\n'..vtext(members))
+		api.sendMessage(msg.chat.id, chat_id..' ➤ '..tostring(#members)..'\n'..misc.vtext(members))
 	end
 	if blocks[1] == 'initcache' then
 		local chat_id, text
@@ -426,14 +395,35 @@ function plugin.onTextMessage(msg, blocks)
 		api.sendMessage(msg.chat.id, 'Active groups in the last '..days..' days: '..n)
 	end
 	if blocks[1] == 'getid' then
-		if msg.forward_from then
-			api.sendMessage(msg.chat.id, '`'..msg.forward_from.id..'`', true)
+		if msg.reply.forward_from then
+			api.sendMessage(msg.chat.id, '`'..msg.reply.forward_from.id..'`', true)
 		end
 	end
-	if blocks[1] == 'updatelocale' then
-		local lang = blocks[2]
-		misc.bash('./launch.sh update-locale '..lang)
-		api.sendMessage(msg.chat.id, 'Updating `'..lang..'`... (check by yourself)', true)
+	if blocks[1] == 'realm' then
+		local chat_id
+		if blocks[2] == '$chat' then
+			chat_id = msg.chat.id
+		else
+			chat_id = blocks[2]
+		end
+		local text = 'Group: '..chat_id..'\nIs in the general list: '..tostring(db:sismember('bot:realms', chat_id))..'\n'
+		local subgroups = db:hgetall('realm:'..chat_id..':subgroups')
+		if not next(subgroups) then
+			text = text..'Doesn\'t have subgroups paired'
+		else
+			text = text..'Subgroups:\n'
+			for subgroup_id, subgroup_name in pairs(subgroups) do
+				text = text..subgroup_id
+				local subgroup_paired_realm = (db:get('chat:'..subgroup_id..':realm')) or 'none'
+				text = text..' X '..subgroup_paired_realm..'\n'
+			end
+		end
+		api.sendMessage(msg.chat.id, text)
+	end
+	if blocks[1] == 'redisbackup' then
+		local res = misc.bash('./redisbackup.sh')
+		if not res then res = '-' end
+		api.sendMessage(msg.chat.id, res)
 	end
 end
 

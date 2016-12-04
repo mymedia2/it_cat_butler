@@ -1,3 +1,8 @@
+local config = require 'config'
+local misc = require 'utilities'.misc
+local roles = require 'utilities'.roles
+local api = require 'methods'
+
 local plugin = {}
 
 local function getFloodSettings_text(chat_id)
@@ -82,6 +87,7 @@ function plugin.onCallbackQuery(msg, blocks)
     local chat_id = msg.target_id
         local request = blocks[2]
         local text, notification
+    local parse_mode = true
 		local res = api.getChat(chat_id)
 		if not res then
 		api.answerCallbackQuery(msg.cb_id, _("🚫 This group does not exist"))
@@ -144,7 +150,7 @@ function plugin.onCallbackQuery(msg, blocks)
             end
             notification = _("ℹ️ Group ► Media")
         end
-    api.editMessageText(msg.from.id, msg.message_id, text, true, keyboard)
+    api.editMessageText(msg.from.id, msg.message_id, text, parse_mode, keyboard)
         api.answerCallbackQuery(msg.cb_id, notification)
 end
 

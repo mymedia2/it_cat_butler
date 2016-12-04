@@ -1,7 +1,11 @@
+local serpent = require 'serpent'
+local config = require 'config'
+local api = require 'methods'
+
 -- utilities.lua
 -- Functions shared among plugins.
 
-local misc, roles, users = {}, {}, {}
+local utilities = {misc = {}, roles = {}, users = {}}
 
 -- Escape markdown for Telegram. This function makes non-clickable usernames,
 -- hashtags, commands, links and emails, if only_markup flag isn't setted.
@@ -11,6 +15,13 @@ function string:escape(only_markup)
 		self = self:gsub('([@#/.])(%w)', '%1\xE2\x81\xA0%2')
 	end
 	return self:gsub('[*_`[]', '\\%0')
+end
+
+function string:escape_html()
+	self = self:gsub('&', '&amp;')
+	self = self:gsub('"', '&quot;')
+	self = self:gsub('<', '&lt;'):gsub('>', '&gt;')
+	return self
 end
 
 -- Remove specified formating or all markdown. This function useful for put
@@ -29,7 +40,7 @@ function string:escape_hard(ft)
 	end
 end
 
-function roles.is_superadmin(user_id)
+function utilities.roles.is_superadmin(user_id)
 	for i=1, #config.superadmins do
 		if tonumber(user_id) == config.superadmins[i] then
 			return true
@@ -38,7 +49,7 @@ function roles.is_superadmin(user_id)
 	return false
 end
 
-function roles.bot_is_admin(chat_id)
+function utilities.roles.bot_is_admin(chat_id)
 	local status = api.getChatMember(chat_id, bot.id).result.status
 	if not(status == 'administrator') then
 		return false
@@ -47,7 +58,7 @@ function roles.bot_is_admin(chat_id)
 	end
 end
 
-function roles.is_admin(msg)
+function utilities.roles.is_admin(msg)
 	local res = api.getChatMember(msg.chat.id, msg.from.id)
 	if not res then
 		return false, false
@@ -62,7 +73,7 @@ end
 
 -- Returns the admin status of the user. The first argument can be the message,
 -- then the function checks the rights of the sender in the incoming chat.
-function roles.is_admin_cached(chat_id, user_id)
+function utilities.roles.is_admin_cached(chat_id, user_id)
 	if type(chat_id) == 'table' then
 		local msg = chat_id
 		chat_id = msg.chat.id
@@ -71,12 +82,12 @@ function roles.is_admin_cached(chat_id, user_id)
 
 	local hash = 'cache:chat:'..chat_id..':admins'
 	if not db:exists(hash) then
-		misc.cache_adminlist(chat_id, res)
+		utilities.misc.cache_adminlist(chat_id, res)
 	end
 	return db:sismember(hash, user_id)
 end
 
-function roles.is_admin2(chat_id, user_id)
+function utilities.roles.is_admin2(chat_id, user_id)
 	local res = api.getChatMember(chat_id, user_id)
 	if not res then
 		return false, false
@@ -89,7 +100,7 @@ function roles.is_admin2(chat_id, user_id)
 	end
 end
 
-function roles.is_owner(msg)
+function utilities.roles.is_owner(msg)
 	local status = api.getChatMember(msg.chat.id, msg.from.id).result.status
 	if status == 'creator' then
 		return true
@@ -98,7 +109,7 @@ function roles.is_owner(msg)
 	end
 end
 
-function roles.is_owner_cached(chat_id, user_id)
+function utilities.roles.is_owner_cached(chat_id, user_id)
 	if type(chat_id) == 'table' then
 		local msg = chat_id
 		chat_id = msg.chat.id
@@ -110,7 +121,7 @@ function roles.is_owner_cached(chat_id, user_id)
 	repeat
 		owner_id = db:get(hash)
 		if not owner_id then
-			res = misc.cache_adminlist(chat_id)
+			res = utilities.misc.cache_adminlist(chat_id)
 		end
 	until owner_id or not res
 
@@ -123,7 +134,7 @@ function roles.is_owner_cached(chat_id, user_id)
 	return false
 end	
 
-function roles.is_owner2(chat_id, user_id)
+function utilities.roles.is_owner2(chat_id, user_id)
 	local status = api.getChatMember(chat_id, user_id).result.status
 	if status == 'creator' then
 		return true
@@ -132,7 +143,7 @@ function roles.is_owner2(chat_id, user_id)
 	end
 end
 
-function misc.cache_adminlist(chat_id)
+function utilities.misc.cache_adminlist(chat_id)
 	local res, code = api.getChatAdministrators(chat_id)
 	if not res then
 		return false, code
@@ -149,7 +160,22 @@ function misc.cache_adminlist(chat_id)
 	return true, #res.result or 0
 end
 
-function misc.is_blocked_global(id)
+function utilities.misc.get_cached_admins_list(chat_id, second_try)
+	local hash = 'cache:chat:'..chat_id..':admins'
+	local list = db:smembers(hash)
+	if not list or not next(list) then
+		utilities.misc.cache_adminlist(chat_id)
+		if not second_try then
+			return utilities.misc.get_cached_admins_list(chat_id, true)
+		else
+			return false
+		end
+	else
+		return list
+	end
+end
+
+function utilities.misc.is_blocked_global(id)
 	if db:sismember('bot:blocked', id) then
 		return true
 	else
@@ -162,13 +188,13 @@ function string:trim() -- Trims whitespace from a string.
 	return s
 end
 
-function vardump(...)
+function utilities.misc.vardump(...)
 	for _, value in pairs{...} do
 		print(serpent.block(value, {comment=false}))
 	end
 end
 
-function vtext(...)
+function utilities.misc.vtext(...)
 	local lines = {}
 	for _, value in pairs{...} do
 		table.insert(lines, serpent.block(value, {comment=false}))
@@ -176,11 +202,11 @@ function vtext(...)
 	return table.concat(lines, '\n')
 end
 
-function misc.deeplink_constructor(chat_id, what)
+function utilities.misc.deeplink_constructor(chat_id, what)
 	return 'https://telegram.me/'..bot.username..'?start='..chat_id..':'..what
 end
 
-function table.clone(t) --doing "table1 = table2" in lua = creates a pointer to table2
+function table.clone(t)
   local new_t = {}
   local i, v = next(t, nil)
   while i do
@@ -190,16 +216,16 @@ function table.clone(t) --doing "table1 = table2" in lua = creates a pointer to 
   return new_t
 end
 
-function misc.get_date(timestamp)
+function utilities.misc.get_date(timestamp)
 	if not timestamp then
 		timestamp = os.time()
 	end
-	return os.date(timestamp, '%d/%m/%y')
+	return os.date('%d/%m/%y', timestamp)
 end
 
 -- Resolves username. Returns ID of user if it was early stored in date base.
 -- Argument username must begin with symbol @ (commercial 'at')
-function misc.resolve_user(username)
+function utilities.misc.resolve_user(username)
 	assert(username:byte(1) == string.byte('@'))
 
 	local stored_id = tonumber(db:hget('bot:usernames', username:lower()))
@@ -220,7 +246,7 @@ function misc.resolve_user(username)
 	return user_obj.result.id
 end
 
-function misc.get_sm_error_string(code)
+function utilities.misc.get_sm_error_string(code)
 	local descriptions = {
 		[109] = _("Inline link formatted incorrectly. Check the text between brackets -> \\[]()"),
 		[141] = _("Inline link formatted incorrectly. Check the text between brackets -> \\[]()"),
@@ -234,24 +260,7 @@ function misc.get_sm_error_string(code)
 	return descriptions[code] or _("Unknown markdown error")
 end
 
-function misc.write_file(path, text, mode)
-	if not mode then
-		mode = "w"
-	end
-	file = io.open(path, mode)
-	if not file then
-		misc.create_folder('logs')
-		file = io.open(path, mode)
-		if not file then
-			return false
-		end
-	end
-	file:write(text)
-	file:close()
-	return true
-end
-
-function misc.get_media_type(msg)
+function utilities.misc.get_media_type(msg)
 	if msg.photo then
 		return 'photo'
 	elseif msg.video then
@@ -281,7 +290,7 @@ function misc.get_media_type(msg)
 	end
 end
 
-function misc.get_media_id(msg)
+function utilities.misc.get_media_id(msg)
 	if msg.photo then
 		return msg.photo[#msg.photo].file_id, 'photo'
 	elseif msg.document then
@@ -299,7 +308,7 @@ function misc.get_media_id(msg)
 	end
 end
 
-function misc.migrate_chat_info(old, new, on_request)
+function utilities.misc.migrate_chat_info(old, new, on_request)
 	if not old or not new then
 		return false
 	end
@@ -343,7 +352,7 @@ function string:replaceholders(msg, ...)
 		username = msg.from.username and '@'..msg.from.username:escape() or '-',
 		id = msg.from.id,
 		title = msg.chat.title:escape(),
-		rules = misc.deeplink_constructor(msg.chat.id, 'rules')
+		rules = utilities.misc.deeplink_constructor(msg.chat.id, 'rules')
 	}
 
 	local substitutions = next{...} and {} or replace_map
@@ -354,97 +363,31 @@ function string:replaceholders(msg, ...)
 	return self:gsub('$(%w+)', substitutions)
 end
 
-function misc.to_supergroup(msg)
-	local old = msg.chat.id
-	local new = msg.migrate_to_chat_id
-	local done = misc.migrate_chat_info(old, new, false)
-	if done then
-		misc.remGroup(old, true, 'to supergroup')
-		api.sendMessage(new, _("(_service notification: migration of the group executed_)"), true)
-	end
-end
-
-function misc.log_error(method, code, extras, description)
-	if not method or not code then return end
-	
-	local ignored_errors = {403, 429, 110, 111, 116, 131}
-	
-	for _, ignored_code in pairs(ignored_errors) do
-		if tonumber(code) == tonumber(ignored_code) then return end
-	end
-	
-	local text = 'Type: #badrequest\nMethod: #'..method..'\nCode: #n'..code
-	
-	if description then
-		text = text..'\nDesc: '..description
-	end
-	
-	if extras then
-		if next(extras) then
-			for i, extra in pairs(extras) do
-				text = text..'\n#more'..i..': '..extra
-			end
-		else
-			text = text..'\n#more: empty'
-		end
-	else
-		text = text..'\n#more: nil'
-	end
-	
-	api.sendLog(text)
-end
-
 -- Return user mention for output a text
-function misc.getname_final(user)
-	return misc.getname_link(user.first_name, user.username) or user.first_name:escape()
+function utilities.misc.getname_final(user)
+	return utilities.misc.getname_link(user.first_name, user.username) or '<code>'..user.first_name:escape_html()..'</code>'
 end
 
 -- Return link to user profile or false, if he doesn't have login
-function misc.getname_link(name, username)
+function utilities.misc.getname_link(name, username)
 	if not name or not username then return nil end
 	username = username:gsub('@', '')
-	return '['..name:escape_hard('link')..'](https://telegram.me/'..username..')'
+	return ('<a href="%s">%s</a>'):format('https://telegram.me/'..username, name:escape_html())
 end
 
-function misc.bash(str)
+function utilities.misc.bash(str)
 	local cmd = io.popen(str)
     local result = cmd:read('*all')
     cmd:close()
     return result
 end
 
-function misc.download_to_file(url, file_path)--https://github.com/yagop/telegram-bot/blob/master/bot/utils.lua
-  --print("url to download: "..url)
-
-  local respbody = {}
-  local options = {
-    url = url,
-    sink = ltn12.sink.table(respbody),
-    redirect = true
-  }
-  -- nil, code, headers, status
-  local response = nil
-    options.redirect = false
-    response = {HTTPS.request(options)}
-  local code = response[2]
-  local headers = response[3]
-  local status = response[4]
-  if code ~= 200 then return false, code end
-
-  print("Saved to: "..file_path)
-
-  file = io.open(file_path, "w+")
-  file:write(table.concat(respbody))
-  file:close()
-  return file_path, code
-end
-
-function misc.telegram_file_link(res)
+function utilities.misc.telegram_file_link(res)
 	--res = table returned by getFile()
 	return "https://api.telegram.org/file/bot"..config.bot_api_key.."/"..res.result.file_path
 end
 
-function misc.is_silentmode_on(chat_id)
+function utilities.misc.is_silentmode_on(chat_id)
 	local hash = 'chat:'..chat_id..':settings'
 	local res = db:hget(hash, 'Silent')
 	if res and res == 'on' then
@@ -454,7 +397,7 @@ function misc.is_silentmode_on(chat_id)
 	end
 end
 
-function misc.getRules(chat_id)
+function utilities.misc.getRules(chat_id)
 	local hash = 'chat:'..chat_id..':info'
 	local rules = db:hget(hash, 'rules')
     if not rules then
@@ -469,7 +412,7 @@ end
 -- result: for send in a message body (false) or for answer to a callback query
 -- (true). In first case the name will be escaped, otherwise the function won't
 -- escape it.
-function users.full_name(chat, without_link)
+function utilities.users.full_name(chat, without_link)
 	if chat.first_name == '' then
 		-- if the user deleted his account, API returns an User object with id
 		-- and first_name fields
@@ -494,8 +437,7 @@ function users.full_name(chat, without_link)
 	return result:escape()
 end
 
-function misc.getAdminlist(chat_id, user_id)
-	--- ???
+function utilities.misc.getAdminlist(chat_id)
 	local list, code = api.getChatAdministrators(chat_id)
 	if not list then
 		return false, code
@@ -539,7 +481,7 @@ function misc.getAdminlist(chat_id, user_id)
 	return table.concat(lines, '\n')
 end
 
-function misc.getExtraList(chat_id)
+function utilities.misc.getExtraList(chat_id)
 	local hash = 'chat:'..chat_id..':extra'
 	local commands = db:hkeys(hash)
 	if not next(commands) then
@@ -553,7 +495,7 @@ function misc.getExtraList(chat_id)
 	end
 end
 
-function misc.getSettings(chat_id)
+function utilities.misc.getSettings(chat_id)
     local hash = 'chat:'..chat_id..':settings'
         
 	local lang = db:get('lang:'..chat_id) or 'en' -- group language
@@ -578,7 +520,7 @@ function misc.getSettings(chat_id)
     for key, default in pairs(config.chat_settings['settings']) do
         
         local off_icon, on_icon = '🚫', '✅'
-        if misc.is_info_message_key(key) then
+        if utilities.misc.is_info_message_key(key) then
         	off_icon, on_icon = '👤', '👥'
         end
         
@@ -627,7 +569,7 @@ function misc.getSettings(chat_id)
 			.. _("👤 = _sent in private_")
 end
 
-function misc.changeSettingStatus(chat_id, field)
+function utilities.misc.changeSettingStatus(chat_id, field)
 	local turned_off = {
 		reports = _("@admin command disabled"),
 		welcome = _("Welcome message won't be displayed from now"),
@@ -671,7 +613,7 @@ function misc.changeSettingStatus(chat_id, field)
 	end
 end
 
-function misc.changeMediaStatus(chat_id, media, new_status)
+function utilities.misc.changeMediaStatus(chat_id, media, new_status)
 	local old_status = db:hget('chat:'..chat_id..':media', media)
 	local new_status_icon
 	if new_status == 'next' then
@@ -690,12 +632,12 @@ function misc.changeMediaStatus(chat_id, media, new_status)
 	return _("New status = %s"):format(new_status_icon), true
 end
 
-function misc.sendStartMe(chat_id, text)
+function utilities.misc.sendStartMe(chat_id, text)
 	local keyboard = {inline_keyboard = {{{text = _("Start me"), url = 'https://telegram.me/'..bot.username}}}}
 	api.sendMessage(chat_id, text, true, keyboard)
 end
 
-function misc.initGroup(chat_id)
+function utilities.misc.initGroup(chat_id)
 	
 	for set, setting in pairs(config.chat_settings) do
 		local hash = 'chat:'..chat_id..':'..set
@@ -704,7 +646,7 @@ function misc.initGroup(chat_id)
 		end
 	end
 	
-	misc.cache_adminlist(chat_id, api.getChatAdministrators(chat_id)) --init admin cache
+	utilities.misc.cache_adminlist(chat_id, api.getChatAdministrators(chat_id)) --init admin cache
 	
 	--save group id
 	db:sadd('bot:groupsid', chat_id)
@@ -712,71 +654,83 @@ function misc.initGroup(chat_id)
 	db:srem('bot:groupsid:removed', chat_id)
 end
 
-function misc.remGroup(chat_id, full, call)
+local function remRealm(chat_id)
+	if db:exists('realm:'..chat_id..':subgroups') then
+		local subgroups = db:hgetall('realm:'..chat_id..':subgroups')
+		if next(subgroups) then
+			for subgroup_id, _ in pairs(subgroups) do
+				db:del('chat:'..subgroup_id..':realm')
+			end
+		end
+		db:del('realm:'..chat_id..':subgroups')
+		return true
+	end
+	db:srem('bot:realms', chat_id)
+end
+
+function utilities.misc.remGroup(chat_id, full, converted_to_realm)
+	if not converted_to_realm then
 	--remove group id
 	db:srem('bot:groupsid', chat_id)
 	--add to the removed groups list
 	db:sadd('bot:groupsid:removed', chat_id)
+		--remove the owner cached
+		db:del('cache:chat:'..chat_id..':owner')
+		--remove the realm data: the group is not being converted to realm -> remove all the info
+		remRealm(chat_id)
+	end
 	
 	for set,field in pairs(config.chat_settings) do
 		db:del('chat:'..chat_id..':'..set)
 	end
 	
 	db:del('cache:chat:'..chat_id..':admins') --delete the cache
-	db:del('cache:chat:'..chat_id..':owner')
 	db:hdel('bot:logchats', chat_id) --delete the associated log chat
 	db:del('chat:'..chat_id..':pin') --delete the msg id of the (maybe) pinned message
+	db:del('chat:'..chat_id..':userlast')
+	db:hdel('bot:chats:latsmsg', chat_id)
+	db:hdel('bot:chatlogs', chat_id) --log channel
 	
-	if full then
+	--if chat_id has a realm
+	if db:exists('chat:'..chat_id..':realm') then
+		local realm_id = db:get('chat:'..chat_id..':realm') --get the realm id
+		db:hdel('realm:'..realm_id..':subgroups', chat_id) --remove the group from the realm subgroups
+		db:del('chat:'..chat_id..':realm') --remove the key with the group realm
+	end
+	
+	if full or converted_to_realm then
 		for i, set in pairs(config.chat_custom_texts) do
 			db:del('chat:'..chat_id..':'..set)
 		end
 		db:del('lang:'..chat_id)
 	end
-	
-	--[[local msg_text = '#removed '..chat_id
-	if full then
-		msg_text = msg_text..'\nfull: true'
-	else
-		msg_text = msg_text..'\nfull: false'
-	end
-	if call then msg_text = msg_text..'\ncall: '..call end
-	api.sendAdmin(msg_text)]]
 end
 
-function misc.getnames_complete(msg, blocks)
+function utilities.misc.getnames_complete(msg, blocks)
 	local admin, kicked
 	
-	if msg.from.username then
-		admin = misc.getname_link(msg.from.first_name, msg.from.username)
-	else
-		admin = '`'..msg.from.first_name:escape_hard('fixed')..'`'
-	end
+	admin = utilities.misc.getname_link(msg.from.first_name, msg.from.username) or ("<code>%s</code>"):format(msg.from.first_name:escape_html())
 	
 	if msg.reply then
-		if msg.reply.from.username then
-			kicked = misc.getname_link(msg.reply.from.first_name, msg.reply.from.username)
-		else
-			kicked = '`'..msg.reply.from.first_name:escape_hard('fixed')..'`'
-		end
+		kicked = utilities.misc.getname_link(msg.reply.from.first_name, msg.reply.from.username) or ("<code>%s</code>"):format(msg.reply.from.first_name:escape_html())
 	elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%s(@[%w_]+)%s?') then
 		local username = msg.text:match('%s(@[%w_]+)')
-		kicked = username:escape(true)
+		kicked = username
 	elseif msg.mentions then
 		for _, entity in pairs(msg.entities) do
 			if entity.user then
-				kicked = '`'..entity.user.first_name:escape_hard('fixed')..'`'
+				kicked = entity.user.first_name:escape_html()
 			end
 		end
 	elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%s(%d+)') then
 		local id = msg.text:match(config.cmd..'%w%w%w%w?%w?%s(%d+)')
-		kicked = '`'..id..'`'
+		kicked = '<code>'..id..'</code>'
 	end
 	
 	return admin, kicked
 end
 
-function misc.get_user_id(msg, blocks)
+function utilities.misc.get_user_id(msg, blocks)
 	--if no user id: returns false and the msg id of the translation for the problem
 	if not msg.reply and not blocks[2] then
 		return false, "Reply to someone"
@@ -785,7 +739,7 @@ function misc.get_user_id(msg, blocks)
 			return msg.reply.from.id
 		elseif msg.text:match(config.cmd..'%w%w%w%w?%w?%w?%s(@[%w_]+)%s?') then
 			local username = msg.text:match('%s(@[%w_]+)')
-			local id = misc.resolve_user(username)
+			local id = utilities.misc.resolve_user(username)
 			if not id then
 				return false, _("I've never seen this user before.\n"
 					.. "If you want to teach me who is he, forward me a message from him")
@@ -804,73 +758,117 @@ function misc.get_user_id(msg, blocks)
 	end
 end
 
-function misc.logEvent(event, msg, blocks, extra)
+function utilities.misc.logEvent(event, msg, extra)
 	local log_id = db:hget('bot:chatlogs', msg.chat.id)
+	--vardump(extra)
 	
 	if not log_id then return end
-	--if not is_loggable(msg.chat.id, event) then return end
+	local is_loggable = db:hget('chat:'..msg.chat.id..':tolog', event)
+	if not is_loggable or is_loggable == 'no' then return end
 	
-	local text
-	if event == 'ban' then
-		local admin, banned = misc.getnames_complete(msg, blocks)
-		local admin_id, banned_id = msg.from.id, misc.get_user_id(msg, blocks)
-		if admin and banned and admin_id and banned_id then
-			text = '#BAN\n*Admin*: '..admin..'  #'..admin_id..'\n*User*: '..banned..'  #'..banned_id
-			if extra.motivation then
-				text = text..'\n\n> _'..extra.motivation:escape_hard('italic')..'_'
-			end
-		end
-	end
-	if event == 'kick' then
-		local admin, kicked = misc.getnames_complete(msg, blocks)
-		local admin_id, kicked_id = msg.from.id, misc.get_user_id(msg, blocks)
-		if admin and kicked and admin_id and kicked_id then
-			text = '#KICK\n*Admin*: '..admin..'  #'..admin_id..'\n*User*: '..banned..'  #'..banned_id
-			if extra.motivation then
-				text = text..'\n\n> _'..extra.motivation:escape_hard('italic')..'_'
-			end
-		end
-	end
-	if event == 'join' then
-		local member = misc.getname_link(msg.new_chat_member.first_name, msg.new_chat_member.username) or '`'..msg.new_chat_member.first_name:escape_hard('fixed')..'`'
-		text = '#NEW_MEMBER\n'..member.. '  #'..msg.new_chat_member.id
-	end
-	if event == 'warn' then
-		local admin, warned = misc.getnames_complete(msg, blocks)
-		local admin_id, warned_id = msg.from.id, misc.get_user_id(msg, blocks)
-		if admin and warned and admin_id and warned_id then
-			text = '#WARN ('..extra.warns..'/'..extra.warnmax..') ('..type..')\n*Admin*: '..admin..'  #'..admin_id..']\n*User*: '..banned..'  #'..banned_id..']'
-			if extra.motivation then
-				text = text..'\n\n> _'..extra.motivation:escape_hard('italic')..'_'
-			end
-		end
-	end
+	local text, reply_markup
+	
+	local chat_info = _("<b>Chat</b>: %s [#chat%d]"):format(msg.chat.title:escape_html(), msg.chat.id * -1)
+	
+	local member = ("%s [@%s] [#id%d]"):format(msg.from.first_name:escape_html(), msg.from.username or '-', msg.from.id)
 	if event == 'mediawarn' then
-		local name = misc.getname_link(msg.from.first_name, msg.from.username) or '`'..msg.from.first_name:escape_hard('fixed')..'`'
-		text = '#MEDIAWARN ('..extra.warns..'/'..extra.warnmax..') '..extra.media..'\n'..name..'  #'..msg.from.id
-		if extra.hammered then
-			text = text..'\n*'..extra.hammered..'*'
-		end
+		--MEDIA WARN
+		--warns n°: warns
+		--warns max: warnmax
+		--media type: media
+		text = ('#MEDIAWARN (<code>%d/%d</code>), %s\n• %s\n• <b>User</b>: %s'):format(extra.warns, extra.warnmax, extra.media, chat_info, member)
+		if extra.hammered then text = text..('\n#%s'):format(extra.hammered:upper()) end
+	elseif event == 'spamwarn' then
+		--SPAM WARN
+		--warns n°: warns
+		--warns max: warnmax
+		--media type: spam_type
+		text = ('#SPAMWARN (<code>%d/%d</code>), <i>%s</i>\n• %s\n• <b>User</b>: %s'):format(extra.warns, extra.warnmax, extra.spam_type, chat_info, member)
+		if extra.hammered then text = text..('\n#%s'):format(extra.hammered:upper()) end
+	elseif event == 'flood' then
+		--FLOOD
+		--hammered?: hammered
+		text = ('#FLOOD\n• %s\n• <b>User</b>: %s'):format(chat_info, member)
+		if extra.hammered then text = text..('\n#%s'):format(extra.hammered:upper()) end
+	elseif event == 'new_chat_photo' then
+		text = _('#NEWPHOTO\n• %s\n• <b>By</b>: %s'):format(chat_info, member)
+		reply_markup = {inline_keyboard={{{text = _("Get the new photo"), url = ("telegram.me/%s?start=photo:%s"):format(bot.username, msg.new_chat_photo[#msg.new_chat_photo].file_id)}}}}
+	elseif event == 'delete_chat_photo' then
+		text = _('#PHOTOREMOVED\n• %s\n• <b>By</b>: %s'):format(chat_info, member)
+	elseif event == 'new_chat_title' then
+		text = _('#NEWTITLE\n• %s\n• <b>By</b>: %s'):format(chat_info, member)
+	elseif event == 'pinned_message' then
+		text = _('#PINNEDMSG\n• %s\n• <b>By</b>: %s'):format(chat_info, member)
+		msg.message_id = msg.pinned_message.message_id --because of the "go to the message" link. The normal msg.message_id brings to the service message
+	elseif event == 'report' then
+		text = _('#REPORT\n• %s\n• <b>By</b>: %s\n• <i>Reported to %d admin(s)</i>'):format(chat_info, member, extra.n_admins)
+	elseif event == 'new_chat_member' then
+		local member = ("%s [@%s] [#id%d]"):format(msg.new_chat_member.first_name:escape_html(), msg.new_chat_member.username or '-', msg.new_chat_member.id)
+		text = _('#NEW_MEMBER\n• %s\n• <b>User</b>: %s'):format(chat_info, member)
+		if extra then --extra == msg.from
+			text = text.._("\n• <b>Added by</b>: %s [#id%d]"):format(utilities.misc.getname_final(extra), extra.id)
 	end
-	if event == 'flood' then
-		local name = misc.getname_link(msg.from.first_name, msg.from.username) or '`'..msg.from.first_name:escape_hard('fixed')..'`'
-		text = '#FLOOD\n'..name..'  #'..msg.from.id
+	else
+		-- events that requires user + admin
+	if event == 'warn' then
+			--WARN
+			--admin name formatted: admin
+			--user name formatted: user
+			--user id: user_id
+			--warns n°: warns
+			--warns max: warnmax
+			--motivation: motivation
+			text = _('#%s\n• <b>Admin</b>: %s [#id%d]\n• %s\n• <b>User</b>: %s [#id%d]\n• <b>Count</b>: <code>%d/%d</code>'):format(event:upper(), extra.admin, msg.from.id, chat_info, extra.user, extra.user_id, extra.warns, extra.warnmax)
 		if extra.hammered then
-			text = text..'\n*'..extra.hammered..'*'
+				text = text.._('\n<b>Action</b>: <i>%s</i>'):format(extra.hammered)
+			end
+		elseif event == 'nowarn' then
+			--WARNS REMOVED
+			--admin name formatted: admin
+			--user name formatted: user
+			--user id: user_id
+			local event_nowarn = _("WARNS_RESET")
+			text = _('#%s\n• <b>Admin</b>: %s [#id%s]\n• %s\n• <b>User</b>: %s [#id%s]'):format(event_nowarn, extra.admin, msg.from.id, chat_info, extra.user, tostring(extra.user_id))
+		elseif event == 'tempban' then
+			--TEMPBAN
+			--admin name formatted: admin
+			--user name formatted: user
+			--user id: user_id
+			--days: d
+			--hours: h
+			--motivation: motivation
+			text = _('#%s\n• <b>Admin</b>: %s [#id%s]\n• %s\n• <b>User</b>: %s [#id%s]\n• <b>Duration</b>: %d days, %d hours'):format(event:upper(), extra.admin, msg.from.id, chat_info, extra.user, tostring(extra.user_id), extra.d, extra.h)
+		else --ban or kick
+			--BAN OR KICK
+			--admin name formatted: admin
+			--user name formatted: user
+			--user id: user_id
+			--motivation: motivation
+			text = _('#%s\n• <b>Admin</b>: %s [#id%s]\n• %s\n• <b>User</b>: %s [#id%s]'):format(event:upper(), extra.admin, msg.from.id, chat_info, extra.user, tostring(extra.user_id))
 		end
+		if event == 'ban' or event == 'tempban' then
+			--logcb:unban:user_id:chat_id for ban, logcb:untempban:user_id:chat_id for tempban
+			reply_markup = {inline_keyboard={{{text = _("Unban"), callback_data = ("logcb:un%s:%d:%d"):format(event, extra.user_id, msg.chat.id)}}}}
+		end
+		if extra.motivation then
+			text = text..('\n• <i>%s</i>'):format(extra.motivation:escape_html())
+	end
+		end
+	if msg.chat.username then
+		text = text..('\n• <a href="telegram.me/%s/%d">%s</a>'):format(msg.chat.username, msg.message_id, _('Go to the message'))
 	end
 	
 	if text then
-		api.sendMessage(log_id, text, true)
+		api.sendMessage(log_id, text, 'html', reply_markup)
 	end
 end
 
-function misc.saveBan(user_id, motivation)
+function utilities.misc.saveBan(user_id, motivation)
 	local hash = 'ban:'..user_id
 	return db:hincrby(hash, motivation, 1)
 end
 
-function misc.is_info_message_key(key)
+function utilities.misc.is_info_message_key(key)
     if key == 'Extra' or key == 'Rules' then
         return true
     else
@@ -878,7 +876,7 @@ function misc.is_info_message_key(key)
     end
 end
 
-function misc.table2keyboard(t)
+function utilities.misc.table2keyboard(t)
 	local keyboard = {inline_keyboard = {}}
     for i, line in pairs(t) do
         if type(line) ~= 'table' then return false, 'Wrong structure (each line need to be a table, not a single value)' end
@@ -896,4 +894,4 @@ function misc.table2keyboard(t)
     return keyboard
 end
 
-return misc, roles, users
+return utilities

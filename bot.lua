@@ -1,10 +1,8 @@
-curl = require('cURL')
-URL = require('socket.url')
-JSON = require('dkjson')
-redis = require('redis')
-clr = require 'term.colors'
+local api = require 'methods'
+local redis = require 'redis'
+local clr = require 'term.colors'
+local misc, roles, config, plugins, is_started, last_update, last_cron
 db = redis.connect('127.0.0.1', 6379)
-serpent = require('serpent')
 
 function bot_init(on_reload) -- The function run when the bot is started or reloaded.
 	
@@ -15,17 +13,18 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	
 	db:select(config.db or 0) --select the redis db
 	
-	misc, roles, users = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
+	local utilities = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
+	misc, roles, users, utilities = utilities.misc, utilities.roles, utilities.users, nil
 	locale = dofile('languages.lua')
-	api = require('methods')
 	now_ms = require('socket').gettime
 	
 	bot = api.getMe().result -- Get bot info
-	bot.revision = io.popen('git rev-parse --short HEAD'):read()
+	bot.revision = misc.bash('git rev-parse --short HEAD')
 
 	plugins = {} -- Load plugins.
 	for i,v in ipairs(config.plugins) do
-		local p = dofile('plugins/'..v)
+		local p = require('plugins.'..v)
+		package.loaded['plugins.'..v] = nil
 		if p.triggers then
 			for funct, trgs in pairs(p.triggers) do
 				for i = 1, #trgs do
@@ -49,10 +48,6 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 
 	print('\n'..clr.blue..'BOT RUNNING:'..clr.reset, clr.red..'[@'..bot.username .. '] [' .. bot.first_name ..'] ['..bot.id..']'..clr.reset..'\n')
 	
-	-- Generate a random seed and "pop" the first random number. :)
-	math.randomseed(os.time())
-	math.random()
-
 	last_update = last_update or 0 -- Set loop variables: Update offset,
 	last_cron = last_cron or os.time() -- the time of the last cron job,
 	is_started = true -- whether the bot should be running or not.
@@ -67,7 +62,6 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	end
 end
 
--- for resolve username
 local function extract_usernames(msg)
 	if msg.from then
 		if msg.from.username then
@@ -179,7 +173,7 @@ local function on_msg_receive(msg, callback) -- The fn run whenever a message is
 						if not success then --if a bug happens
 							print(result)
 							if config.bot_settings.notify_bug then
-								api.sendReply(msg, _("🐛 Sorry, a *bug* occurred"), true)
+								api.sendReply(msg, _("🐞 Sorry, a *bug* occurred"), true)
 							end
           					api.sendAdmin('An #error occurred.\n'..result..'\n'..locale.language..'\n'..msg.text)
 							return
@@ -224,17 +218,29 @@ local function parseMessageFunction(update)
 	
 	local msg, function_key
 	
+	--if update.message or update.edited_message or update.channel_post or update.edited_channel_post then
 	if update.message or update.edited_message then
 		
 		function_key = 'onTextMessage'
 		
+		--if not update.message then
 		if update.edited_message then
 			update.edited_message.edited = true
 			update.edited_message.original_date = update.edited_message.date
 			update.edited_message.date = update.edited_message.edit_date
 			function_key = 'onEditedMessage'
-		end
+			--[[elseif update.channel_post then
+				update.channel_post.channel_post = true
+				function_key = 'onChannelPost'
+			elseif update.edited_channel_post then
+				update.edited_channel_post.edited_channel_post = true
+				update.edited_channel_post.original_date = update.edited_channel_post.date
+				update.edited_channel_post.date = update.edited_channel_post.edit_date
+				function_key = 'onEditedChannelPost']]
+			end
+		--end
 		
+		--msg = update.message or update.edited_message or update.channel_post or update.edited_channel_post
 		msg = update.message or update.edited_message
 		
 		if msg.text then
@@ -306,9 +312,15 @@ local function parseMessageFunction(update)
 		elseif msg.migrate_from_chat_id then
 			msg.service = true
 			msg.text = '###migrate_from_chat_id'
+		elseif msg.new_chat_title then
+			msg.service = true
+			msg.text = '###new_chat_title'
+		elseif msg.pinned_message then
+			msg.service = true
+			msg.text = '###pinned_message'
 	else
 			--callback = 'onUnknownType'
-			vardump(update)
+			misc.vardump(update)
 			print('Unknown update type') return
 	end
 	
@@ -393,7 +405,7 @@ local function parseMessageFunction(update)
 		function_key = 'onCallbackQuery'
 	else
 		--function_key = 'onUnknownType'
-		vardump(update)
+		misc.vardump(update)
 		print('Unknown update type') return
 	end
 	

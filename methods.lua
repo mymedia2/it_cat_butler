@@ -1,3 +1,10 @@
+local curl = require 'cURL'
+local URL = require 'socket.url'
+local JSON = require 'dkjson'
+local config = require 'config'
+local clr = require 'term.colors'
+local api_errors = require 'api_bad_requests'
+
 local BASE_URL = 'https://api.telegram.org/bot' .. config.bot_api_key
 
 local api = {}
@@ -5,7 +12,7 @@ local api = {}
 local curl_context = curl.easy{verbose = config.bot_settings.debug_connections}
 	
 local function getCode(err)
-	for k,v in pairs(config.api_errors) do
+	for k,v in pairs(api_errors) do
 		if err:match(v) then
 			return k
 		end
@@ -35,12 +42,13 @@ local function sendRequest(url)
 	end
 
 	if code ~= 200 then
-		print(clr.red..code, tab.description..clr.reset)
 		
 		if code == 400 then
 			 --error code 400 is general: try to specify
 			 code = getCode(tab.description)
 		end
+		
+		print(clr.red..code, tab.description..clr.reset)
 		db:hincrby('bot:errors', code, 1)
 		
 		return false, code, tab.description
@@ -53,6 +61,36 @@ local function sendRequest(url)
 	
 	return tab
 
+end
+
+local function log_error(method, code, extras, description)
+	if not method or not code then return end
+	
+	local ignored_errors = {403, 429, 110, 111, 116, 131}
+	
+	for _, ignored_code in pairs(ignored_errors) do
+		if tonumber(code) == tonumber(ignored_code) then return end
+	end
+	
+	local text = 'Type: #badrequest\nMethod: #'..method..'\nCode: #n'..code
+	
+	if description then
+		text = text..'\nDesc: '..description
+	end
+	
+	if extras then
+		if next(extras) then
+			for i, extra in pairs(extras) do
+				text = text..'\n#more'..i..': '..extra
+			end
+		else
+			text = text..'\n#more: empty'
+		end
+	else
+		text = text..'\n#more: nil'
+	end
+	
+	api.sendLog(text)
 end
 
 function api.getMe()
@@ -133,7 +171,7 @@ function api.kickUser(chat_id, user_id)
 		return res
 	else
 		local motivation = code2text(code)
-		return res, motivation
+		return res, code, motivation
 	end
 end
 
@@ -158,7 +196,7 @@ function api.getChatAdministrators(chat_id)
 	local res, code, desc = sendRequest(url)
 	
 	if not res and code then --if the request failed and a code is returned (not 403 and 429)
-		misc.log_error('getChatAdministrators', code, nil, desc)
+		log_error('getChatAdministrators', code, nil, desc)
 	end
 	
 	return res, code
@@ -180,7 +218,7 @@ function api.getChatMember(chat_id, user_id)
 	local res, code, desc = sendRequest(url)
 	
 	if not res and code then --if the request failed and a code is returned (not 403 and 429)
-		misc.log_error('getChatMember', code, nil, desc)
+		log_error('getChatMember', code, nil, desc)
 	end
 	
 	return res, code
@@ -198,14 +236,14 @@ function api.leaveChat(chat_id)
 	end
 	
 	if not res and code then --if the request failed and a code is returned (not 403 and 429)
-		misc.log_error('leaveChat', code)
+		log_error('leaveChat', code)
 	end
 	
 	return res, code
 	
 end
 
-function api.sendMessage(chat_id, text, use_markdown, reply_markup, reply_to_message_id, enable_web_page_preview)
+function api.sendMessage(chat_id, text, parse_mode, reply_markup, reply_to_message_id, enable_web_page_preview)
 	--print(text)
 	
 	local url = BASE_URL .. '/sendMessage?chat_id=' .. chat_id .. '&text=' .. URL.escape(text)
@@ -214,8 +252,12 @@ function api.sendMessage(chat_id, text, use_markdown, reply_markup, reply_to_mes
 		url = url .. '&reply_to_message_id=' .. reply_to_message_id
 	end
 	
-	if use_markdown then
+	if parse_mode then
+		if type(parse_mode) == 'string' and parse_mode:lower() == 'html' then
+			url = url .. '&parse_mode=HTML'
+		else
 		url = url .. '&parse_mode=Markdown'
+	end
 	end
 	
 	if reply_markup then
@@ -231,7 +273,7 @@ function api.sendMessage(chat_id, text, use_markdown, reply_markup, reply_to_mes
 	local res, code, desc = sendRequest(url)
 	
 	if not res and code then --if the request failed and a code is returned (not 403 and 429)
-		misc.log_error('sendMessage', code, {text}, desc)
+		log_error('sendMessage', code, {text}, desc)
 	end
 	
 	return res, code --return false, and the code
@@ -244,12 +286,16 @@ function api.sendReply(msg, text, markd, reply_markup)
 
 end
 
-function api.editMessageText(chat_id, message_id, text, markdown, keyboard)
+function api.editMessageText(chat_id, message_id, text, parse_mode, keyboard)
 	
 	local url = BASE_URL .. '/editMessageText?chat_id=' .. chat_id .. '&message_id='..message_id..'&text=' .. URL.escape(text)
 	
-	if markdown then
+	if parse_mode then
+		if type(parse_mode) == 'string' and parse_mode:lower() == 'html' then
+			url = url .. '&parse_mode=HTML'
+		else
 		url = url .. '&parse_mode=Markdown'
+	end
 	end
 	
 	url = url .. '&disable_web_page_preview=true'
@@ -261,7 +307,7 @@ function api.editMessageText(chat_id, message_id, text, markdown, keyboard)
 	local res, code, desc = sendRequest(url)
 	
 	if not res and code then --if the request failed and a code is returned (not 403 and 429)
-		misc.log_error('editMessageText', code, {text}, desc)
+		log_error('editMessageText', code, {text}, desc)
 	end
 	
 	return res, code
@@ -278,12 +324,17 @@ function api.editMarkup(chat_id, message_id, reply_markup)
 
 end
 
-function api.answerCallbackQuery(callback_query_id, text, show_alert)
+function api.answerCallbackQuery(callback_query_id, text, show_alert, cache_time)
 	
 	local url = BASE_URL .. '/answerCallbackQuery?callback_query_id=' .. callback_query_id .. '&text=' .. URL.escape(text)
 	
 	if show_alert then
 		url = url..'&show_alert=true'
+	end
+	
+	if cache_time then
+		local seconds = tonumber(cache_time) * 3600
+		url = url..'&cache_time='..seconds
 	end
 	
 	return sendRequest(url)
@@ -320,7 +371,7 @@ function api.forwardMessage(chat_id, from_chat_id, message_id, send_sound)
 	local res, code, desc = sendRequest(url)
 	
 	if not res and code then --if the request failed and a code is returned (not 403 and 429)
-		misc.log_error('forwardMessage', code, nil, desc)
+		log_error('forwardMessage', code, nil, desc)
 	end
 	
 	return res, code
@@ -396,12 +447,16 @@ function api.sendPhotoId(chat_id, file_id, reply_to_message_id)
 	
 end
 
-function api.sendDocumentId(chat_id, file_id, reply_to_message_id)
+function api.sendDocumentId(chat_id, file_id, reply_to_message_id, caption)
 	
 	local url = BASE_URL .. '/sendDocument?chat_id=' .. chat_id .. '&document=' .. file_id
 	
 	if reply_to_message_id then
 		url = url..'&reply_to_message_id='..reply_to_message_id
+	end
+
+	if caption then
+		url = url..'&caption='..caption
 	end
 
 	return sendRequest(url)
@@ -435,7 +490,7 @@ function api.sendPhoto(chat_id, photo, caption, reply_to_message_id)
 
 end
 
-function api.sendDocument(chat_id, document, reply_to_message_id)
+function api.sendDocument(chat_id, document, reply_to_message_id, caption)
 
 	local url = BASE_URL .. '/sendDocument'
 
@@ -445,6 +500,10 @@ function api.sendDocument(chat_id, document, reply_to_message_id)
 		curl_command = curl_command .. ' -F "reply_to_message_id=' .. reply_to_message_id .. '"'
 	end
 
+	if caption then
+		curl_command = curl_command .. ' -F "caption=' .. caption .. '"'
+	end
+	
 	return curlRequest(curl_command)
 
 end

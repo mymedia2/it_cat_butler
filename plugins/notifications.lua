@@ -1,4 +1,6 @@
 -- Deprecated features. Use @TagAlertBot or @mentions_bot instead.
+local config = require 'config'
+local api = require 'methods'
 
 local plugin = {}
 
@@ -104,7 +106,7 @@ end
 
 plugin.triggers = {
 	onTextMessage = {
-		-- config.cmd..'(subscribe)$',
+		--config.cmd..'(subscribe)$',
 		config.cmd..'(unscribe)$',
 		config.cmd..'(unsubscribe)$',
 	}

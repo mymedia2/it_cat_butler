@@ -1,6 +1,11 @@
+local config = require 'config'
+local misc = require 'utilities'.misc
+local roles = require 'utilities'.roles
+local api = require 'methods'
+
 local plugin = {}
 
-local function do_keybaord_credits()
+local function do_keyboard_credits()
 	local keyboard = {}
     keyboard.inline_keyboard = {
     	{
@@ -190,7 +195,7 @@ function plugin.onTextMessage(msg, blocks)
 					unknown = _("%s has nothing to do with this chat"),
 					member = _("%s is a chat member")
 				}
-				api.sendReply(msg, texts[status]:format(name), true)
+				api.sendReply(msg, texts[status]:format(name), 'html')
 		 	end
 	 	end
  	end
@@ -243,6 +248,12 @@ function plugin.onTextMessage(msg, blocks)
 			api.sendMessage(msg.from.id, text, true)
 		end
 	end
+	if blocks[1] == 'leave' then
+		if roles.is_admin_cached(msg) then
+			misc.remGroup(msg.chat.id)
+			api.leaveChat(msg.chat.id)
+		end
+	end
 end
 
 function plugin.onCallbackQuery(msg, blocks)
@@ -256,18 +267,21 @@ function plugin.onCallbackQuery(msg, blocks)
 		local res, code, text = api.banUser(msg.chat.id, user_id)
 		if res then
 			misc.saveBan(user_id, 'ban')
-			local name = misc.getname_link(msg.from.first_name, msg.from.username) or msg.from.first_name:escape()
-			text = _("_Banned!_\n(Admin: %s)"):format(name)
+			local name = misc.getname_final(msg.from)
+			misc.logEvent('ban', msg, {admin = name, user = ('<code>%s</code>'):format(user_id), user_id = user_id, motivation = _("Ban from the /user command")})
+			text = _("<i>Banned!</i>\nBanned by: %s"):format(name)
 		end
-		api.editMessageText(msg.chat.id, msg.message_id, text, true)
+		api.editMessageText(msg.chat.id, msg.message_id, text, 'html')
 	end
 	if blocks[1] == 'remwarns' then
 		db:hdel('chat:'..msg.chat.id..':warns', msg.target_id)
 		db:hdel('chat:'..msg.chat.id..':mediawarn', msg.target_id)
+		db:hdel('chat:'..msg.chat.id..':spamwarns', msg.target_id)
         
-        local name = misc.getname_link(msg.from.first_name, msg.from.username) or msg.from.first_name:escape()
-		local text = _("The number of warnings received by this user has been *reset*\n(Admin: %s)")
-		api.editMessageText(msg.chat.id, msg.message_id, text:format(name), true)
+        local name = misc.getname_final(msg.from)
+		local text = _("The number of warnings received by this user has been <b>reset</b>, by %s"):format(name)
+		api.editMessageText(msg.chat.id, msg.message_id, text:format(name), 'html')
+		misc.logEvent('nowarn', msg, {admin = name, user = ('<code>%s</code>'):format(msg.target_id), user_id = msg.target_id})
     end
     if blocks[1] == 'recache' then
 		local missing_sec = tonumber(db:ttl('cache:chat:'..msg.target_id..':admins') or 0)
@@ -294,7 +308,8 @@ plugin.triggers = {
 		config.cmd..'(cache)$',
 		config.cmd..'(msglink)$',
 		config.cmd..'(user)$',
-		config.cmd..'(user) (.*)'
+		config.cmd..'(user) (.*)',
+		config.cmd..'(leave)$'
 	},
 	onCallbackQuery = {
 		'^###cb:userbutton:(banuser):(%d+)$',

@@ -1,3 +1,8 @@
+local config = require 'config'
+local misc = require 'utilities'.misc
+local roles = require 'utilities'.roles
+local api = require 'methods'
+
 local plugin = {}
 
 function plugin.onTextMessage(msg, blocks)
@@ -48,15 +53,23 @@ function plugin.onTextMessage(msg, blocks)
 					.. "If he doesn't know how, there is a good [guide](https://telegram.me/GroupButler_ch/104).\n")
 			end
 		end
-		--[[
+        --[[
 		text = text .. _("I can do a lot of cool things. To discover about them, "
 				-- TODO: old link, update it
-			.. "watch this [video-tutorial](https://youtu.be/uqNumbcUyzs).")
-		]]
+			.. "watch this [video-tutorial](https://youtu.be/uqNumbcUyzs).") ]]
 		api.sendMessage(msg.chat.id, text, true, nil, nil, true)
+	elseif blocks[1] == 'left_chat_member:bot' then
+				
+		local realm_id = db:get('chat:'..msg.chat.id..':realm')
+		if realm_id then
+			if db:hget('realm:'..realm_id..':subgroups', msg.chat.id) then
+				api.sendMessage(realm_id, _("I've been removed from %s [<code>%d</code>], one of your subgroups"):format(msg.chat.title:escape_html(), msg.chat.id), 'html')
 	end
-	if blocks[1] == 'left_chat_member:bot' then
-		misc.remGroup(msg.chat.id)
+		end
+		
+		misc.remGroup(msg.chat.id, true)
+	else
+		misc.logEvent(blocks[1], msg)
 	end
 end
 
@@ -65,6 +78,10 @@ plugin.triggers = {
 		'^###(new_chat_member:bot)',
 		'^###(migrate_from_chat_id)',
 		'^###(left_chat_member:bot)',
+		'^###(pinned_message)$',
+		'^###(new_chat_title)$',
+		'^###(new_chat_photo)$',
+		'^###(delete_chat_photo)$'
 	}
 }
 
