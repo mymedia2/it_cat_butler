@@ -149,7 +149,8 @@ return {
 			['new_chat_photo'] = 'no',
 			['delete_chat_photo'] = 'no',
 			['new_chat_title'] = 'no',
-			['pinned_message'] = 'no'
+			['pinned_message'] = 'no',
+			['voteban_banned'] = 'no',
 		},
 	},
 	private_settings = {

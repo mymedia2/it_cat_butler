@@ -59,7 +59,8 @@ local function doKeyboard_logchannel(chat_id)
 		['new_chat_photo'] = _('New group icon'),
 		['delete_chat_photo'] = _('Group icon removed'),
 		['new_chat_title'] = _('New group title'),
-		['pinned_message'] = _('Pinned messages')
+		['pinned_message'] = _('Pinned messages'),
+		['voteban_banned'] = _('/voteban'),
 	}
 	
 	local keyboard = {inline_keyboard={}}
@@ -213,7 +214,7 @@ plugin.triggers = {
 	},
 	onCallbackQuery = {
 		 --callbacks from the log channel
-		'^###cb:(logcb):(%w-):(%d+):(-%d+)$',
+		'^###cb:(logcb):(%w-):(-?%d+):(-?%d+)$',
 		
 		--callbacks from the configuration keyboard
         '^###cb:logchannel:(toggle):([%w_]+):(-?%d+)$',

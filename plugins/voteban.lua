@@ -262,6 +262,9 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 	local hash = string.format('chat:%d:voteban:%d', chat_id, user_id)
 	local informative = db:hget(hash, 'informative')
 
+	if not db:exists(hash) then
+		return _("🔴 The poll is already closed. You're late")
+	end
 	if from_id == user_id and informative ~= 'against himself' then
 		return _("🚷 You can't vote about yourself")
 	end
@@ -278,7 +281,7 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 				send_confirmation, code = api.banUser(chat_id, user_id)
 			end
 
-			local upshot, initiator
+			local upshot
 			if send_confirmation then
 				upshot = 'was banned'
 			elseif code == 101 or code == 105 or code == 107 then
@@ -287,16 +290,17 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 				upshot = 'already admin'
 			elseif supports <= oppositionists then
 				upshot = 'was protected'
-				initiator = api.getChat(db:hget(hash, 'initiator')).result
 			end
 			local defendant = api.getChat(user_id).result
+			local initiator = api.getChat(db:hget(hash, 'initiator')).result
 
 			local text = conclusion(initiator, defendant, supports, oppositionists, quorum, upshot, informative)
 			api.editMessageText(chat_id, msg_id, text, true)
 
 			if send_confirmation then
 				local text = _("%s has been banned ✨"):format(users.full_name(defendant))
-				api.sendMessage(chat_id, text, true, nil, msg_id)
+				local msg = api.sendMessage(chat_id, text, true, nil, msg_id).result
+				misc.logEvent('voteban_banned', msg, {user = defendant, init = initiator})
 			end
 			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
 		else
@@ -324,6 +328,26 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 	return text
 end
 
+local function update_poll(chat_id, user_id)
+	local expired = tonumber(db:hget(hash, 'expired'))
+	local msg_id = tonumber(db:hget(hash, 'msg_id'))
+	if expired < os.time() then
+		-- Poll is finished
+		local defendant = api.getChat(user_id).result
+		local supports = tonumber(db:scard(hash .. ':supports'))
+		local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
+		local quorum = tonumber(db:hget(hash, 'quorum'))
+		local informative = db:hget(hash, 'informative')
+
+		local text = conclusion(nil, defendant, supports, oppositionists, quorum, 'no decision', informative)
+		api.editMessageText(chat_id, msg_id, text, true)
+		db:del(hash, hash .. ':supports', hash .. ':oppositionists')
+	else
+		-- Poll is continue
+		rebuild_poll_message(chat_id, user_id)
+	end
+end
+
 function plugin.cron()
 	-- FIXME: they don't recommend use keys function
 	for i, hash in pairs(db:keys('chat:*:voteban:*')) do
@@ -331,23 +355,11 @@ function plugin.cron()
 		-- lua sucks because it have no continue statement
 		if not chat_id or not user_id then goto continue end
 
-		local expired = tonumber(db:hget(hash, 'expired'))
-		local msg_id = tonumber(db:hget(hash, 'msg_id'))
-		if expired < os.time() then
-			-- Poll is finished
-			local defendant = api.getChat(user_id).result
-			local supports = tonumber(db:scard(hash .. ':supports'))
-			local oppositionists = tonumber(db:scard(hash .. ':oppositionists'))
-			local quorum = tonumber(db:hget(hash, 'quorum'))
-			local informative = db:hget(hash, 'informative')
-
-			local text = conclusion(nil, defendant, supports, oppositionists, quorum, 'no decision', informative)
-			api.editMessageText(chat_id, msg_id, text, true)
-
+		ok, traceback = xpcall(update_poll, debug.traceback, chat_id, user_id)
+		if not ok then
+			print(traceback)
+			api.sendAdmin('An #error occurred (voteban).\n'..traceback)
 			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
-		else
-			-- Poll is continue
-			rebuild_poll_message(chat_id, user_id)
 		end
 		::continue::
 	end
@@ -358,7 +370,7 @@ function plugin.onTextMessage(msg, blocks)
 		local hash = string.format('chat:%d:settings', msg.chat.id)
 		local status = db:hget(hash, 'voteban') or config.chat_settings.settings.voteban
 		if status == 'off' and not roles.is_admin_cached(msg) then return end
-		hash = string.format('chat:%d:voteban', msg.chat.id)
+		local hash = string.format('chat:%d:voteban', msg.chat.id)
 
 		-- choose the hero
 		local nominated
@@ -442,7 +454,7 @@ end
 
 plugin.triggers = {
 	onTextMessage = {
-		config.cmd..'(voteban) ([^%s]*) ?(.*)',
+		config.cmd..'(voteban) ([^%s]*)%s?(.*)',
 		config.cmd..'(voteban)$',
 	},
 	onCallbackQuery = {

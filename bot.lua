@@ -112,11 +112,13 @@ end
 
 local function match_triggers(triggers, text)
   	if text and triggers then
+		-- avoid reaction to commands for other bots
 		text = text:gsub('^(/[%w_]+)@'..bot.username, '%1')
+
 		for i, trigger in pairs(triggers) do
-    	local matches = {}
+			local matches = {}
 	    	matches = { string.match(text, trigger) }
-    	if next(matches) then
+			if next(matches) then
 	    		return matches, trigger
 			end
 		end
@@ -125,9 +127,7 @@ end
 
 local function on_msg_receive(msg, callback) -- The fn run whenever a message is received.
 	--vardump('PARSED', msg)
-	if not msg then
-		return
-	end
+	if not msg then return end
 	
 	if msg.chat.type ~= 'group' then --do not process messages from normal groups
 		
@@ -229,54 +229,45 @@ local function parseMessageFunction(update)
 			update.edited_message.original_date = update.edited_message.date
 			update.edited_message.date = update.edited_message.edit_date
 			function_key = 'onEditedMessage'
-			--[[elseif update.channel_post then
-				update.channel_post.channel_post = true
-				function_key = 'onChannelPost'
-			elseif update.edited_channel_post then
-				update.edited_channel_post.edited_channel_post = true
-				update.edited_channel_post.original_date = update.edited_channel_post.date
-				update.edited_channel_post.date = update.edited_channel_post.edit_date
-				function_key = 'onEditedChannelPost']]
-			end
-		--end
+		end
 		
 		--msg = update.message or update.edited_message or update.channel_post or update.edited_channel_post
 		msg = update.message or update.edited_message
 		
 		if msg.text then
 		elseif msg.photo then
-	msg.media = true
-			msg.media_type = 'photo'
-	elseif msg.audio then
 			msg.media = true
-		msg.media_type = 'audio'
-	elseif msg.document then
+			msg.media_type = 'photo'
+		elseif msg.audio then
+			msg.media = true
+			msg.media_type = 'audio'
+		elseif msg.document then
 			msg.media = true
 			msg.media_type = 'document'
-		if msg.document.mime_type == 'video/mp4' then
-			msg.media_type = 'gif'
-		end
-	elseif msg.sticker then
+			if msg.document.mime_type == 'video/mp4' then
+				msg.media_type = 'gif'
+			end
+		elseif msg.sticker then
 			msg.media = true
-		msg.media_type = 'sticker'
+			msg.media_type = 'sticker'
 		elseif msg.video then
 			msg.media = true
 			msg.media_type = 'video'
 		elseif msg.voice then
 			msg.media = true
 			msg.media_type = 'voice'
-	elseif msg.contact then
+		elseif msg.contact then
 			msg.media = true
-		msg.media_type = 'contact'
+			msg.media_type = 'contact'
 		elseif msg.venue then
 			msg.media = true
 			msg.media_type = 'venue'
 		elseif msg.location then
 			msg.media = true
 			msg.media_type = 'location'
-	elseif msg.game then
+		elseif msg.game then
 			msg.media = true
-		msg.media_type = 'game'
+			msg.media_type = 'game'
 		elseif msg.left_chat_member then
 			msg.service = true
 			if msg.left_chat_member.id == bot.id then
@@ -318,16 +309,14 @@ local function parseMessageFunction(update)
 		elseif msg.pinned_message then
 			msg.service = true
 			msg.text = '###pinned_message'
-	else
+		else
 			--callback = 'onUnknownType'
 			misc.vardump(update)
 			print('Unknown update type') return
-	end
+		end
 	
-		if msg.forward_from_chat then
-			if msg.forward_from_chat.type == 'channel' then
-				msg.spam = 'forwards'
-			end
+		if msg.forward_from_chat and msg.forward_from_chat.type == 'channel' then
+			msg.spam = 'forwards'
 		end
 		if msg.caption then
 			local caption_lower = msg.caption:lower()
@@ -335,72 +324,58 @@ local function parseMessageFunction(update)
 				msg.spam = 'links'
 			end
 		end
-	if msg.entities then
+		if msg.entities then
 			for i, entity in pairs(msg.entities) do
-			if entity.type == 'text_mention' then
-				msg.mentions = msg.mentions or {}
-				msg.mentions[entity.user.id] = true
-				if entity.user.username then
-					db:hset('bot:usernames', '@'..entity.user.username:lower(), entity.user.id)
-				end
-			end
-		   if entity.type == 'mention' and entity.offset == 0 then
-				-- FIXME: cut the username taking into consideration length of unicode characters
-				local username = msg.text:sub(entity.offset + 1, entity.offset + entity.length)
-				local user_id = misc.resolve_user(username, msg.chat.id)
-				if user_id then
+				if entity.type == 'text_mention' then
 					msg.mentions = msg.mentions or {}
-					msg.mentions[user_id] = true
+					msg.mentions[entity.user.id] = true
+					if entity.user.username then
+						db:hset('bot:usernames', '@'..entity.user.username:lower(), entity.user.id)
+					end
 				end
-			end
-			if entity.type == 'url' or entity.type == 'text_link' then
+				if entity.type == 'mention' and entity.offset == 0 then
+					-- FIXME: cut the username taking into consideration length of unicode characters
+					local username = msg.text:sub(entity.offset + 1, entity.offset + entity.length)
+					local user_id = misc.resolve_user(username, msg.chat.id)
+					if user_id then
+						msg.mentions = msg.mentions or {}
+						msg.mentions[user_id] = true
+					end
+				end
+				if entity.type == 'url' or entity.type == 'text_link' then
 					local text_lower = msg.text or msg.caption
 					text_lower = text_lower:lower()
 					if text_lower:match('telegram%.me') or text_lower:match('telegram%.dog') then
 						msg.spam = 'links'
-				else
-					msg.media_type = 'link'
-				msg.media = true
+					else
+						msg.media_type = 'link'
+						msg.media = true
+					end
+				end
 			end
 		end
-	end
+		if msg.reply_to_message then
+			msg.reply = msg.reply_to_message
+			if msg.reply.caption then
+				msg.reply.text = msg.reply.caption
+			end
 		end
-	if msg.reply_to_message then
-		msg.reply = msg.reply_to_message
-	if msg.reply.caption then
-		msg.reply.text = msg.reply.caption
-	end
-		end
-	--[[elseif update.inline_query then
-		msg = update.inline_query
-		msg.inline = true
-		msg.chat = {id = msg.from.id, type = 'inline', title = 'inline'}
-		msg.date = os.time()
-		msg.text = '###inline:'..msg.query
-		function_key = 'onInlineQuery'
-	elseif update.chosen_inline_result then
-		msg = update.chosen_inline_result
-		msg.text = '###chosenresult:'..msg.query
-		msg.chat = {type = 'inline', id = msg.from.id, title = msg.from.first_name}
-		msg.message_id = msg.inline_message_id
-	msg.date = os.time()
-		function_key = 'onChosenInlineQuery']]
 	elseif update.callback_query then
 		msg = update.callback_query
-	msg.cb = true
+		msg.cb = true
 		msg.text = '###cb:'..msg.data
 		if msg.message then
 			msg.original_text = msg.message.text
 			msg.original_date = msg.message.date
-	msg.message_id = msg.message.message_id
-	msg.chat = msg.message.chat
+		msg.message_id = msg.message.message_id
+		msg.chat = msg.message.chat
 		else --when the inline keyboard is sent via the inline mode
 			msg.chat = {type = 'inline', id = msg.from.id, title = msg.from.first_name}
 			msg.message_id = msg.inline_message_id
 		end
 		msg.date = os.time()
 		msg.cb_id = msg.id
-	msg.message = nil
+		msg.message = nil
 		msg.target_id = msg.data:match('(-?%d+)$') --callback datas often (always) ship IDs. Create a shortcut
 		function_key = 'onCallbackQuery'
 	else

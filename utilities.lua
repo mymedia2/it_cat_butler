@@ -761,16 +761,15 @@ end
 function utilities.misc.logEvent(event, msg, extra)
 	local log_id = db:hget('bot:chatlogs', msg.chat.id)
 	--vardump(extra)
-	
+
 	if not log_id then return end
 	local is_loggable = db:hget('chat:'..msg.chat.id..':tolog', event)
 	if not is_loggable or is_loggable == 'no' then return end
-	
+
 	local text, reply_markup
-	
 	local chat_info = _("<b>Chat</b>: %s [#chat%d]"):format(msg.chat.title:escape_html(), msg.chat.id * -1)
-	
 	local member = ("%s [@%s] [#id%d]"):format(msg.from.first_name:escape_html(), msg.from.username or '-', msg.from.id)
+
 	if event == 'mediawarn' then
 		--MEDIA WARN
 		--warns n°: warns
@@ -807,57 +806,58 @@ function utilities.misc.logEvent(event, msg, extra)
 		text = _('#NEW_MEMBER\n• %s\n• <b>User</b>: %s'):format(chat_info, member)
 		if extra then --extra == msg.from
 			text = text.._("\n• <b>Added by</b>: %s [#id%d]"):format(utilities.misc.getname_final(extra), extra.id)
-	end
-	else
-		-- events that requires user + admin
-	if event == 'warn' then
-			--WARN
-			--admin name formatted: admin
-			--user name formatted: user
-			--user id: user_id
-			--warns n°: warns
-			--warns max: warnmax
-			--motivation: motivation
-			text = _('#%s\n• <b>Admin</b>: %s [#id%d]\n• %s\n• <b>User</b>: %s [#id%d]\n• <b>Count</b>: <code>%d/%d</code>'):format(event:upper(), extra.admin, msg.from.id, chat_info, extra.user, extra.user_id, extra.warns, extra.warnmax)
+		end
+	elseif event == 'voteban_banned' then
+		local defendant = ("%s [@%s] [#id%d]"):format(extra.user.first_name, extra.user.username or '-', extra.user.id)
+		local initiator = ("%s [@%s] [#id%d]"):format(extra.init.first_name, extra.init.username or '-', extra.init.id)
+		text = _("#VOTEBAN\n%s\n<b>User</b>: %s\n<b>Initiator</b>: %s"):format(chat_info, defendant, initiator)
+	elseif event == 'warn' then
+		--WARN
+		--admin name formatted: admin
+		--user name formatted: user
+		--user id: user_id
+		--warns n°: warns
+		--warns max: warnmax
+		--motivation: motivation
+		text = _('#%s\n• <b>Admin</b>: %s [#id%d]\n• %s\n• <b>User</b>: %s [#id%d]\n• <b>Count</b>: <code>%d/%d</code>'):format(event:upper(), extra.admin, msg.from.id, chat_info, extra.user, extra.user_id, extra.warns, extra.warnmax)
 		if extra.hammered then
-				text = text.._('\n<b>Action</b>: <i>%s</i>'):format(extra.hammered)
-			end
-		elseif event == 'nowarn' then
-			--WARNS REMOVED
-			--admin name formatted: admin
-			--user name formatted: user
-			--user id: user_id
-			local event_nowarn = _("WARNS_RESET")
-			text = _('#%s\n• <b>Admin</b>: %s [#id%s]\n• %s\n• <b>User</b>: %s [#id%s]'):format(event_nowarn, extra.admin, msg.from.id, chat_info, extra.user, tostring(extra.user_id))
-		elseif event == 'tempban' then
-			--TEMPBAN
-			--admin name formatted: admin
-			--user name formatted: user
-			--user id: user_id
-			--days: d
-			--hours: h
-			--motivation: motivation
-			text = _('#%s\n• <b>Admin</b>: %s [#id%s]\n• %s\n• <b>User</b>: %s [#id%s]\n• <b>Duration</b>: %d days, %d hours'):format(event:upper(), extra.admin, msg.from.id, chat_info, extra.user, tostring(extra.user_id), extra.d, extra.h)
-		else --ban or kick
-			--BAN OR KICK
-			--admin name formatted: admin
-			--user name formatted: user
-			--user id: user_id
-			--motivation: motivation
-			text = _('#%s\n• <b>Admin</b>: %s [#id%s]\n• %s\n• <b>User</b>: %s [#id%s]'):format(event:upper(), extra.admin, msg.from.id, chat_info, extra.user, tostring(extra.user_id))
+			text = text.._('\n<b>Action</b>: <i>%s</i>'):format(extra.hammered)
 		end
-		if event == 'ban' or event == 'tempban' then
-			--logcb:unban:user_id:chat_id for ban, logcb:untempban:user_id:chat_id for tempban
-			reply_markup = {inline_keyboard={{{text = _("Unban"), callback_data = ("logcb:un%s:%d:%d"):format(event, extra.user_id, msg.chat.id)}}}}
-		end
-		if extra.motivation then
-			text = text..('\n• <i>%s</i>'):format(extra.motivation:escape_html())
+	elseif event == 'nowarn' then
+		--WARNS REMOVED
+		--admin name formatted: admin
+		--user name formatted: user
+		--user id: user_id
+		local event_nowarn = _("WARNS_RESET")
+		text = _('#%s\n• <b>Admin</b>: %s [#id%s]\n• %s\n• <b>User</b>: %s [#id%s]'):format(event_nowarn, extra.admin, msg.from.id, chat_info, extra.user, tostring(extra.user_id))
+	elseif event == 'tempban' then
+		--TEMPBAN
+		--admin name formatted: admin
+		--user name formatted: user
+		--user id: user_id
+		--days: d
+		--hours: h
+		--motivation: motivation
+		text = _('#%s\n• <b>Admin</b>: %s [#id%s]\n• %s\n• <b>User</b>: %s [#id%s]\n• <b>Duration</b>: %d days, %d hours'):format(event:upper(), extra.admin, msg.from.id, chat_info, extra.user, tostring(extra.user_id), extra.d, extra.h)
+	else --ban or kick
+		--BAN OR KICK
+		--admin name formatted: admin
+		--user name formatted: user
+		--user id: user_id
+		--motivation: motivation
+		text = _('#%s\n• <b>Admin</b>: %s [#id%s]\n• %s\n• <b>User</b>: %s [#id%s]'):format(event:upper(), extra.admin, msg.from.id, chat_info, extra.user, tostring(extra.user_id))
 	end
-		end
+
+	if event == 'flood' or event == 'ban' or event == 'tempban' or event == 'voteban_banned' then
+		--logcb:unban:user_id:chat_id for ban, logcb:untempban:user_id:chat_id for tempban
+		reply_markup = {inline_keyboard={{{text = _("Unban"), callback_data = ("logcb:unban:%d:%d"):format(extra.user_id or extra.user.id, msg.chat.id)}}}}
+	end
+	if extra.motivation then
+		text = text..('\n• <i>%s</i>'):format(extra.motivation:escape_html())
+	end
 	if msg.chat.username then
 		text = text..('\n• <a href="telegram.me/%s/%d">%s</a>'):format(msg.chat.username, msg.message_id, _('Go to the message'))
 	end
-	
 	if text then
 		api.sendMessage(log_id, text, 'html', reply_markup)
 	end
