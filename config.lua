@@ -13,10 +13,10 @@ return {
 			adminlist = 18000, --5 hours (18000s) Admin Cache time, in seconds.
 		},
 		multipurpose_mode = false, --If this is enabled, the bot will activate the plugins from plugins/multipurpose
-		notify_bug = false, --Notify if a bug occurs!
+		notify_bug = true, --Notify if a bug occurs!
 		log_api_errors = true, --Log errors, which happening whilst interacting with the bot api.
 		stream_commands = true,
-		admin_mode = true,
+		admin_mode = false,
 		debug_connections = false,
 		realm_max_members = 60,
 		realm_max_subgroups = 6

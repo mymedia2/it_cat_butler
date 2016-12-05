@@ -467,8 +467,8 @@ function utilities.misc.getAdminlist(chat_id)
 		end
 	end
 
-	if not roles.bot_is_admin(chat_id) then
-		if roles.is_admin_cached(chat_id, user_id) then
+	if not utilities.roles.bot_is_admin(chat_id) then
+		if utilities.roles.is_admin_cached(chat_id, user_id) then
 			table.insert(lines, _("*I'm not an admin*. I can't fully perform "
 					.. "my functions until group creator hasn't made me admin. "
 					.. "See [this post](https://telegram.me/GroupButler_ch/104) "
@@ -852,7 +852,7 @@ function utilities.misc.logEvent(event, msg, extra)
 		--logcb:unban:user_id:chat_id for ban, logcb:untempban:user_id:chat_id for tempban
 		reply_markup = {inline_keyboard={{{text = _("Unban"), callback_data = ("logcb:unban:%d:%d"):format(extra.user_id or extra.user.id, msg.chat.id)}}}}
 	end
-	if extra.motivation then
+	if extra and extra.motivation then
 		text = text..('\n• <i>%s</i>'):format(extra.motivation:escape_html())
 	end
 	if msg.chat.username then
