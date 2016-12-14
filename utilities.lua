@@ -437,7 +437,7 @@ function utilities.users.full_name(chat, without_link)
 	return result:escape()
 end
 
-function utilities.misc.getAdminlist(chat_id)
+function utilities.misc.getAdminlist(chat_id, user_id)
 	local list, code = api.getChatAdministrators(chat_id)
 	if not list then
 		return false, code
@@ -848,7 +848,7 @@ function utilities.misc.logEvent(event, msg, extra)
 		text = _('#%s\n• <b>Admin</b>: %s [#id%s]\n• %s\n• <b>User</b>: %s [#id%s]'):format(event:upper(), extra.admin, msg.from.id, chat_info, extra.user, tostring(extra.user_id))
 	end
 
-	if event == 'flood' or event == 'ban' or event == 'tempban' or event == 'voteban_banned' then
+	if event == 'ban' or event == 'tempban' or event == 'voteban_banned' then
 		--logcb:unban:user_id:chat_id for ban, logcb:untempban:user_id:chat_id for tempban
 		reply_markup = {inline_keyboard={{{text = _("Unban"), callback_data = ("logcb:unban:%d:%d"):format(extra.user_id or extra.user.id, msg.chat.id)}}}}
 	end

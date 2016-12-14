@@ -329,6 +329,7 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 end
 
 local function update_poll(chat_id, user_id)
+	local hash = string.format('chat:%d:voteban:%d', chat_id, user_id)
 	local expired = tonumber(db:hget(hash, 'expired'))
 	local msg_id = tonumber(db:hget(hash, 'msg_id'))
 	if expired < os.time() then
