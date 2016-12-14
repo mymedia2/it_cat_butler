@@ -42,7 +42,6 @@ $ bash install.sh
 
 or
 
-
 ```bash
 # Tested on Ubuntu 14.04, 15.04 and 16.04, Debian 7, Linux Mint 17.2
 
@@ -57,6 +56,7 @@ $ tar zxpf luarocks-2.2.2.tar.gz
 $ cd luarocks-2.2.2
 $ ./configure; sudo make bootstrap
 $ sudo luarocks install luasec
+$ sudo luarocks install luasocket
 $ sudo luarocks install redis-lua
 $ sudo luarocks install lua-term
 $ sudo luarocks install serpent
@@ -65,6 +65,7 @@ $ sudo luarocks install Lua-cURL
 $ cd ..
 
 # Clone the repository and give the launch script permissions to be executed
+# If you want to clone the beta branch, use git clone with the [-b beta] option
 
 $ git clone https://github.com/RememberTheAir/GroupButler.git
 $ cd GroupButler
@@ -103,7 +104,6 @@ You may also start the bot with `lua bot.lua`, however it will not restart autom
 
   * You can change some settings of the bot. All the settings are placed in `config.lua`, in the `bot_settings` table
     * `cache_time.adminlist`: the permanence in seconds of the adminlist in the cache. The bot caches the adminlist to avoid to hit Telegram limits
-    * `multipurpose_mode`: set it to `true` if you want to load the plugins placed in `plugins/multipurpose` folder. At the moment, this directory is empty
     * `notify_bug`: if `true`, the bot will send a message that notifies that a bug has occured to the current user, when a plugin is executed and an error happens
     * `log_api_errors`: if `true`, the bot will send in the `log_chat` (`config.lua`) all the relevant errors returned by an api request toward Telegram
     * `stream_commands`: if `true`, when an update triggers a plugin, the match will be printed on the console
@@ -169,7 +169,7 @@ The [Werewolf](https://github.com/parabola949/Werewolf) guys, for aiding the spr
 
 Lucas Montuano, for helping me a lot in the debugging of the bot
 
-All the Admins of our discussion groups about Group Butler
+All the Admins of our [discussion groups](telegram.me/gbgroups) about Group Butler
 
 All the people who reported bugs and suggested new stuffs
 

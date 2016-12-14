@@ -247,13 +247,14 @@ function utilities.misc.resolve_user(username)
 end
 
 function utilities.misc.get_sm_error_string(code)
+	local hyperlinks_text = _('More info [here](https://telegram.me/GB_tutorials/12)')
 	local descriptions = {
-		[109] = _("Inline link formatted incorrectly. Check the text between brackets -> \\[]()"),
-		[141] = _("Inline link formatted incorrectly. Check the text between brackets -> \\[]()"),
-		[142] = _("Inline link formatted incorrectly. Check the text between brackets -> \\[]()"),
+		[109] = _("Inline link formatted incorrectly. Check the text between brackets -> \\[]()\n%s"):format(hyperlinks_text),
+		[141] = _("Inline link formatted incorrectly. Check the text between brackets -> \\[]()\n%s"):format(hyperlinks_text),
+		[142] = _("Inline link formatted incorrectly. Check the text between brackets -> \\[]()\n%s"):format(hyperlinks_text),
 		[112] = _("This text breaks the markdown.\n"
 					.. "More info about a proper use of markdown "
-					.. "[here](https://telegram.me/GroupButler_ch/46)."),
+					.. "[here](https://telegram.me/GB_tutorials/10) and [here](https://telegram.me/GB_tutorials/12)."),
 		[118] = _('This message is too long. Max lenght allowed by Telegram: 4000 characters')
 	}
 	
@@ -790,20 +791,20 @@ function utilities.misc.logEvent(event, msg, extra)
 		text = ('#FLOOD\n• %s\n• <b>User</b>: %s'):format(chat_info, member)
 		if extra.hammered then text = text..('\n#%s'):format(extra.hammered:upper()) end
 	elseif event == 'new_chat_photo' then
-		text = _('#NEWPHOTO\n• %s\n• <b>By</b>: %s'):format(chat_info, member)
+		text = _('%s\n• %s\n• <b>By</b>: %s'):format('#NEWPHOTO', chat_info, member)
 		reply_markup = {inline_keyboard={{{text = _("Get the new photo"), url = ("telegram.me/%s?start=photo:%s"):format(bot.username, msg.new_chat_photo[#msg.new_chat_photo].file_id)}}}}
 	elseif event == 'delete_chat_photo' then
-		text = _('#PHOTOREMOVED\n• %s\n• <b>By</b>: %s'):format(chat_info, member)
+		text = _('%s\n• %s\n• <b>By</b>: %s'):format('#PHOTOREMOVED', chat_info, member)
 	elseif event == 'new_chat_title' then
-		text = _('#NEWTITLE\n• %s\n• <b>By</b>: %s'):format(chat_info, member)
+		text = _('%s\n• %s\n• <b>By</b>: %s'):format('#NEWTITLE', chat_info, member)
 	elseif event == 'pinned_message' then
-		text = _('#PINNEDMSG\n• %s\n• <b>By</b>: %s'):format(chat_info, member)
+		text = _('%s\n• %s\n• <b>By</b>: %s'):format('#PINNEDMSG', chat_info, member)
 		msg.message_id = msg.pinned_message.message_id --because of the "go to the message" link. The normal msg.message_id brings to the service message
 	elseif event == 'report' then
-		text = _('#REPORT\n• %s\n• <b>By</b>: %s\n• <i>Reported to %d admin(s)</i>'):format(chat_info, member, extra.n_admins)
+		text = _('%s\n• %s\n• <b>By</b>: %s\n• <i>Reported to %d admin(s)</i>'):format('#REPORT', chat_info, member, extra.n_admins)
 	elseif event == 'new_chat_member' then
 		local member = ("%s [@%s] [#id%d]"):format(msg.new_chat_member.first_name:escape_html(), msg.new_chat_member.username or '-', msg.new_chat_member.id)
-		text = _('#NEW_MEMBER\n• %s\n• <b>User</b>: %s'):format(chat_info, member)
+		text = _('%s\n• %s\n• <b>User</b>: %s'):format('#NEW_MEMBER', chat_info, member)
 		if extra then --extra == msg.from
 			text = text.._("\n• <b>Added by</b>: %s [#id%d]"):format(utilities.misc.getname_final(extra), extra.id)
 		end

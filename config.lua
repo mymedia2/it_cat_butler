@@ -1,6 +1,7 @@
 return {
 	bot_api_key = os.getenv('BOT_TOKEN'),
 	cmd = '^[/!]',
+	allowed_updates = {"message", "edited_message", "callback_query"},
 	db = 2, --default redis db: 0
 	superadmins = {119416836},
 	log = {
@@ -12,7 +13,6 @@ return {
 		cache_time = {
 			adminlist = 18000, --5 hours (18000s) Admin Cache time, in seconds.
 		},
-		multipurpose_mode = false, --If this is enabled, the bot will activate the plugins from plugins/multipurpose
 		notify_bug = true, --Notify if a bug occurs!
 		log_api_errors = true, --Log errors, which happening whilst interacting with the bot api.
 		stream_commands = true,
@@ -66,17 +66,19 @@ return {
 		--['fr'] = 'Français 🇫🇷',
 		['zh'] = '中文 🇨🇳',
 		['fa'] = 'فارسی 🇮🇷',
-		['id'] = 'Bahasa Indonesia 🇮🇩'
+		['id'] = 'Bahasa Indonesia 🇮🇩',
+		['nl'] = 'Dutch 🇱🇺'
 		-- more languages will come
 	},
 	allow_fuzzy_translations = false,
-	chat_settings = { --default chat_settings for groups.
+	chat_settings = {
 		['settings'] = {
 			['Welcome'] = 'off',
 			['Goodbye'] = 'off',
 			['Extra'] = 'on',
 			['Flood'] = 'off',
 			['Silent'] = 'off',
+			['Preview'] = 'off',
 			['Rules'] = 'off',
 			['Reports'] = 'off',
 			['voteban'] = 'off',

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GroupButler 4.0\n"
 "Report-Msgid-Bugs-To: https://telegram.me/bac0nnn\n"
-"POT-Creation-Date: 2016-11-24 00:46+0100\n"
-"PO-Revision-Date: 2016-09-12 22:00+0200\n"
+"POT-Creation-Date: 2016-12-12 00:59+0100\n"
+"PO-Revision-Date: 2016-12-12 01:02+0100\n"
 "Last-Translator: Nicholas Guriev <guriev-ns@ya.ru>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -16,13 +16,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 1.8.11\n"
 
-#: bot.lua:172
+#: bot.lua:165
 msgid "🐞 Sorry, a *bug* occurred"
 msgstr "🐛 Ci dispiace, si è verificato un *bug*"
 
-#: bot.lua:196
+#: bot.lua:189
 #, lua-format
 msgid ""
 "\n"
@@ -33,19 +33,19 @@ msgid ""
 "convert this group to a supergroup.\n"
 msgstr ""
 
-#: methods.lua:108
+#: methods.lua:145
 msgid "I'm not an admin, I can't kick people"
 msgstr "Non sono admin, quindi non posso kickare"
 
-#: methods.lua:110
+#: methods.lua:147
 msgid "I can't kick or ban an admin"
 msgstr "Non posso kickare o bannare un admin"
 
-#: methods.lua:112
+#: methods.lua:149
 msgid "There is no need to unban in a normal group"
 msgstr "Non c'è bisogno di unbannare in un gruppo normale"
 
-#: methods.lua:114
+#: methods.lua:151
 msgid "This user is not a chat member"
 msgstr "Questo utente non fa parte del gruppo"
 
@@ -103,7 +103,7 @@ msgstr ""
 "Imposta quanti warn un utente potrà ricevere prima di essere kickato/bannato"
 
 #: plugins/antispam.lua:116 plugins/floodmanager.lua:16
-#: plugins/logchannel.lua:32 plugins/menu.lua:39
+#: plugins/logchannel.lua:32 plugins/menu.lua:41
 #: plugins/private_settings.lua:14
 msgid "Description not available"
 msgstr "Descrizione non disponibile"
@@ -118,8 +118,7 @@ msgid "Channels messages"
 msgstr "Messaggi da canali"
 
 #: plugins/antispam.lua:166 plugins/floodmanager.lua:120
-#: plugins/logchannel.lua:100 plugins/mediasettings.lua:73
-#: plugins/menu.lua:221
+#: plugins/logchannel.lua:101 plugins/mediasettings.lua:73 plugins/menu.lua:225
 msgid "You're no longer an admin"
 msgstr "*Non sei* un admin!"
 
@@ -191,19 +190,19 @@ msgstr "%s ha bannato %s!"
 msgid "%s unbanned by %s!"
 msgstr "%s è stato unbannato da %s!"
 
-#: plugins/configure.lua:11 plugins/realms.lua:255
+#: plugins/configure.lua:11
 msgid "🛠 Menu"
 msgstr ""
 
-#: plugins/configure.lua:12 plugins/realms.lua:256
+#: plugins/configure.lua:12
 msgid "⚡️ Antiflood"
 msgstr ""
 
-#: plugins/configure.lua:13 plugins/realms.lua:257
+#: plugins/configure.lua:13
 msgid "🌈 Media"
 msgstr ""
 
-#: plugins/configure.lua:14 plugins/realms.lua:258
+#: plugins/configure.lua:14
 msgid "🚫 Antispam"
 msgstr ""
 
@@ -231,7 +230,7 @@ msgstr ""
 msgid "❌ | OFF"
 msgstr ""
 
-#: plugins/dashboard.lua:18 plugins/menu.lua:193
+#: plugins/dashboard.lua:18 plugins/menu.lua:197
 msgid "👞 kick"
 msgstr ""
 
@@ -299,11 +298,11 @@ msgstr "Impostazioni"
 msgid "Admins"
 msgstr "Admin"
 
-#: plugins/dashboard.lua:57 plugins/menu.lua:158 utilities.lua:519
+#: plugins/dashboard.lua:57 plugins/menu.lua:161 utilities.lua:488
 msgid "Rules"
 msgstr "Regole"
 
-#: plugins/dashboard.lua:58 plugins/help.lua:277
+#: plugins/dashboard.lua:58 plugins/help.lua:278
 msgid "Extra commands"
 msgstr "Comandi extra"
 
@@ -349,7 +348,7 @@ msgstr "ℹ️ Gruppo ► Regole"
 msgid "I got kicked out of this group 😓"
 msgstr "Sono stato rimosso da questo gruppo"
 
-#: plugins/dashboard.lua:118 plugins/realms.lua:314 plugins/users.lua:165
+#: plugins/dashboard.lua:118 plugins/users.lua:165
 #, lua-format
 msgid ""
 "<b>Creator</b>:\n"
@@ -513,6 +512,7 @@ msgid ""
 "I work better if you add me to the group administrators (otherwise I won't "
 "be able to kick or ban)!\n"
 msgstr ""
+"\n"
 "Ciao %s, piacere di conoscerti!\n"
 "Sono Group Butler, il primo bot per amministrare gruppi che utilizza la Bot "
 "API ufficiale.\n"
@@ -531,7 +531,7 @@ msgstr ""
 "consultare la lista completa!\n"
 "\n"
 "Funziono meglio se mi aggiungi agli amministratori del gruppo (altrimenti "
-"non potrò bannare/kickare)!"
+"non potrò bannare/kickare)!\n"
 
 #: plugins/help.lua:26
 msgid ""
@@ -911,6 +911,7 @@ msgid ""
 "the gif/sticker you want to set as welcome message with `/welcome`. Same "
 "goes for `/goodbye`\n"
 msgstr ""
+"\n"
 "*Messaggio di benvenuto/addio*\n"
 "\n"
 "• `/config`, poi tasto `menu`: ricevi in privato la tastiera del menu. Lì "
@@ -961,6 +962,7 @@ msgid ""
 "Now supports placeholders. Check the \"welcome\" tab for the list of the "
 "available placeholders\n"
 msgstr ""
+"\n"
 "*Comandi extra*\n"
 "Gli #extra sono un semplice modo per impostare i tuoi comandi "
 "personalizzati.\n"
@@ -1043,7 +1045,7 @@ msgstr ""
 "Come impostare il numero massimo di warn per i media: comando `/config`, poi "
 "tasto `media`.\n"
 "Come impostare il numero massimo di warn per spam: comando `/config`, poi "
-"tasto `antispam`."
+"tasto `antispam`.\n"
 
 #: plugins/help.lua:198
 msgid ""
@@ -1082,7 +1084,7 @@ msgstr ""
 "ancora\n"
 "\n"
 "*Nota*: `/pin` supporta il markdown, ma solamente i segnaposto `$rules` e `"
-"$title`"
+"$title`\n"
 
 #. TRANSLATORS: leave your contact information for reports mistakes in translation
 #: plugins/help.lua:211
@@ -1131,7 +1133,7 @@ msgstr ""
 "al contraio)\n"
 "Quando questo carattere non è consentito, chiunque lo abbia inserito "
 "all'interno del proprio nome o che invii un messaggio il cui testo comprende "
-"questo carattere, verrà kickato/bannato"
+"questo carattere, verrà kickato/bannato\n"
 
 #: plugins/help.lua:230
 msgid ""
@@ -1150,6 +1152,7 @@ msgid ""
 "*Antispam*: choose which kind of spam you want to forbid (example: telegram."
 "me links, forwarded messages from channels)\n"
 msgstr ""
+"\n"
 "*Impostazioni generali del gruppo*\n"
 "\n"
 "`/config` = configura il bot in privato con una comoda tastiera inline.\n"
@@ -1162,7 +1165,7 @@ msgstr ""
 "ammonizioni necessarie per essere kickati/bannati dal gruppo a seguito "
 "dell'invio di media non consentiti\n"
 "*Antiflood*: scegli se proibire lo spam di link o di messaggi inoltrati da "
-"canali"
+"canali\n"
 
 #: plugins/help.lua:242
 msgid ""
@@ -1181,6 +1184,7 @@ msgid ""
 "`/setlog`\n"
 "Then, an admin of the group must forward in the group the message (\"`/"
 "setlog`\") sent in the channel. *Done*!\n"
+"(you can find a video-tutorial [here](https://telegram.me/GB_tutorials/8))\n"
 "\n"
 "A channel can be used as log by different groups.\n"
 "To change your log channel, simply repeat this process with another "
@@ -1205,6 +1209,7 @@ msgstr ""
 "`/setlog`\n"
 "Una volta inviato, un admin del gruppo dovrà inoltrare quel messaggio (\"`/"
 "setlog`\") nel gruppo. *Fatto*!\n"
+"(vide-tutorial [qui](https://telegram.me/GB_tutorials/8))\n"
 "\n"
 "Lo stesso canale può essere usato come log per diversi gruppi.\n"
 "Per cambiare il canale log, basta ripetere il processo di associazione con "
@@ -1213,116 +1218,112 @@ msgstr ""
 "`/unsetlog`: rimuovi il canale log impostato\n"
 "`/logchannel`: ricevi alcune info sul canale log utilizzato"
 
-#: plugins/help.lua:265
+#: plugins/help.lua:266
 msgid "Banhammer"
 msgstr ""
 
-#: plugins/help.lua:266
+#: plugins/help.lua:267
 msgid "Group info"
 msgstr "Info gruppo"
 
-#: plugins/help.lua:269
+#: plugins/help.lua:270
 msgid "Report system"
 msgstr "Segnalazioni"
 
-#: plugins/help.lua:270
+#: plugins/help.lua:271
 msgid "Pin"
 msgstr ""
 
-#: plugins/help.lua:273
+#: plugins/help.lua:274
 msgid "Languages"
 msgstr "Lingue"
 
-#: plugins/help.lua:274
+#: plugins/help.lua:275
 msgid "Group configuration"
 msgstr "Configurazione gruppo"
 
-#: plugins/help.lua:278 plugins/logchannel.lua:52
+#: plugins/help.lua:279 plugins/logchannel.lua:53
 msgid "Warns"
 msgstr ""
 
-#: plugins/help.lua:281
+#: plugins/help.lua:282
 msgid "Welcome settings"
 msgstr "Messaggio di benvenuto"
 
-#: plugins/help.lua:301
+#: plugins/help.lua:302
 msgid "📢 Bot channel"
 msgstr "📢 Canale del bot"
 
-#: plugins/help.lua:302
+#: plugins/help.lua:303
 msgid "🌍 Select your language"
 msgstr "*Scegli la tua lingua:*"
 
-#: plugins/help.lua:305
+#: plugins/help.lua:306
 msgid "📕 All the commands"
 msgstr "📕 Tutti i comandi"
 
-#: plugins/help.lua:314
+#: plugins/help.lua:315
 msgid "Basics"
 msgstr "Basilari"
 
-#: plugins/help.lua:315
+#: plugins/help.lua:316
 msgid "Admin commands"
 msgstr "Comandi per admin"
 
-#: plugins/help.lua:316
+#: plugins/help.lua:317
 msgid "Normal users commands"
 msgstr "Comandi per gli utenti"
 
-#: plugins/help.lua:317
+#: plugins/help.lua:318
 msgid "Commands in private"
 msgstr "Comandi in chat privata"
 
-#: plugins/help.lua:318
-msgid "Realms"
-msgstr "Realm"
-
-#: plugins/help.lua:319
+#: plugins/help.lua:320
 msgid "Log channel"
 msgstr "Canale log"
 
-#: plugins/help.lua:334
+#: plugins/help.lua:335
 msgid "Back"
 msgstr "Indietro"
 
-#: plugins/help.lua:353
+#: plugins/help.lua:354
 #, lua-format
 msgid "[Start me](%s) _to get the list of commands_"
 msgstr "[Avviami](%s) _per la lista dei comandi_"
 
-#: plugins/help.lua:365
+#: plugins/help.lua:366
 msgid "Main menu"
 msgstr "Menu principale"
 
-#: plugins/help.lua:368
+#: plugins/help.lua:369
 msgid "Basic usage"
 msgstr "Basilari"
 
-#: plugins/help.lua:371
+#: plugins/help.lua:372
 msgid "Commands for users (group)"
 msgstr "Comandi per utenti (gruppo)"
 
-#: plugins/help.lua:374
+#: plugins/help.lua:375
 msgid "Available commands in private"
 msgstr "Comandi da usare in chat privata"
 
-#: plugins/help.lua:377
+#: plugins/help.lua:378
 msgid "Available commands in a realm"
 msgstr "Comandi da usare in un Realm"
 
-#: plugins/help.lua:380
+#: plugins/help.lua:381
 msgid "Log channel informations"
 msgstr "Informazioni sul canale log"
 
-#: plugins/help.lua:384
+#: plugins/help.lua:385
 msgid "Available commands for admins"
 msgstr "Comandi per admin"
 
-#: plugins/help.lua:388
+#: plugins/help.lua:389
 msgid "Deprecated message, send /help again"
 msgstr "Messaggio troppo vecchio, usa /help di nuovo"
 
-#: plugins/help.lua:393
+#: plugins/help.lua:394
 msgid "❗️ Already there"
 msgstr "❗️ Già su questa scheda"
 
@@ -1425,51 +1426,55 @@ msgstr ""
 msgid "Tempban"
 msgstr ""
 
-#: plugins/logchannel.lua:53
+#: plugins/logchannel.lua:52
+msgid "Report"
+msgstr "Segnalazioni"
+
+#: plugins/logchannel.lua:54
 msgid "Warns resets"
 msgstr "Reset dei warn"
 
-#: plugins/logchannel.lua:54
+#: plugins/logchannel.lua:55
 msgid "New members"
 msgstr "Nuovi membri"
 
-#: plugins/logchannel.lua:55
+#: plugins/logchannel.lua:56
 msgid "Media warns"
 msgstr "Warn per media"
 
-#: plugins/logchannel.lua:56
+#: plugins/logchannel.lua:57
 msgid "Spam warns"
 msgstr "Warn per spam"
 
-#: plugins/logchannel.lua:57
+#: plugins/logchannel.lua:58
 msgid "Flood"
 msgstr ""
 
-#: plugins/logchannel.lua:58
+#: plugins/logchannel.lua:59
 msgid "New group icon"
 msgstr "Foto gruppo cambiata"
 
-#: plugins/logchannel.lua:59
+#: plugins/logchannel.lua:60
 msgid "Group icon removed"
 msgstr "Foto gruppo rimossa"
 
-#: plugins/logchannel.lua:60
+#: plugins/logchannel.lua:61
 msgid "New group title"
 msgstr "Nuovo titolo gruppo"
 
-#: plugins/logchannel.lua:61
+#: plugins/logchannel.lua:62
 msgid "Pinned messages"
 msgstr "Messaggi fissati"
 
-#: plugins/logchannel.lua:85
+#: plugins/logchannel.lua:86
 msgid "You are not admin of this group"
 msgstr "Non sei un admin!"
 
-#: plugins/logchannel.lua:90
+#: plugins/logchannel.lua:91
 msgid "User unbanned!"
 msgstr "Utente bannato!"
 
-#: plugins/logchannel.lua:111
+#: plugins/logchannel.lua:112
 msgid ""
 "*Select the events the will be logged in the channel*\n"
 "✅ = will be logged\n"
@@ -1479,53 +1484,53 @@ msgstr ""
 "✅ = verrà loggato\n"
 "☑️ = non verrà loggato"
 
-#: plugins/logchannel.lua:135 plugins/realms.lua:592
+#: plugins/logchannel.lua:136
 msgid "_Too many requests. Retry later_"
 msgstr "_Troppe richieste. Riprova più tardi_"
 
-#: plugins/logchannel.lua:137 plugins/realms.lua:594
+#: plugins/logchannel.lua:138
 msgid "_I need to be admin in the channel_"
 msgstr "_Devo essere impostato come amministratore nel canale_"
 
-#: plugins/logchannel.lua:144
+#: plugins/logchannel.lua:145
 msgid "_Already using this channel_"
 msgstr "_Stai già usando questo canale_"
 
-#: plugins/logchannel.lua:147
+#: plugins/logchannel.lua:148
 msgid "*Log channel added!*"
 msgstr "*Canale log impostato!*"
 
-#: plugins/logchannel.lua:149
+#: plugins/logchannel.lua:150
 #, lua-format
 msgid "<i>%s</i> changed its log channel"
 msgstr "<i>%s</i> ha cambiato il canale log"
 
-#: plugins/logchannel.lua:151
+#: plugins/logchannel.lua:152
 #, lua-format
 msgid "Logs of <i>%s</i> will be posted here"
 msgstr "I log di <i>%s</i> verranno postati qui"
 
-#: plugins/logchannel.lua:155
+#: plugins/logchannel.lua:156
 msgid "_Only the channel creator can pair the chat with a channel_"
 msgstr "_Solamente il creatore del canale può associarlo ad un gruppo_"
 
-#: plugins/logchannel.lua:159 plugins/realms.lua:605
+#: plugins/logchannel.lua:160
 msgid "_I'm sorry, only private channels are supported for now_"
 msgstr "_Mi dispiace, al momento sono supportati solamente i canali privati_"
 
-#: plugins/logchannel.lua:164
+#: plugins/logchannel.lua:165
 msgid "You have to *forward* the message from the channel"
 msgstr "Devi *inoltrare* il messaggio dal canale"
 
-#: plugins/logchannel.lua:171 plugins/logchannel.lua:182
+#: plugins/logchannel.lua:172 plugins/logchannel.lua:183
 msgid "_This groups is not using a log channel_"
 msgstr "_Questo gruppo non ha un canale log associato_"
 
-#: plugins/logchannel.lua:174
+#: plugins/logchannel.lua:175
 msgid "*Log channel removed*"
 msgstr "*Canale log rimosso*"
 
-#: plugins/logchannel.lua:186
+#: plugins/logchannel.lua:187
 msgid ""
 "_This group has a log channel saved, but I'm not a member there, so I can't "
 "post/retrieve its info_"
@@ -1533,7 +1538,7 @@ msgstr ""
 "_Questo gruppo ha un canale log associato, ma non vi sono membro, per cui "
 "non posso postare/ricavarne le informazioni_"
 
-#: plugins/logchannel.lua:192
+#: plugins/logchannel.lua:193
 #, lua-format
 msgid ""
 "<b>This group has a log channel</b>\n"
@@ -1560,10 +1565,11 @@ msgid ""
 "before kick / ban someone for a forbidden media\n"
 "The number is not related the the normal `/warn` command\n"
 msgstr ""
+"\n"
 "Tocca una voce sulla colonna destra per *cambiare le impostazioni*Puoi usare "
 "l'ultima riga per decidere quante volte il bot deve avvisare un utente prima "
 "di bannarlo/kickarlo per aver inviato un media proibito.\n"
-"Questo numero non è correlato in alcun modo al comando `/warn`."
+"Questo numero non è correlato in alcun modo al comando `/warn`.\n"
 
 #: plugins/mediasettings.lua:86
 msgid "⚠️ Tap on the right column"
@@ -1627,6 +1633,14 @@ msgstr ""
 
 #: plugins/menu.lua:23
 msgid ""
+"Show or hide the preview for links. Affects the rules and every custom "
+"command set with /extra"
+msgstr ""
+"Mostra o nascondi l'anteprima dei link. Influenza solo le regole ed i "
+"comandi salvati con /extra"
+
+#: plugins/menu.lua:25
+msgid ""
 "When someone uses /rules\n"
 "👥: the bot will answer in the group (always, with admins)\n"
 "👤: the bot will answer in private"
@@ -1635,7 +1649,7 @@ msgstr ""
 "👥: il bot le invierà nel gruppo (SEMPRE con gli admin)\n"
 "👤: il bot le invierà in privato"
 
-#: plugins/menu.lua:27
+#: plugins/menu.lua:29
 msgid ""
 "When someone uses an #extra\n"
 "👥: the bot will answer in the group (always, with admins)\n"
@@ -1645,7 +1659,7 @@ msgstr ""
 "👥: il bot le invierà nel gruppo (SEMPRE con gli admin)\n"
 "👤: il bot le invierà in privato"
 
-#: plugins/menu.lua:31
+#: plugins/menu.lua:33
 msgid ""
 "Select what the bot should do when someone sends a message with arab "
 "characters"
@@ -1653,7 +1667,7 @@ msgstr ""
 "Imposta come dovrà comportarsi il bot quando qualcuno invia un messaggio in "
 "arabo"
 
-#: plugins/menu.lua:33
+#: plugins/menu.lua:35
 msgid ""
 "Select what the bot should do when someone sends a message with the RTL "
 "character, or has it in his name"
@@ -1661,112 +1675,116 @@ msgstr ""
 "Imposta come dovrà comportarsi il bot se un utente usa il carattere RTL nel "
 "nome, o invia un messaggio che lo contiene"
 
-#: plugins/menu.lua:35
+#: plugins/menu.lua:37
 msgid ""
 "Change how many times an user has to be warned before being kicked/banned"
 msgstr ""
 "Imposta quanti warn un utente potrà ricevere prima di essere kickato/bannato"
 
-#: plugins/menu.lua:37
+#: plugins/menu.lua:39
 msgid ""
 "Change the action to perform when an user reaches the max. number of warnings"
 msgstr ""
 "Imposta come il bot dovrà comportarsi quando un utente riceve il numero "
 "massimo di warn"
 
-#: plugins/menu.lua:48
+#: plugins/menu.lua:50
 msgid "The new value is too high ( > 12)"
 msgstr "Il nuovo valore è troppo alto (>12)"
 
-#: plugins/menu.lua:55
+#: plugins/menu.lua:57
 msgid "The new value is too low ( < 1)"
 msgstr "Il nuovo valore è troppo basso (<1)"
 
-#: plugins/menu.lua:64
+#: plugins/menu.lua:66
 msgid "New action on max number of warns received: ban"
 msgstr "Nuova azione: ban"
 
-#: plugins/menu.lua:67
+#: plugins/menu.lua:69
 msgid "New action on max number of warns received: kick"
 msgstr "Nuova azione: kick"
 
-#: plugins/menu.lua:74
+#: plugins/menu.lua:76
 msgid "Senders of arab messages will be kicked"
 msgstr "Messaggi in arabo = kick"
 
-#: plugins/menu.lua:75
+#: plugins/menu.lua:77
 msgid "Senders of arab messages will be banned"
 msgstr "Messaggi in arabo = ban"
 
-#: plugins/menu.lua:76
+#: plugins/menu.lua:78
 msgid "Arab language allowed"
 msgstr "Messaggi in arabo permessi"
 
-#: plugins/menu.lua:77
+#: plugins/menu.lua:79
 msgid "The use of the RTL character will lead to a kick"
 msgstr "Uso del carattere RTL = kick"
 
-#: plugins/menu.lua:78
+#: plugins/menu.lua:80
 msgid "The use of the RTL character will lead to a ban"
 msgstr "Uso del carattere RTL = ban"
 
-#: plugins/menu.lua:79
+#: plugins/menu.lua:81
 msgid "RTL character allowed"
 msgstr "Carattere RTL consentito"
 
-#: plugins/menu.lua:153
+#: plugins/menu.lua:156
 msgid "Welcome"
 msgstr "Messaggio di benvenuto"
 
-#: plugins/menu.lua:154
+#: plugins/menu.lua:157
 msgid "Goodbye"
 msgstr "Messaggio di addio"
 
-#: plugins/menu.lua:155 utilities.lua:515
+#: plugins/menu.lua:158 utilities.lua:484
 msgid "Extra"
 msgstr ""
 
-#: plugins/menu.lua:156 utilities.lua:516
+#: plugins/menu.lua:159 utilities.lua:485
 msgid "Anti-flood"
 msgstr "Anti-flood"
 
-#: plugins/menu.lua:157 utilities.lua:518
+#: plugins/menu.lua:160 utilities.lua:487
 msgid "Silent mode"
 msgstr "Modalità silenziosa"
 
-#: plugins/menu.lua:159 utilities.lua:520
+#: plugins/menu.lua:162
+msgid "Link preview"
+msgstr "Anteprima link"
+
+#: plugins/menu.lua:163 utilities.lua:489
 msgid "Arab"
 msgstr "Arabo"
 
-#: plugins/menu.lua:160 utilities.lua:521
+#: plugins/menu.lua:164 utilities.lua:490
 msgid "RTL"
 msgstr ""
 
-#: plugins/menu.lua:161 utilities.lua:517
+#: plugins/menu.lua:165 utilities.lua:486
 msgid "Ban bots"
 msgstr "Banna i bot"
 
-#: plugins/menu.lua:162 utilities.lua:522
+#: plugins/menu.lua:166 utilities.lua:491
 msgid "Reports"
 msgstr "Segnalazioni"
 
-#: plugins/menu.lua:163
+#: plugins/menu.lua:167
 msgid "Welcome + rules button"
 msgstr "Benvenuto + pulsante regole"
 
-#: plugins/menu.lua:195
+#: plugins/menu.lua:199
 msgid "🔨️ ban"
 msgstr ""
 
-#: plugins/menu.lua:199
+#: plugins/menu.lua:203
 msgid "Warns: "
 msgstr "Warn: "
 
-#: plugins/menu.lua:204
+#: plugins/menu.lua:208
 msgid "Action:"
 msgstr "Azione:"
 
-#: plugins/menu.lua:227
+#: plugins/menu.lua:231
 msgid "Manage the settings of the group"
 msgstr "Gestisci le impostazioni del gruppo"
 
@@ -1844,15 +1862,16 @@ msgstr "Questo testo è troppo lungo, non posso inviarlo"
 msgid "The text is not modified"
 msgstr "Il testo non è diverso da quello precedente"
 
-#: plugins/pin.lua:34 utilities.lua:244
+#: plugins/pin.lua:34 utilities.lua:260
 msgid ""
 "This text breaks the markdown.\n"
 "More info about a proper use of markdown [here](https://telegram.me/"
-"GroupButler_ch/46)."
+"GB_tutorials/10) and [here](https://telegram.me/GB_tutorials/12)."
 msgstr ""
 "Questo messaggio impedisce il markdown.\n"
 "Controlla quante volte hai usato asterischi oppure underscores.\n"
-"Più info [qui](https://telegram.me/GroupButler_ch/46)"
+"Più info [qui](https://telegram.me/GB_tutorials/10) e [qui](https://telegram."
+"me/GB_tutorials/12)."
 
 #: plugins/pin.lua:40
 msgid "Message edited. Check it here"
@@ -1875,27 +1894,27 @@ msgstr ""
 "Ora puoi fissare questo messaggio. Usa `/pin [nuovo testo]` per modificarlo, "
 "senza inviare un messaggio da fissare di nuovo"
 
-#: plugins/private.lua:12 plugins/users.lua:12
+#: plugins/private.lua:11 plugins/users.lua:12
 msgid "Channel"
 msgstr "Canale"
 
-#: plugins/private.lua:13 plugins/users.lua:13
+#: plugins/private.lua:12 plugins/users.lua:13
 msgid "GitHub"
 msgstr ""
 
-#: plugins/private.lua:14 plugins/users.lua:14
+#: plugins/private.lua:13 plugins/users.lua:14
 msgid "Rate me!"
 msgstr "Votami!"
 
-#: plugins/private.lua:17
+#: plugins/private.lua:16
 msgid "👥 Groups"
 msgstr "👥 Gruppi"
 
-#: plugins/private.lua:27
+#: plugins/private.lua:26
 msgid "Pong!"
 msgstr ""
 
-#: plugins/private.lua:40 plugins/private.lua:62
+#: plugins/private.lua:39 plugins/private.lua:52
 #, lua-format
 msgid ""
 "This bot is based on [otouto](https://github.com/topkecleon/otouto) (AKA "
@@ -1909,9 +1928,10 @@ msgid ""
 "*Some useful links:*"
 msgstr ""
 
-#: plugins/private.lua:53 plugins/private.lua:75
-msgid "Select a group:"
-msgstr "Seleziona un gruppo:"
+#: plugins/private.lua:44 plugins/private.lua:57
+#, lua-format
+msgid "You can find the list of our support groups in [this channel](%s)"
+msgstr "Puoi trovare la lista dei nostri gruppi in [questo canale](%s)"
 
 #: plugins/private_settings.lua:10
 msgid ""
@@ -1944,413 +1964,6 @@ msgstr "Modifica le tue impostazioni personali"
 #: plugins/private_settings.lua:69
 msgid "⚙ Setting applied"
 msgstr "⚙ Impostazioni cambiate"
-
-#: plugins/realms.lua:185 plugins/realms.lua:194
-msgid ""
-"I've never seen this user before.\n"
-"If you want to teach me who is he, forward me a message from him"
-msgstr ""
-"Non ho mai visto questo utente prima.\n"
-"Se vuoi aggiungerlo al database, inoltrami un suo messaggio"
-
-#: plugins/realms.lua:276
-msgid "Cancel"
-msgstr "Annulla"
-
-#: plugins/realms.lua:283 plugins/realms.lua:368
-msgid "_Action aborted_"
-msgstr "_Azione annullata_"
-
-#: plugins/realms.lua:288 plugins/realms.lua:328 plugins/realms.lua:379
-msgid "_Expired_"
-msgstr "_Scaduto_"
-
-#: plugins/realms.lua:294 plugins/realms.lua:397 plugins/realms.lua:424
-#, lua-format
-msgid ""
-"%s\n"
-"<b>Applied to</b>: %s"
-msgstr ""
-"%s\n"
-"<b>Applicate a</b>: %s"
-
-#: plugins/realms.lua:296 plugins/realms.lua:399
-msgid "Applied"
-msgstr "Applicate"
-
-#: plugins/realms.lua:299
-msgid "Rules applied to every group"
-msgstr "Regole applicate ad ogni gruppo"
-
-#: plugins/realms.lua:309
-msgid ""
-"Too many requests. Please wait some minutes and try again. Note that if you "
-"flood this command, I'll leave the group and block you"
-msgstr ""
-"Troppe richieste. Per favore, aspetta alcuni minuti e poi prova ancora. Nota "
-"che se usi troppo questo comando, lascerò il gruppo e verrai bloccato"
-
-#: plugins/realms.lua:311
-msgid "An unexpected error with the api occurred. Please try again later"
-msgstr ""
-"Un errore inaspettato con l'api si è verificato. Per favore, prova "
-"nuovamente più tardi"
-
-#: plugins/realms.lua:321
-#, lua-format
-msgid "ID of %s:"
-msgstr "ID di %s"
-
-#: plugins/realms.lua:333
-msgid "*Message sent*"
-msgstr "*Messagio inviato*"
-
-#: plugins/realms.lua:335
-#, lua-format
-msgid ""
-"I can't send the text\n"
-"Motivation: %s"
-msgstr ""
-"Non posso inviare il messaggio\n"
-"Motivazione: %s"
-
-#: plugins/realms.lua:339
-#, lua-format
-msgid "Message sent in *%d* groups"
-msgstr "Messaggio inviato in *%d* gruppi"
-
-#: plugins/realms.lua:345
-msgid "_Only the realm owner can remove a group_"
-msgstr "_Solo il proprietario del realm può rimuovere un gruppo_"
-
-#: plugins/realms.lua:355
-#, lua-format
-msgid "%s removed from your subgroups"
-msgstr "%s rimosso dai tuoi subgruppi"
-
-#: plugins/realms.lua:362
-msgid "As you wish. This group is no longer a realm."
-msgstr "Come desideri. Questo gruppo non è più un realm."
-
-#: plugins/realms.lua:364
-#, lua-format
-msgid ""
-"\n"
-"_%d associations with subgroups have been deleted_"
-msgstr ""
-"\n"
-"_%d associazioni con un subgruppo sono state eliminate_"
-
-#: plugins/realms.lua:374
-msgid "Manage your group settings from this keyboard"
-msgstr "Gestisci le impostazioni del tuo gruppo da questa tastiera"
-
-#: plugins/realms.lua:385
-msgid "I'm sorry, this group doesn't have any message generated by /pin"
-msgstr "Mi dispiace, questo gruppo non ha alcun messaggio generato da /pin"
-
-#: plugins/realms.lua:389
-msgid ""
-"_I'm sorry, the last message genereted with /pin does not exists anymore_"
-msgstr "_Mi dispiace, l'ultimo messaggio generato da /pin non esiste più_"
-
-#: plugins/realms.lua:391
-msgid "_The text you sent me is the same of the old pinned message_"
-msgstr ""
-"_Il messaggio che mi hai inviato è lo stesso del messaggio precedentemente "
-"generato con /pin_"
-
-#: plugins/realms.lua:404
-#, lua-format
-msgid ""
-"Pinned message edited in %d groups. If this number is lower than expected, "
-"it means that in some subgroups the last message generated with /pin has "
-"been deleted"
-msgstr ""
-"Messaggio fissato modificato in %d gruppi. Se questo numero è più basso di "
-"quanto previsto, significa che in uno o più subgruppi l'ultimo messaggio "
-"generato con /pin è stato cancellato"
-
-#: plugins/realms.lua:416
-msgid "This group is already using this channel"
-msgstr "Questo gruppo usa già questo canale"
-
-#: plugins/realms.lua:419
-msgid "Log channel added!"
-msgstr "Canale log aggiunto!"
-
-#: plugins/realms.lua:421
-#, lua-format
-msgid ""
-"<i>%s</i> changed its log channel.\n"
-"<i>From a realm, by %s</i>"
-msgstr ""
-"<i>%s</i> ha cambiato il suo canale log.\n"
-"<i>Messaggio da un realm, da %s</i>"
-
-#: plugins/realms.lua:423
-#, lua-format
-msgid ""
-"Logs of <i>%s</i> will be posted here.\n"
-"<i>From a realm, by %s</i>"
-msgstr ""
-"I log di <i>%s</i> verranno postati qui\n"
-"<i>Eseguito da un realm, by %s</i>"
-
-#: plugins/realms.lua:424
-msgid "<i>undefined</i>"
-msgstr "<i>indefinito</i>"
-
-#: plugins/realms.lua:431
-#, lua-format
-msgid ""
-"The channel will be used by %d more subgroups.\n"
-"<i>If this number is lower than expected, it means that all the other "
-"subgroups were already using that channel as log</i>"
-msgstr ""
-"Il canale verrà usato da %d altri subgruppi.\n"
-"<i>se questo numero è minore di quello previsto, significa che tutti gli "
-"altri subgruppi stavano già usando quel canale come log</i>"
-
-#: plugins/realms.lua:440
-msgid "_This group is a realm, you can set a realm for a realm_"
-msgstr "_Questo gruppo è un realm, non puoi associare un realm ad un realm_"
-
-#: plugins/realms.lua:444
-msgid "<i>The id you sent doesn't belong to a realm</i>"
-msgstr "<i>L'id che hai inviato non appartiene ad un realm</i>"
-
-#: plugins/realms.lua:450
-#, lua-format
-msgid ""
-"This realm [<code>%s</code>] already reached the max [<code>%d</code>] "
-"number of subgroups"
-msgstr ""
-"Questo realm [<code>%s</code>] ha già raggiunto il numero massimo [<code>%d</"
-"code>] di subgruppi"
-
-#: plugins/realms.lua:456
-#, lua-format
-msgid ""
-"<b>New subgroup added</b>: %s [<code>%d</code>]\n"
-"<b>By</b>: %s [@%s][#id%d]"
-msgstr ""
-"<b>Nuovo subgruppo aggiunto</b>: %s [<code>%d</code>]\n"
-"<b>Da</b>: %s [@%s][#id%d]"
-
-#: plugins/realms.lua:459
-#, lua-format
-msgid "The realm of this group changed: <code>%s</code>`"
-msgstr "Il realm di questo gruppo è cambiato: <code>%s</code>`"
-
-#: plugins/realms.lua:463
-#, lua-format
-msgid "<i>Already a sub-group of:</i> <code>%s</code>"
-msgstr "<i>Questo gruppo è già un subgruppo di:</i> <code>%s</code>"
-
-#: plugins/realms.lua:465
-#, lua-format
-msgid "<b>Group added to the sub-groups of</b>: <code>%s</code>"
-msgstr "<b>Gruppo aggiunto ai subgruppi di</b>: <code>%s</code>"
-
-#: plugins/realms.lua:478
-#, lua-format
-msgid ""
-"This group is already a realm.\n"
-"*Realm id*: `%s`"
-msgstr ""
-"Questo gruppo è già un realm.\n"
-"*Id realm*: `%s`"
-
-#: plugins/realms.lua:481
-msgid "_Only the owner can decide to use this group as a realm_"
-msgstr "_Solo il proprietario può decidere di usare questo gruppo come realm_"
-
-#: plugins/realms.lua:484
-msgid "_I'm sorry, a public group can't be used as realms_"
-msgstr "_Mi dispiace, un gruppo pubblico non può essere usato come realm_"
-
-#: plugins/realms.lua:488
-msgid ""
-"_I'm sorry, I can't get the number of the members of this group now. Try "
-"again later_"
-msgstr ""
-"_Mi dispiace, non posso ottenere il numero di membri di questo gruppo in "
-"questo momento. Prova più tardi_"
-
-#: plugins/realms.lua:492
-#, lua-format
-msgid "_You can't use as realm a group with more than %d members_"
-msgstr "_Non puoi usare come realm un gruppo con più di %d membri_"
-
-#: plugins/realms.lua:496
-#, lua-format
-msgid ""
-"This group can now be used as realm: the members of this group can now "
-"manage multiple groups from here. To add a sub-group, the group owner must "
-"write in the chat:\n"
-"\"/setrealm %s\". He can copy-paste in the group the following text:"
-msgstr ""
-"Questo gruppo può essere usato ora come realm: i mebri di questo gruppo ora "
-"potranno gestire molteplici gruppi da qui. Per aggiungere (associare) un "
-"subgruppo, il proprietario del gruppo deve inviare questo messaggio nel "
-"gruppo:\n"
-"\"/setrealm %s\".\n"
-"(per semplicità, puo copia-incollare il messaggio seguente:)"
-
-#: plugins/realms.lua:508
-msgid "_This command can be used only by the group owner_"
-msgstr "_Questo comando può essere usato solo dal proprietario del gruppo_"
-
-#: plugins/realms.lua:510
-msgid ""
-"_This group is no longer going to be used as a realm, and you will lose all "
-"the associations with your subgroups._\n"
-"*Do you want to continue?*"
-msgstr ""
-"_Questo gruppo non verrà più usato come realm, e tutte le associazioni con i "
-"tuoi subgruppi verranno eliminate._\n"
-"*Vuoi continuare?*"
-
-#: plugins/realms.lua:520
-msgid ""
-"<i>This group is a realm, you can use this command only in one subgroup</i>"
-msgstr ""
-"<i>Questo gruppo è un realm, puoi usare questo comando solo i un subgruppo</"
-"i>"
-
-#: plugins/realms.lua:526
-#, lua-format
-msgid "Done. This group does no longer belong to <code>%s</code>"
-msgstr "Fatto. Questo gruppo non è più associato a <code>%s</code>"
-
-#: plugins/realms.lua:527
-#, lua-format
-msgid ""
-"<i>A group has been removed from your subgroups</i>\r\n"
-"<b>Title</b>: %s\r\n"
-"<b>ID</b>: <code>%d</code>\r\n"
-"<b>By</b>: %s [@%s] [#id%d] "
-msgstr ""
-"<i>Un gruppo è stato rimosso dai tuoi subgruppi</i>\n"
-"<b>Titolo</b>: %s\n"
-"<b>ID</b>: <code>%d</code>\n"
-"<b>Da</b>: %s [@%s] [#id%d] "
-
-#: plugins/realms.lua:533
-msgid "<i>You are not associated with any realm</i>"
-msgstr "<i>Questo gruppo non è associato ad alcun realm</i>"
-
-#: plugins/realms.lua:551
-msgid "This group is not paired with any realm"
-msgstr "Questo gruppo non ha un realm associato"
-
-#: plugins/realms.lua:555
-#, lua-format
-msgid ""
-"<b>Paired with</b>: %s\n"
-"<b>Saved as</b>: %s\n"
-"<b>Realm in the global list</b>: %s"
-msgstr ""
-"<b>Associato a</b>: %s\n"
-"<b>Salvato come</b>: %s\n"
-"<b>Realm nella lista globale</b>: %s"
-
-#: plugins/realms.lua:562
-msgid ""
-"To add a group to the administrated group of this chat, the *owner of the "
-"group* have to copy-paste the following message in the group you want to add:"
-msgstr ""
-"Per aggiungere un gruppo ai subgruppi amministrati da questa chat, il "
-"*proprietario del gruppo* deve copia-incollare il messaggio che invierò ora:"
-
-#: plugins/realms.lua:571
-msgid "_I'm sorry, this realm doesn't have subgroups paired with it_"
-msgstr "_Mi dispiace, questo realm non ha alcun subgruppo associato_"
-
-#: plugins/realms.lua:599
-msgid "Select one or more groups that will use that channel as log channel"
-msgstr "seleziona uno o più gruppi che useranno questo canale come log"
-
-#: plugins/realms.lua:601
-msgid "_Only the channel creator can pair a chat with a channel_"
-msgstr ""
-"_Solamente il creatore del canale può associare il proprio canale ad un "
-"gruppo_"
-
-#: plugins/realms.lua:609
-msgid "You must *forward* the message from the channel you want to use"
-msgstr "Devi *inoltrare* il messaggio dal canale che vuoi usare"
-
-#: plugins/realms.lua:614
-msgid "Select a group to manage its settings"
-msgstr "Seleziona un gruppo per gestirne le impostazioni"
-
-#: plugins/realms.lua:623
-msgid ""
-"<b>Your subgroups</b>:\n"
-"\n"
-msgstr ""
-"<b>I tuoi subgruppi</b>:\n"
-"\n"
-
-#: plugins/realms.lua:628
-msgid "Choose the subgroup you want to un-pair:"
-msgstr "Choose the subgroup you want to un-pair:"
-
-#: plugins/realms.lua:639
-#, lua-format
-msgid ""
-"<b>Title</b>: %s\n"
-"<b>ID</b>: %d\n"
-"<b>Subgroups n°</b>: %d\n"
-"<b>Total members</b>: %d"
-msgstr ""
-"<b>Titolo</b>: %s\n"
-"<b>ID</b>: %d\n"
-"<b>N° subgruppi</b>: %d\n"
-"<b>Membri totali</b>: %d"
-
-#: plugins/realms.lua:650
-msgid ""
-"Choose the group where apply the rules (choose <b>within 30 minutes from "
-"now</b>)"
-msgstr ""
-"Scegli il gruppo al quale applicare le regole (scegli <b>entro 30 minuti</b>)"
-
-#: plugins/realms.lua:660
-msgid "_Answer to a forwarded message_"
-msgstr "_Rispondi ad un messaggio inoltrato_"
-
-#: plugins/realms.lua:691
-#, lua-format
-msgid ""
-"Executed.\r\n"
-"\r\n"
-"<b>Success</b>: <code>%d</code>\r\n"
-"<b>The bot is not admin</b>: <code>%d</code>\r\n"
-"<b>The user is admin</b>: <code>%d</code>\r\n"
-"<b>Failed because of limits</b>: <code>%d</code>\r\n"
-"<b>Failed because of other reasons</b>: <code>%d</code>\r\n"
-"<b>Failed to ban from</b>:\r\n"
-"%s"
-msgstr ""
-"Eseguito.\r\n"
-"\r\n"
-"<b>A buon fine</b>: <code>%d</code>\r\n"
-"<b>il bot non era admin</b>: <code>%d</code>\r\n"
-"<b>L'utente era admin</b>: <code>%d</code>\r\n"
-"<b>Tentativi falliti a causa dei limiti</b>: <code>%d</code>\r\n"
-"<b>Tentativi falliti per altri motivi</b>: <code>%d</code>\r\n"
-"<b>Non bannato da</b>:\r\n"
-
-#: plugins/realms.lua:723
-msgid ""
-"<i>Log channels used by your subgroups</i>:\n"
-"\n"
-msgstr ""
-"<i>Canali log usati dai tuoi subgruppi</i>:\n"
-"\n"
 
 #: plugins/report.lua:9
 #, lua-format
@@ -2388,11 +2001,7 @@ msgstr ""
 "\n"
 "• <b>Descrizione</b>: <i>%s</i>"
 
-#: plugins/report.lua:59
-msgid "_Reported in the admins group_"
-msgstr "_Segnalato nel gruppo degli admin_"
-
-#: plugins/report.lua:61
+#: plugins/report.lua:52
 #, lua-format
 msgid "_Reported to %d admin(s)_"
 msgstr "_Segnalato a %d admin_"
@@ -2409,15 +2018,15 @@ msgstr ""
 "🚷 Non sei un membro di questo gruppo. Non è possibile leggere le regole di "
 "un gruppo privato"
 
-#: plugins/rules.lua:57
+#: plugins/rules.lua:59
 msgid "Please write something next this poor `/setrules`"
 msgstr "Per favore, scrivi qualcosa accanto a `/setrules`"
 
-#: plugins/rules.lua:63
+#: plugins/rules.lua:65
 msgid "Rules has been deleted."
 msgstr "Le regole sono state eliminate."
 
-#: plugins/rules.lua:74
+#: plugins/rules.lua:76
 msgid "New rules *saved successfully*!"
 msgstr "Le nuove regole *sono state salvate correttamente*!"
 
@@ -2441,7 +2050,7 @@ msgid ""
 msgstr ""
 "Ciao a tutti!\n"
 "Il mio nome è %s, e sono stato creato per aiutare gli admin nel loro duro "
-"lavoro :)"
+"lavoro :)\n"
 
 #: plugins/service.lua:43
 msgid ""
@@ -2449,27 +2058,27 @@ msgid ""
 "properly :)\n"
 msgstr ""
 "Il gruppo è stato convertito, fantastico! Ora posso funzionare come si "
-"deve :)"
+"deve :)\n"
 
 #: plugins/service.lua:65
 #, lua-format
 msgid "I've been removed from %s [<code>%d</code>], one of your subgroups"
 msgstr "Sono stato rimosso da %s [<code>%d</code>], uno dei tuoi subgruppi"
 
-#: plugins/setlang.lua:22 plugins/setlang.lua:32
+#: plugins/setlang.lua:21 plugins/setlang.lua:31
 msgid "*List of available languages*:"
 msgstr "*Elenco delle lingue disponibili:*"
 
-#: plugins/setlang.lua:28 plugins/users.lua:253 plugins/warn.lua:122
+#: plugins/setlang.lua:27 plugins/users.lua:259 plugins/warn.lua:122
 msgid "You are not an admin"
 msgstr "*Non sei* un admin!"
 
 #. TRANSLATORS: replace 'English' with the name of your language
-#: plugins/setlang.lua:41
+#: plugins/setlang.lua:40
 msgid "English language is *set*"
 msgstr "Italiano impostato"
 
-#: plugins/setlang.lua:41
+#: plugins/setlang.lua:40
 msgid ""
 ".\n"
 "Please note that translators are volunteers, and some strings of the "
@@ -2586,7 +2195,7 @@ msgstr "%s è il creatore del gruppo"
 #: plugins/users.lua:191
 #, lua-format
 msgid "%s has nothing to do with this chat"
-msgstr "Questo utente non ha nulla a che fare con questo gruppo"
+msgstr "%s non ha nulla a che fare con questo gruppo"
 
 #: plugins/users.lua:192
 #, lua-format
@@ -2605,24 +2214,27 @@ msgstr ""
 "Non ho mai visto questo utente prima.\n"
 "Se vuoi aggiungerlo al database, inoltrami un suo messaggio"
 
-#: plugins/users.lua:233 plugins/users.lua:285
+#: plugins/users.lua:233 plugins/users.lua:291
 #, lua-format
 msgid ""
 "📌 Status: `CACHED`\n"
 "⌛ ️Remaining: `%s`\n"
 "👥 Admins cached: `%d`"
 msgstr ""
+"📌 Stato: `IN MEMORIA`\n"
+"⌛ ️Rimanente: `%s`\n"
+"👥 Admin in memoria: `%d`"
 
 #: plugins/users.lua:242
 #, lua-format
 msgid "Message N° %d"
 msgstr "Messagio N° %d"
 
-#: plugins/users.lua:263
+#: plugins/users.lua:269
 msgid "Ban from the /user command"
 msgstr "Ban dal comando /user"
 
-#: plugins/users.lua:264
+#: plugins/users.lua:270
 #, lua-format
 msgid ""
 "<i>Banned!</i>\n"
@@ -2631,14 +2243,15 @@ msgstr ""
 "<i>Bannato!</i>\n"
 "Bannato da: %s"
 
-#: plugins/users.lua:274
+#: plugins/users.lua:280
 #, lua-format
 msgid ""
 "The number of warnings received by this user has been <b>reset</b>, by %s"
 msgstr ""
-"Il numero di ammonizioni ricevute da questo utente è stato <b>azzerato</b>, da %s)"
+"Il numero di ammonizioni ricevute da questo utente è stato <b>azzerato</b>, "
+"da %s)"
 
-#: plugins/users.lua:281
+#: plugins/users.lua:287
 msgid ""
 "The adminlist has just been updated. You must wait 3 minutes from the last "
 "refresh"
@@ -2646,7 +2259,7 @@ msgstr ""
 "Lista degli admin appena aggiornata. Il tasto torna disponibile tre minuti "
 "dell'ultimo aggiornamento"
 
-#: plugins/users.lua:287
+#: plugins/users.lua:293
 #, lua-format
 msgid "✅ Updated. Next update in %s"
 msgstr "✅ Aggiornata. Prossimo aggiornamento tra %s"
@@ -2738,88 +2351,96 @@ msgstr ""
 "\n"
 "(Admin: %s)"
 
-#: plugins/welcome.lua:31
+#: plugins/welcome.lua:35
 #, lua-format
 msgid "Hi %s, and welcome to *%s*!"
 msgstr "Ciao %s, e benvenuto/a in *%s*!"
 
-#: plugins/welcome.lua:51
+#: plugins/welcome.lua:58
 #, lua-format
 msgid "Goodbye, %s!"
 msgstr "Addio, %s!"
 
-#: plugins/welcome.lua:65
+#: plugins/welcome.lua:72
 msgid "Welcome and...?"
 msgstr "Welcome e...?"
 
-#: plugins/welcome.lua:81
+#: plugins/welcome.lua:93
 #, lua-format
 msgid "A form of media has been set as the welcome message: `%s`"
 msgstr "Media impostato come messaggio di benvenuto: `%s`"
 
-#: plugins/welcome.lua:83
+#: plugins/welcome.lua:95
 msgid "Reply to a `sticker` or a `gif` to set them as the *welcome message*"
 msgstr ""
 "Rispondi ad uno `sticker` a ad una `gif` per usarli come *messaggio di "
 "benvenuto*"
 
-#: plugins/welcome.lua:95
+#: plugins/welcome.lua:107
 msgid "*Custom welcome message saved!*"
 msgstr "*Messaggio di benvenuto personalizzato salvato!*"
 
-#: plugins/welcome.lua:107
+#: plugins/welcome.lua:119
 msgid "No goodbye message"
 msgstr "Nessun messaggio di arrivederci"
 
-#: plugins/welcome.lua:122
+#: plugins/welcome.lua:140
 #, lua-format
 msgid "New media setted as goodbye message: `%s`"
 msgstr "Media impostato come messaggio di addio: `%s`"
 
-#: plugins/welcome.lua:124
+#: plugins/welcome.lua:142
 msgid "Reply to a `sticker` or a `gif` to set them as *goodbye message*"
 msgstr ""
 "Rispondi ad uno `sticker` a ad una `gif` per usarli come *messaggio di addio*"
 
-#: plugins/welcome.lua:139
+#: plugins/welcome.lua:157
 msgid "*Custom goodbye message saved!*"
 msgstr "*Messaggio di addio personalizzato salvato!*"
 
-#: plugins/welcome.lua:161
+#: plugins/welcome.lua:179
 msgid "Read the rules"
 msgstr "Leggi le regole"
 
-#: utilities.lua:241 utilities.lua:242 utilities.lua:243
+#: utilities.lua:255
+msgid "More info [here](https://telegram.me/GB_tutorials/12)"
+msgstr "Tutorial [qui](https://telegram.me/GB_tutorials/12)"
+
+#: utilities.lua:257 utilities.lua:258 utilities.lua:259
+#, lua-format
 msgid ""
-"Inline link formatted incorrectly. Check the text between brackets -> \\[]()"
+"Inline link formatted incorrectly. Check the text between brackets -> \\[]"
+"()\n"
+"%s"
 msgstr ""
 "Hyperlink malformattato. Controlla meglio il testo e l'url inserito tra "
-"queste parentesi -> \\[]()"
+"queste parentesi -> \\[]()\n"
+"%s"
 
-#: utilities.lua:247
+#: utilities.lua:263
 msgid ""
 "This message is too long. Max lenght allowed by Telegram: 4000 characters"
 msgstr ""
 "Questo messaggio è troppo lungo. Massima lunghezza consentita da Telegram: "
 "poco più di 4000 caratteri"
 
-#: utilities.lua:250
+#: utilities.lua:266
 msgid "Unknown markdown error"
 msgstr "Problema col markdown sconosciuto"
 
-#: utilities.lua:451
+#: utilities.lua:420
 msgid "-*empty*-"
 msgstr "-*vuoto*-!"
 
-#: utilities.lua:494
+#: utilities.lua:463
 msgid "No commands set"
 msgstr "Nessun comando impostato!"
 
-#: utilities.lua:500
+#: utilities.lua:469
 msgid "List of *custom commands*:\n"
 msgstr "Lista dei *comandi personalizzati*:\n"
 
-#: utilities.lua:508
+#: utilities.lua:477
 msgid ""
 "Current settings for *the group*:\n"
 "\n"
@@ -2827,128 +2448,128 @@ msgstr ""
 "Impostazioni correnti per *il gruppo*:\n"
 "\n"
 
-#: utilities.lua:509
+#: utilities.lua:478
 #, lua-format
 msgid "*Language*: %s\n"
 msgstr "*Lingua impostata:* `%s`\n"
 
-#: utilities.lua:513
+#: utilities.lua:482
 msgid "Welcome message"
 msgstr "Messaggio di benvenuto"
 
-#: utilities.lua:514
+#: utilities.lua:483
 msgid "Goodbye message"
 msgstr "Messaggio di addio"
 
-#: utilities.lua:523
+#: utilities.lua:492
 msgid "Welcome button"
 msgstr "Benvenuto + pulsante regole"
 
-#: utilities.lua:559
+#: utilities.lua:528
 msgid "*Welcome type*: `GIF / sticker`\n"
 msgstr "*Tipo di benvenuto*: `gif/sticker`\n"
 
-#: utilities.lua:561
+#: utilities.lua:530
 msgid "*Welcome type*: `custom message`\n"
 msgstr "*Tipo di benvenuto*: `messaggio personalizzato`\n"
 
-#: utilities.lua:563
+#: utilities.lua:532
 msgid "*Welcome type*: `default message`\n"
 msgstr "*Tipo di benvenuto*: `predefinito`\n"
 
-#: utilities.lua:569
+#: utilities.lua:538
 #, lua-format
 msgid "Warns (`standard`): *%s*\n"
 msgstr ""
 
-#: utilities.lua:570
+#: utilities.lua:539
 #, lua-format
 msgid ""
 "Warns (`media`): *%s*\n"
 "\n"
 msgstr ""
 
-#: utilities.lua:571
+#: utilities.lua:540
 msgid "✅ = _enabled / allowed_\n"
 msgstr "✅ = _abilitato / permesso_\n"
 
-#: utilities.lua:572
+#: utilities.lua:541
 msgid "🚫 = _disabled / not allowed_\n"
 msgstr "🚫 = _disabilitato / non permesso_\n"
 
-#: utilities.lua:573
+#: utilities.lua:542
 msgid "👥 = _sent in group (always for admins)_\n"
 msgstr "👥 = _inviato nel gruppo (sempre, per gli admin)_\n"
 
-#: utilities.lua:574
+#: utilities.lua:543
 msgid "👤 = _sent in private_"
 msgstr "👤 = _inviato in privato_"
 
-#: utilities.lua:580
+#: utilities.lua:549
 msgid "@admin command disabled"
 msgstr "Comando @admin disabilitato"
 
-#: utilities.lua:581
+#: utilities.lua:550
 msgid "Welcome message won't be displayed from now"
 msgstr "Il messaggio di benvenuto non verrà mostrato da ora"
 
-#: utilities.lua:582
+#: utilities.lua:551
 msgid "Goodbye message won't be displayed from now"
 msgstr "Il messaggio di addio non verrà mostrato da ora"
 
-#: utilities.lua:583
+#: utilities.lua:552
 msgid "#extra commands are now available only for moderator"
 msgstr "I comandi #extra sono ora utilizzabili solo dai moderatori"
 
-#: utilities.lua:584
+#: utilities.lua:553
 msgid "Anti-flood is now off"
 msgstr "L'anti-flood è ora off"
 
-#: utilities.lua:585
+#: utilities.lua:554
 msgid "/rules will reply in private (for users)"
 msgstr "/rules risponderà in privato (con utenti normali)"
 
-#: utilities.lua:586
+#: utilities.lua:555
 msgid "Bots won't be kicked if added by an user"
 msgstr "I bot non verranno kickati se aggiunti da un utente"
 
-#: utilities.lua:587
+#: utilities.lua:556
 msgid "Welcome message without a button for the rules"
 msgstr "Il benvenuto non avrà il pulsante per le regole"
 
-#: utilities.lua:590
+#: utilities.lua:559
 msgid "@admin command enabled"
 msgstr "Comando @admin abilitato"
 
-#: utilities.lua:591
+#: utilities.lua:560
 msgid "Welcome message will be displayed"
 msgstr "Il messaggio di benvenuto da ora verrà mostrato"
 
-#: utilities.lua:592
+#: utilities.lua:561
 msgid "Goodbye message will be displayed"
 msgstr "Il messaggio d'addio da ora verrà mostrato"
 
-#: utilities.lua:593
+#: utilities.lua:562
 msgid "#extra commands are now available for all"
 msgstr "I comandi #extra sono già disponibili per tutti"
 
-#: utilities.lua:594
+#: utilities.lua:563
 msgid "Anti-flood is now on"
 msgstr "L'anti-flood è ora on"
 
-#: utilities.lua:595
+#: utilities.lua:564
 msgid "/rules will reply in the group (with everyone)"
 msgstr "`/rules` risponderà nel gruppo (con tutti)"
 
-#: utilities.lua:596
+#: utilities.lua:565
 msgid "Bots will be kicked if added by an user"
 msgstr "I bot verranno kickati se aggiunti da un utente"
 
-#: utilities.lua:597
+#: utilities.lua:566
 msgid "The welcome message will have a button for the rules"
 msgstr "Il benvenuto avrà un messaggio per le regole"
 
-#: utilities.lua:610
+#: utilities.lua:579
 msgid ""
 "This setting is enabled, but the goodbye message won't be displayed in large "
 "groups, because I can't see service messages about left members"
@@ -2957,112 +2578,88 @@ msgstr ""
 "gruppi con molti membri. Purtroppo in questi gruppi non posso sapere quando "
 "la gente abbandona"
 
-#: utilities.lua:634
+#: utilities.lua:603
 #, lua-format
 msgid "New status = %s"
 msgstr "Nuovo stato = %s"
 
-#: utilities.lua:638
+#: utilities.lua:607
 msgid "Start me"
 msgstr "Avviami"
 
-#: utilities.lua:639
+#: utilities.lua:608
 msgid "_Please message me first so I can message you_"
 msgstr "_Per favore, avviami cosicchè io possa risponderti_"
 
-#: utilities.lua:773
+#: utilities.lua:742
 #, lua-format
 msgid "<b>Chat</b>: %s [#chat%d]"
-msgstr ""
+msgstr "<b>Gruppo</b>: %s [#chat%d]"
 
-#: utilities.lua:796
+#: utilities.lua:765 utilities.lua:768 utilities.lua:770 utilities.lua:772
 #, lua-format
 msgid ""
-"#NEWPHOTO\n"
 "%s\n"
-"<b>By</b>: %s"
+"• %s\n"
+"• <b>By</b>: %s"
 msgstr ""
-"#NUOVAFOTO\n"
 "%s\n"
-"<b>Da</b>: %s"
+"• %s\n"
+"• <b>Da</b>: %s"
 
-#: utilities.lua:797
+#: utilities.lua:766
 msgid "Get the new photo"
 msgstr "Vedi la nuova foto"
 
-#: utilities.lua:799
+#: utilities.lua:775
 #, lua-format
 msgid ""
-"#PHOTOREMOVED\n"
 "%s\n"
-"<b>By</b>: %s"
+"• %s\n"
+"• <b>By</b>: %s\n"
+"• <i>Reported to %d admin(s)</i>"
 msgstr ""
-"#FOTORIMOSSA\n"
 "%s\n"
-"<b>Da</b>: %s"
+"• %s\n"
+"• <b>By</b>: %s\n"
+"• <i>Segnalato a %d admin</i>"
 
-#: utilities.lua:801
+#: utilities.lua:778
 #, lua-format
 msgid ""
-"#NEWTITLE\n"
 "%s\n"
-"<b>By</b>: %s"
+"• %s\n"
+"• <b>User</b>: %s"
 msgstr ""
-"#NUOVOTITOLO\n"
 "%s\n"
-"<b>Da</b>: %s"
+"• %s\n"
+"• <b>Utente</b>: %s"
 
-#: utilities.lua:803
-#, lua-format
-msgid ""
-"#PINNEDMSG\n"
-"%s\n"
-"<b>By</b>: %s"
-msgstr ""
-"#FISSATO\n"
-"%s\n"
-"<b>Da</b>: %s"
-
-#: utilities.lua:805
-msgid "Go to the pinned message"
-msgstr "Vai al messaggio fissato"
-
-#: utilities.lua:809
-#, lua-format
-msgid ""
-"#NEW_MEMBER\n"
-"%s\n"
-"<b>User</b>: %s"
-msgstr ""
-"#NUOVOMEMBRO\n"
-"%s\n"
-"<b>Utente</b>: %s"
-
-#: utilities.lua:811
+#: utilities.lua:780
 #, lua-format
 msgid ""
 "\n"
-"<b>Added by</b>: %s [#id%d]"
+"• <b>Added by</b>: %s [#id%d]"
 msgstr ""
 "\n"
-"<b>Aggiunto day</b>: %s [#id%d]"
+"• <b>Aggiunto day</b>: %s [#id%d]"
 
-#: utilities.lua:823
+#: utilities.lua:792
 #, lua-format
 msgid ""
 "#%s\n"
-"<b>Admin</b>: %s [#id%d]\n"
-"%s\n"
-"<b>User</b>: %s [#id%d]\n"
-"<b>Count</b>: <code>%d/%d</code>"
+"• <b>Admin</b>: %s [#id%d]\n"
+"• %s\n"
+"• <b>User</b>: %s [#id%d]\n"
+"• <b>Count</b>: <code>%d/%d</code>"
 msgstr ""
 "#%s\n"
-"<b>Admin</b>: %s [#id%d]\n"
-"%s\n"
-"<b>Utente</b>: %s [#id%d]\n"
-"<b>Conteggio</b>: <code>%d/%d</code>"
+"• <b>Admin</b>: %s [#id%d]\n"
+"• %s\n"
+"• <b>Utente</b>: %s [#id%d]\n"
+"• <b>Conteggio</b>: <code>%d/%d</code>"
 
-#: utilities.lua:825
+#: utilities.lua:794
 #, lua-format
 msgid ""
 "\n"
@@ -3071,49 +2668,408 @@ msgstr ""
 "\n"
 "<b>Azione</b>: <i>%s</i>"
 
-#: utilities.lua:832
+#: utilities.lua:801
 msgid "WARNS_RESET"
 msgstr ""
 
-#: utilities.lua:833 utilities.lua:849
+#: utilities.lua:802 utilities.lua:818
 #, lua-format
 msgid ""
 "#%s\n"
-"<b>Admin</b>: %s [#id%s]\n"
-"%s\n"
-"<b>User</b>: %s [#id%s]"
+"• <b>Admin</b>: %s [#id%s]\n"
+"• %s\n"
+"• <b>User</b>: %s [#id%s]"
 msgstr ""
 "#%s\n"
-"<b>Admin</b>: %s [#id%s]\n"
-"%s\n"
-"<b>Utente</b>: %s [#id%s]"
+"• <b>Admin</b>: %s [#id%s]\n"
+"• %s\n"
+"• <b>Utente</b>: %s [#id%s]"
 
-#: utilities.lua:842
+#: utilities.lua:811
 #, lua-format
 msgid ""
 "#%s\n"
-"<b>Admin</b>: %s [#id%s]\n"
-"%s\n"
-"<b>User</b>: %s [#id%s]\n"
-"<b>Duration</b>: %d days, %d hours"
+"• <b>Admin</b>: %s [#id%s]\n"
+"• %s\n"
+"• <b>User</b>: %s [#id%s]\n"
+"• <b>Duration</b>: %d days, %d hours"
 msgstr ""
 "#%s\n"
-"<b>Admin</b>: %s [#id%s]\n"
-"%s\n"
-"<b>Utente</b>: %s [#id%s]\n"
-"<b>Durata</b>: %d giorni, %d ore"
+"• <b>Admin</b>: %s [#id%s]\n"
+"• %s\n"
+"• <b>Utente</b>: %s [#id%s]\n"
+"• <b>Durata</b>: %d giorni, %d ore"
 
-#: utilities.lua:853
+#: utilities.lua:822
 msgid "Unban"
 msgstr "Unbanna"
 
-#: utilities.lua:856
-#, lua-format
-msgid ""
-"\n"
-"\n"
-"<i>%s</i>"
-msgstr ""
+#: utilities.lua:829
+msgid "Go to the message"
+msgstr "Vai al messaggio"
+
+#~ msgid ""
+#~ "I've never seen this user before.\n"
+#~ "If you want to teach me who is he, forward me a message from him"
+#~ msgstr ""
+#~ "Non ho mai visto questo utente prima.\n"
+#~ "Se vuoi aggiungerlo al database, inoltrami un suo messaggio"
+
+#~ msgid "Cancel"
+#~ msgstr "Annulla"
+
+#~ msgid "_Action aborted_"
+#~ msgstr "_Azione annullata_"
+
+#~ msgid "_Expired_"
+#~ msgstr "_Scaduto_"
+
+#~ msgid ""
+#~ "%s\n"
+#~ "<b>Applied to</b>: %s"
+#~ msgstr ""
+#~ "%s\n"
+#~ "<b>Applicate a</b>: %s"
+
+#~ msgid "Applied"
+#~ msgstr "Applicate"
+
+#~ msgid "Rules applied to every group"
+#~ msgstr "Regole applicate ad ogni gruppo"
+
+#~ msgid ""
+#~ "Too many requests. Please wait some minutes and try again. Note that if "
+#~ "you flood this command, I'll leave the group and block you"
+#~ msgstr ""
+#~ "Troppe richieste. Per favore, aspetta alcuni minuti e poi prova ancora. "
+#~ "Nota che se usi troppo questo comando, lascerò il gruppo e verrai bloccato"
+
+#~ msgid "An unexpected error with the api occurred. Please try again later"
+#~ msgstr ""
+#~ "Un errore inaspettato con l'api si è verificato. Per favore, prova "
+#~ "nuovamente più tardi"
+
+#~ msgid "ID of %s:"
+#~ msgstr "ID di %s"
+
+#~ msgid "*Message sent*"
+#~ msgstr "*Messagio inviato*"
+
+#~ msgid ""
+#~ "I can't send the text\n"
+#~ "Motivation: %s"
+#~ msgstr ""
+#~ "Non posso inviare il messaggio\n"
+#~ "Motivazione: %s"
+
+#~ msgid "Message sent in *%d* groups"
+#~ msgstr "Messaggio inviato in *%d* gruppi"
+
+#~ msgid "_Only the realm owner can remove a group_"
+#~ msgstr "_Solo il proprietario del realm può rimuovere un gruppo_"
+
+#~ msgid "%s removed from your subgroups"
+#~ msgstr "%s rimosso dai tuoi subgruppi"
+
+#~ msgid "As you wish. This group is no longer a realm."
+#~ msgstr "Come desideri. Questo gruppo non è più un realm."
+
+#~ msgid ""
+#~ "\n"
+#~ "_%d associations with subgroups have been deleted_"
+#~ msgstr ""
+#~ "\n"
+#~ "_%d associazioni con un subgruppo sono state eliminate_"
+
+#~ msgid "Manage your group settings from this keyboard"
+#~ msgstr "Gestisci le impostazioni del tuo gruppo da questa tastiera"
+
+#~ msgid "I'm sorry, this group doesn't have any message generated by /pin"
+#~ msgstr "Mi dispiace, questo gruppo non ha alcun messaggio generato da /pin"
+
+#~ msgid ""
+#~ "_I'm sorry, the last message genereted with /pin does not exists anymore_"
+#~ msgstr "_Mi dispiace, l'ultimo messaggio generato da /pin non esiste più_"
+
+#~ msgid "_The text you sent me is the same of the old pinned message_"
+#~ msgstr ""
+#~ "_Il messaggio che mi hai inviato è lo stesso del messaggio "
+#~ "precedentemente generato con /pin_"
+
+#~ msgid ""
+#~ "Pinned message edited in %d groups. If this number is lower than "
+#~ "expected, it means that in some subgroups the last message generated "
+#~ "with /pin has been deleted"
+#~ msgstr ""
+#~ "Messaggio fissato modificato in %d gruppi. Se questo numero è più basso "
+#~ "di quanto previsto, significa che in uno o più subgruppi l'ultimo "
+#~ "messaggio generato con /pin è stato cancellato"
+
+#~ msgid "This group is already using this channel"
+#~ msgstr "Questo gruppo usa già questo canale"
+
+#~ msgid "Log channel added!"
+#~ msgstr "Canale log aggiunto!"
+
+#~ msgid ""
+#~ "<i>%s</i> changed its log channel.\n"
+#~ "<i>From a realm, by %s</i>"
+#~ msgstr ""
+#~ "<i>%s</i> ha cambiato il suo canale log.\n"
+#~ "<i>Messaggio da un realm, da %s</i>"
+
+#~ msgid ""
+#~ "Logs of <i>%s</i> will be posted here.\n"
+#~ "<i>From a realm, by %s</i>"
+#~ msgstr ""
+#~ "I log di <i>%s</i> verranno postati qui\n"
+#~ "<i>Eseguito da un realm, by %s</i>"
+
+#~ msgid "<i>undefined</i>"
+#~ msgstr "<i>indefinito</i>"
+
+#~ msgid ""
+#~ "The channel will be used by %d more subgroups.\n"
+#~ "<i>If this number is lower than expected, it means that all the other "
+#~ "subgroups were already using that channel as log</i>"
+#~ msgstr ""
+#~ "Il canale verrà usato da %d altri subgruppi.\n"
+#~ "<i>se questo numero è minore di quello previsto, significa che tutti gli "
+#~ "altri subgruppi stavano già usando quel canale come log</i>"
+
+#~ msgid "_This group is a realm, you can set a realm for a realm_"
+#~ msgstr "_Questo gruppo è un realm, non puoi associare un realm ad un realm_"
+
+#~ msgid "<i>The id you sent doesn't belong to a realm</i>"
+#~ msgstr "<i>L'id che hai inviato non appartiene ad un realm</i>"
+
+#~ msgid ""
+#~ "This realm [<code>%s</code>] already reached the max [<code>%d</code>] "
+#~ "number of subgroups"
+#~ msgstr ""
+#~ "Questo realm [<code>%s</code>] ha già raggiunto il numero massimo [<code>"
+#~ "%d</code>] di subgruppi"
+
+#~ msgid ""
+#~ "<b>New subgroup added</b>: %s [<code>%d</code>]\n"
+#~ "<b>By</b>: %s [@%s][#id%d]"
+#~ msgstr ""
+#~ "<b>Nuovo subgruppo aggiunto</b>: %s [<code>%d</code>]\n"
+#~ "<b>Da</b>: %s [@%s][#id%d]"
+
+#~ msgid "The realm of this group changed: <code>%s</code>`"
+#~ msgstr "Il realm di questo gruppo è cambiato: <code>%s</code>`"
+
+#~ msgid "<i>Already a sub-group of:</i> <code>%s</code>"
+#~ msgstr "<i>Questo gruppo è già un subgruppo di:</i> <code>%s</code>"
+
+#~ msgid "<b>Group added to the sub-groups of</b>: <code>%s</code>"
+#~ msgstr "<b>Gruppo aggiunto ai subgruppi di</b>: <code>%s</code>"
+
+#~ msgid ""
+#~ "This group is already a realm.\n"
+#~ "*Realm id*: `%s`"
+#~ msgstr ""
+#~ "Questo gruppo è già un realm.\n"
+#~ "*Id realm*: `%s`"
+
+#~ msgid "_Only the owner can decide to use this group as a realm_"
+#~ msgstr ""
+#~ "_Solo il proprietario può decidere di usare questo gruppo come realm_"
+
+#~ msgid "_I'm sorry, a public group can't be used as realms_"
+#~ msgstr "_Mi dispiace, un gruppo pubblico non può essere usato come realm_"
+
+#~ msgid ""
+#~ "_I'm sorry, I can't get the number of the members of this group now. Try "
+#~ "again later_"
+#~ msgstr ""
+#~ "_Mi dispiace, non posso ottenere il numero di membri di questo gruppo in "
+#~ "questo momento. Prova più tardi_"
+
+#~ msgid "_You can't use as realm a group with more than %d members_"
+#~ msgstr "_Non puoi usare come realm un gruppo con più di %d membri_"
+
+#~ msgid ""
+#~ "This group can now be used as realm: the members of this group can now "
+#~ "manage multiple groups from here. To add a sub-group, the group owner "
+#~ "must write in the chat:\n"
+#~ "\"/setrealm %s\". He can copy-paste in the group the following text:"
+#~ msgstr ""
+#~ "Questo gruppo può essere usato ora come realm: i mebri di questo gruppo "
+#~ "ora potranno gestire molteplici gruppi da qui. Per aggiungere (associare) "
+#~ "un subgruppo, il proprietario del gruppo deve inviare questo messaggio "
+#~ "nel gruppo:\n"
+#~ "\"/setrealm %s\".\n"
+#~ "(per semplicità, puo copia-incollare il messaggio seguente:)"
+
+#~ msgid "_This command can be used only by the group owner_"
+#~ msgstr "_Questo comando può essere usato solo dal proprietario del gruppo_"
+
+#~ msgid ""
+#~ "_This group is no longer going to be used as a realm, and you will lose "
+#~ "all the associations with your subgroups._\n"
+#~ "*Do you want to continue?*"
+#~ msgstr ""
+#~ "_Questo gruppo non verrà più usato come realm, e tutte le associazioni "
+#~ "con i tuoi subgruppi verranno eliminate._\n"
+#~ "*Vuoi continuare?*"
+
+#~ msgid ""
+#~ "<i>This group is a realm, you can use this command only in one subgroup</"
+#~ "i>"
+#~ msgstr ""
+#~ "<i>Questo gruppo è un realm, puoi usare questo comando solo i un "
+#~ "subgruppo</i>"
+
+#~ msgid "Done. This group does no longer belong to <code>%s</code>"
+#~ msgstr "Fatto. Questo gruppo non è più associato a <code>%s</code>"
+
+#~ msgid ""
+#~ "<i>A group has been removed from your subgroups</i>\r\n"
+#~ "<b>Title</b>: %s\r\n"
+#~ "<b>ID</b>: <code>%d</code>\r\n"
+#~ "<b>By</b>: %s [@%s] [#id%d] "
+#~ msgstr ""
+#~ "<i>Un gruppo è stato rimosso dai tuoi subgruppi</i>\n"
+#~ "<b>Titolo</b>: %s\n"
+#~ "<b>ID</b>: <code>%d</code>\n"
+#~ "<b>Da</b>: %s [@%s] [#id%d] "
+
+#~ msgid "<i>You are not associated with any realm</i>"
+#~ msgstr "<i>Questo gruppo non è associato ad alcun realm</i>"
+
+#~ msgid "This group is not paired with any realm"
+#~ msgstr "Questo gruppo non ha un realm associato"
+
+#~ msgid ""
+#~ "<b>Paired with</b>: %s\n"
+#~ "<b>Saved as</b>: %s\n"
+#~ "<b>Realm in the global list</b>: %s"
+#~ msgstr ""
+#~ "<b>Associato a</b>: %s\n"
+#~ "<b>Salvato come</b>: %s\n"
+#~ "<b>Realm nella lista globale</b>: %s"
+
+#~ msgid ""
+#~ "To add a group to the administrated group of this chat, the *owner of the "
+#~ "group* have to copy-paste the following message in the group you want to "
+#~ "add:"
+#~ msgstr ""
+#~ "Per aggiungere un gruppo ai subgruppi amministrati da questa chat, il "
+#~ "*proprietario del gruppo* deve copia-incollare il messaggio che invierò "
+#~ "ora:"
+
+#~ msgid "_I'm sorry, this realm doesn't have subgroups paired with it_"
+#~ msgstr "_Mi dispiace, questo realm non ha alcun subgruppo associato_"
+
+#~ msgid "Select one or more groups that will use that channel as log channel"
+#~ msgstr "seleziona uno o più gruppi che useranno questo canale come log"
+
+#~ msgid "_Only the channel creator can pair a chat with a channel_"
+#~ msgstr ""
+#~ "_Solamente il creatore del canale può associare il proprio canale ad un "
+#~ "gruppo_"
+
+#~ msgid "You must *forward* the message from the channel you want to use"
+#~ msgstr "Devi *inoltrare* il messaggio dal canale che vuoi usare"
+
+#~ msgid "Select a group to manage its settings"
+#~ msgstr "Seleziona un gruppo per gestirne le impostazioni"
+
+#~ msgid ""
+#~ "<b>Your subgroups</b>:\n"
+#~ "\n"
+#~ msgstr ""
+#~ "<b>I tuoi subgruppi</b>:\n"
+#~ "\n"
+
+#~ msgid "Choose the subgroup you want to un-pair:"
+#~ msgstr "Choose the subgroup you want to un-pair:"
+
+#~ msgid ""
+#~ "<b>Title</b>: %s\n"
+#~ "<b>ID</b>: %d\n"
+#~ "<b>Subgroups n°</b>: %d\n"
+#~ "<b>Total members</b>: %d"
+#~ msgstr ""
+#~ "<b>Titolo</b>: %s\n"
+#~ "<b>ID</b>: %d\n"
+#~ "<b>N° subgruppi</b>: %d\n"
+#~ "<b>Membri totali</b>: %d"
+
+#~ msgid ""
+#~ "Choose the group where apply the rules (choose <b>within 30 minutes from "
+#~ "now</b>)"
+#~ msgstr ""
+#~ "Scegli il gruppo al quale applicare le regole (scegli <b>entro 30 minuti</"
+#~ "b>)"
+
+#~ msgid "_Answer to a forwarded message_"
+#~ msgstr "_Rispondi ad un messaggio inoltrato_"
+
+#~ msgid ""
+#~ "Executed.\r\n"
+#~ "\r\n"
+#~ "<b>Success</b>: <code>%d</code>\r\n"
+#~ "<b>The bot is not admin</b>: <code>%d</code>\r\n"
+#~ "<b>The user is admin</b>: <code>%d</code>\r\n"
+#~ "<b>Failed because of limits</b>: <code>%d</code>\r\n"
+#~ "<b>Failed because of other reasons</b>: <code>%d</code>\r\n"
+#~ "<b>Failed to ban from</b>:\r\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Eseguito.\r\n"
+#~ "\r\n"
+#~ "<b>A buon fine</b>: <code>%d</code>\r\n"
+#~ "<b>il bot non era admin</b>: <code>%d</code>\r\n"
+#~ "<b>L'utente era admin</b>: <code>%d</code>\r\n"
+#~ "<b>Tentativi falliti a causa dei limiti</b>: <code>%d</code>\r\n"
+#~ "<b>Tentativi falliti per altri motivi</b>: <code>%d</code>\r\n"
+#~ "<b>Non bannato da</b>:\r\n"
+
+#~ msgid ""
+#~ "<i>Log channels used by your subgroups</i>:\n"
+#~ "\n"
+#~ msgstr ""
+#~ "<i>Canali log usati dai tuoi subgruppi</i>:\n"
+#~ "\n"
+
+#~ msgid ""
+#~ "#PHOTOREMOVED\n"
+#~ "• %s\n"
+#~ "• <b>By</b>: %s"
+#~ msgstr ""
+#~ "#FOTORIMOSSA\n"
+#~ "• %s\n"
+#~ "• <b>Da</b>: %s"
+
+#~ msgid ""
+#~ "#NEWTITLE\n"
+#~ "• %s\n"
+#~ "• <b>By</b>: %s"
+#~ msgstr ""
+#~ "#NUOVOTITOLO\n"
+#~ "• %s\n"
+#~ "• <b>Da</b>: %s"
+
+#~ msgid ""
+#~ "#PINNEDMSG\n"
+#~ "• %s\n"
+#~ "• <b>By</b>: %s"
+#~ msgstr ""
+#~ "#FISSATO\n"
+#~ "• %s\n"
+#~ "• <b>Da</b>: %s"
+
+#~ msgid "Realms"
+#~ msgstr "Realm"
+
+#~ msgid "Select a group:"
+#~ msgstr "Seleziona un gruppo:"
+
+#~ msgid "_Reported in the admins group_"
+#~ msgstr "_Segnalato nel gruppo degli admin_"
 
 #~ msgid "Kicked"
 #~ msgstr "Ha kickato"

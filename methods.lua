@@ -38,6 +38,7 @@ local function sendRequest(url)
 	if not tab then
 		print(clr.red..'Error while parsing JSON'..clr.reset, code)
 		print(clr.yellow..'Data:'..clr.reset, dat)
+		api.sendAdmin(dat..'\n'..code)
 		error('Incorrect response')
 	end
 
@@ -108,9 +109,15 @@ function api.getUpdates(offset)
 	if offset then
 		url = url .. '&offset=' .. offset
 	end
-
+	
 	return sendRequest(url)
 
+end
+
+function api.firstUpdate()
+	local url = BASE_URL .. '/getUpdates?timeout=3600&limit=1&allowed_updates='..JSON.encode(config.allowed_updates)
+	
+	return sendRequest(url)
 end
 
 function api.unbanChatMember(chat_id, user_id)
@@ -243,7 +250,7 @@ function api.leaveChat(chat_id)
 	
 end
 
-function api.sendMessage(chat_id, text, parse_mode, reply_markup, reply_to_message_id, enable_web_page_preview)
+function api.sendMessage(chat_id, text, parse_mode, reply_markup, reply_to_message_id, link_preview)
 	--print(text)
 	
 	local url = BASE_URL .. '/sendMessage?chat_id=' .. chat_id .. '&text=' .. URL.escape(text)
@@ -263,11 +270,11 @@ function api.sendMessage(chat_id, text, parse_mode, reply_markup, reply_to_messa
 	if reply_markup then
 		url = url..'&reply_markup='..URL.escape(JSON.encode(reply_markup))
 	end
-
-	if not enable_web_page_preview then
+	
+	if not link_preview then
 		url = url .. '&disable_web_page_preview=true'
 	end
-
+	
 	url = url..'&disable_notification=true'
 	
 	local res, code, desc = sendRequest(url)
