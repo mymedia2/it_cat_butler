@@ -39,9 +39,7 @@ local triggers2 = {
 	'^%$(active)$',
 	'^%$(getid)$',
 	'^%$(redisbackup)$',
-	'^%$(realm) (.+)$',
-	'^%$(promote) (.+)$',
-	'^%$(demote) (.+)$',
+	'^%$(realm) (.+)$'
 }
 
 function plugin.cron()
@@ -251,7 +249,7 @@ function plugin.onTextMessage(msg, blocks)
 		local all = db:hgetall('bot:usernames')
 		for username,id in pairs(all) do
 			if tostring(id) == user_id then
-				api.sendReply(msg, '@'..username)
+				api.sendReply(msg, username)
 				return
 			end
 		end
@@ -442,18 +440,6 @@ function plugin.onTextMessage(msg, blocks)
 		local res = u.bash('./redisbackup.sh')
 		if not res then res = '-' end
 		api.sendMessage(msg.chat.id, res)
-	end
-	if blocks[1] == 'promote' then
-		if db:sadd('bot:superadmins', blocks[2]) > 0 then
-			api.sendReply(msg, 'Added!')
-		end
-	end
-	if blocks[1] == 'demote' then
-		if db:srem('bot:superadmins', blocks[2]) > 0 then
-			api.sendReply(msg, 'Removed!')
-		else
-			api.sendReply(msg, 'Not a superadmin')
-		end
 	end
 end
 

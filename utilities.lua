@@ -85,7 +85,7 @@ function utilities.is_superadmin(user_id)
 			return true
 		end
 	end
-	return db:sismember('bot:superadmins', user_id)
+	return false
 end
 
 function utilities.bot_is_admin(chat_id)
