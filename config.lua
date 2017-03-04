@@ -12,6 +12,12 @@ return {
 	bot_settings = {
 		cache_time = {
 			adminlist = 18000, --5 hours (18000s) Admin Cache time, in seconds.
+			alert_help = 72,  -- amount of hours for cache help alerts
+			chat_titles = 18000
+		},
+		report = {
+			duration = 1200,
+			times_allowed = 2
 		},
 		notify_bug = true, --Notify if a bug occurs!
 		log_api_errors = true, --Log errors, which happening whilst interacting with the bot api.
@@ -22,35 +28,36 @@ return {
 		realm_max_subgroups = 6
 	},
 	channel = '@it_cat_encrypted', --channel username with the '@'
-	source_code = 'https://github.com/mymedia2/it_cat_butler',
+	source_code = 'https://github.com/mymedia2/GroupButler',
 	help_groups_link = 'https://telegram.me/it_cat_encrypted',
 	plugins = {
 		'onmessage', --THIS MUST BE THE FIRST: IF AN USER IS FLOODING/IS BLOCKED, THE BOT WON'T GO THROUGH PLUGINS
 		'antispam', --SAME OF onmessage.lua
 		--'realms', --must stay here
-        'notifications',
-		'configure',
-		'menu',
-		'dashboard',
+		'backup',
 		'banhammer',
-        'voteban',
-		'users',
+		'block',
+		'configure',
+		'dashboard',
+		'floodmanager',
 		'help',
+		'links',
+		'logchannel',
+		'mediasettings',
+		'menu',
+		'moderators',
+		'pin',
+		'private',
+		'private_settings',
+		'report',
 		'rules',
 		'service',
-		'links',
-		'warn',
 		'setlang',
-		'floodmanager',
+		'users',
+		'warn',
 		'welcome',
-		'pin',
-		'mediasettings',
-		'private',
 		'admin',
-		'backup',
-		'logchannel',
-		'report',
-		'private_settings',
+        'voteban',
 		'extra', --must be the last plugin in the list.
 	},
 	multipurpose_plugins = {},
@@ -76,13 +83,13 @@ return {
 			['Welcome'] = 'off',
 			['Goodbye'] = 'off',
 			['Extra'] = 'on',
-			['Flood'] = 'off',
+			--['Flood'] = 'off',
 			['Silent'] = 'off',
-			['Preview'] = 'off',
 			['Rules'] = 'off',
 			['Reports'] = 'off',
 			['voteban'] = 'off',
 			['Welbut'] = 'off',
+			['Antibot'] = 'off'
 		},
 		['antispam'] = {
 			['links'] = 'alwd',
@@ -92,8 +99,7 @@ return {
 		},
 		['flood'] = {
 			['MaxFlood'] = 5,
-			['ActionFlood'] = 'kick',
-			['TempBanDuration'] = 10,
+			['ActionFlood'] = 'kick'
 		},
 		['char'] = {
 			['Arab'] = 'allowed', --'kick'/'ban'
@@ -101,11 +107,11 @@ return {
 		},
 		['floodexceptions'] = {
 			['text'] = 'no',
-			['forward'] = 'no',
 			['photo'] = 'no', -- image
-			['gif'] = 'no',
-			['sticker'] = 'no',
+			['forward'] = 'no',
 			['video'] = 'no',
+			['sticker'] = 'no',
+			['gif'] = 'no',
 		},
 		['warnsettings'] = {
 			['type'] = 'ban',
@@ -118,7 +124,7 @@ return {
 			['content'] = 'no'
 		},
 		['goodbye'] = {
-			['type'] = 'custom'
+			['type'] = 'custom',
 		},
 		['voteban'] = {
 			['quorum'] = 5,
@@ -140,6 +146,7 @@ return {
 		['tolog'] = {
 			['ban'] = 'no',
 			['kick'] = 'no',
+			['unban'] = 'no',
 			['tempban'] = 'no',
 			['report'] = 'no',
 			['warn'] = 'no',
@@ -147,19 +154,30 @@ return {
 			['mediawarn'] = 'no',
 			['spamwarn'] = 'no',
 			['flood'] = 'no',
+			['promote'] = 'no',
+			['demote'] = 'no',
 			['new_chat_member'] = 'no',
 			['new_chat_photo'] = 'no',
 			['delete_chat_photo'] = 'no',
 			['new_chat_title'] = 'no',
 			['pinned_message'] = 'no',
-			['voteban_banned'] = 'no',
+			['blockban'] = 'no',
+			['block'] = 'no',
+			['unblock'] = 'no'
 		},
+		['modsettings'] = {
+			['promdem'] = 'yes', --'yes': admins can promote or demote moderators; 'no': only the owner can
+			['hammer'] = 'yes',
+			['config'] = 'no',
+			['texts'] = 'no'
+		}
 	},
 	private_settings = {
 		rules_on_join = 'off',
 		reports = 'off'
 	},
-	chat_custom_texts = {'extra', 'info', 'links', 'warns', 'mediawarn', 'spamwarns'},
+	chat_hashes = {'extra', 'info', 'links', 'warns', 'mediawarn', 'spamwarns', 'blocked', 'report'},
+	chat_sets = {'whitelist', 'mods'},
 	bot_keys = {
 		d3 = {'bot:general', 'bot:usernames', 'bot:chat:latsmsg'},
 		d2 = {'bot:groupsid', 'bot:groupsid:removed', 'tempbanned', 'bot:blocked', 'remolden_chats'} --remolden_chats: chat removed with $remold command

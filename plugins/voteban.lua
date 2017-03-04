@@ -1,7 +1,6 @@
 local config = require 'config'
-local misc = require 'utilities'.misc
-local roles = require 'utilities'.roles
 local api = require 'methods'
+local u = require 'utilities'
 
 local plugin = {}
 
@@ -35,11 +34,11 @@ local function get_header(initiator, defendant, supports, oppositionists, quorum
 	end
 
 	if defendant.id == initiator.id then
-		table.insert(lines, _("%s suggests to ban himself. Ban him?\n"):format(users.full_name(initiator)))
+		table.insert(lines, _("%s suggests to ban himself. Ban him?\n"):format(u.full_name(initiator)))
 	elseif defendant.id == bot.id then
-		table.insert(lines, _("%s suggests to ban me. Do you really want to ban me? 😓\n"):format(users.full_name(initiator)))
+		table.insert(lines, _("%s suggests to ban me. Do you really want to ban me? 😓\n"):format(u.full_name(initiator)))
 	else
-		table.insert(lines, _("%s suggests to ban %s. Ban him?\n"):format(users.full_name(initiator), users.full_name(defendant)))
+		table.insert(lines, _("%s suggests to ban %s. Ban him?\n"):format(u.full_name(initiator), u.full_name(defendant)))
 	end
 
 	-- TODO: make plural forms
@@ -88,7 +87,7 @@ local function conclusion(initiator, defendant, supports, oppositionists, quorum
 		or supports + oppositionists < quorum and upshot == 'canceled')
 	local lines = {}
 
-	local defendant_name = users.full_name(defendant)
+	local defendant_name = u.full_name(defendant)
 	if upshot == 'was banned' then
 		table.insert(lines, _("The voting was closed, and %s was banned according "
 			.. "to decision of community. The results:\n"):format(defendant_name))
@@ -106,18 +105,18 @@ local function conclusion(initiator, defendant, supports, oppositionists, quorum
 	if upshot == 'was protected' then
 		table.insert(lines, _("The voting was closed. %s suggested to ban %s, but "
 			.. "a community protected him. The results:\n")
-			:format(users.full_name(initiator), users.full_name(defendant)))
+			:format(u.full_name(initiator), u.full_name(defendant)))
 	end
 	if upshot == 'no decision' then
 		table.insert(lines, _("The voting was closed, because not get enough number of people "
-			.. "for ban %s. The results:\n"):format(users.full_name(defendant)))
+			.. "for ban %s. The results:\n"):format(u.full_name(defendant)))
 	end
 	if upshot == 'canceled' then
-		table.insert(lines, _("The poll against %s was closed by initiator. The results:\n"):format(users.full_name(defendant)))
+		table.insert(lines, _("The poll against %s was closed by initiator. The results:\n"):format(u.full_name(defendant)))
 	end
 	if informative and not upshot then
 		table.insert(lines, _("The voting was closed, but it was informative so %s hadn't "
-			.. "been banned. The results:\n"):format(users.full_name(defendant)))
+			.. "been banned. The results:\n"):format(u.full_name(defendant)))
 	end
 
 	-- TODO: make plural forms
@@ -175,9 +174,9 @@ local function generate_poll(msg, defendant)
 		informative = 'against bot'
 	elseif initiator.id == defendant.id then
 		informative = 'against himself'
-	elseif roles.is_admin_cached(msg.chat.id, defendant.id) then
+	elseif u.is_admin(msg.chat.id, defendant.id) then
 		informative = 'against admin'
-	elseif not roles.bot_is_admin(msg.chat.id) then
+	elseif not u.bot_is_admin(msg.chat.id) then
 		informative = 'bot not admin'
 	end
 
@@ -197,10 +196,10 @@ local function generate_poll(msg, defendant)
 		if res.result.chat.username then
 			local link = string.format('https://telegram.me/%s/%d', res.result.chat.username, res.result.message_id)
 			text = _("⬇ The poll for ban of %s was closed because [new poll](%s) was created")
-				:format(users.full_name(defendant), link)
+				:format(u.full_name(defendant), link)
 		else
 			text = _("⬇ The poll for ban of %s was closed because *new poll* was created")
-				:format(users.full_name(defendant))
+				:format(u.full_name(defendant))
 		end
 		api.editMessageText(msg.chat.id, previous_id, text, true)
 	end
@@ -298,9 +297,9 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 			api.editMessageText(chat_id, msg_id, text, true)
 
 			if send_confirmation then
-				local text = _("%s has been banned ✨"):format(users.full_name(defendant))
+				local text = _("%s has been banned ✨"):format(u.full_name(defendant))
 				local msg = api.sendMessage(chat_id, text, true, nil, msg_id).result
-				misc.logEvent('voteban_banned', msg, {user = defendant, init = initiator})
+				u.logEvent('voteban_banned', msg, {user = defendant, init = initiator})
 			end
 			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
 		else
@@ -323,7 +322,7 @@ local function change_votes_machinery(chat_id, user_id, from_id, value)
 	end
 
 	if not without_name then
-		text = text:format(users.full_name(api.getChat(user_id).result, true))
+		text = text:format(u.full_name(api.getChat(user_id).result, true))
 	end
 	return text
 end
@@ -370,7 +369,7 @@ function plugin.onTextMessage(msg, blocks)
 	if blocks[1] == 'voteban' then
 		local hash = string.format('chat:%d:settings', msg.chat.id)
 		local status = db:hget(hash, 'voteban') or config.chat_settings.settings.voteban
-		if status == 'off' and not roles.is_admin_cached(msg) then return end
+		if status == 'off' and not u.is_admin(msg) then return end
 		local hash = string.format('chat:%d:voteban', msg.chat.id)
 
 		-- choose the hero
@@ -380,7 +379,7 @@ function plugin.onTextMessage(msg, blocks)
 			if next(msg.mentions, nominated) then
 				api.sendMessage(msg.chat.id, _("*Warning*: Multiple mentions still isn't supported"), true)
 			end
-			-- FIXME: make that the follow variable would store the user object for decrease number of API queries
+			-- XXX: make that the follow variable would store the user object for decrease number of API queries
 			nominated = api.getChat(nominated).result
 		elseif msg.reply then
 			nominated = msg.reply.from
@@ -394,8 +393,8 @@ function plugin.onTextMessage(msg, blocks)
 				return
 			end
 		elseif blocks[2] and blocks[2]:byte(1) == string.byte('@') then
-			-- FIXME: double call of getChat
-			local user_id = misc.resolve_user(blocks[2])
+			-- XXX: double call of getChat
+			local user_id = u.resolve_user(blocks[2])
 			if not user_id then
 				api.sendMessage(msg.chat.id, _("I've never seen this user before.\n"
 					.. "If you want to teach me who is he, forward me a message from him"))
@@ -441,7 +440,7 @@ function plugin.onCallbackQuery(msg, blocks)
 			local text = conclusion(nil, defendant, supports, oppositionists, quorum, 'canceled', informative)
 			api.editMessageText(msg.chat.id, msg.message_id, text, true)
 			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
-		elseif roles.is_admin_cached(msg.chat.id, msg.from.id) then
+		elseif u.is_admin(msg.chat.id, msg.from.id) then
 			api.editMessageText(msg.chat.id, msg.message_id, _("The poll was closed by administrator"))
 			db:del(hash, hash .. ':supports', hash .. ':oppositionists')
 		else

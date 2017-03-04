@@ -1,5 +1,5 @@
 local config = require 'config'
-local misc = require 'utilities'.misc
+local u = require 'utilities'
 local api = require 'methods'
 
 local plugin = {}
@@ -20,8 +20,8 @@ local function do_keyboard_credits()
 end
 
 function plugin.onTextMessage(msg, blocks)
-    if msg.chat.type ~= 'private' then return end
-    
+	if msg.chat.type ~= 'private' then return end
+
 	if blocks[1] == 'ping' then
 		local res = api.sendMessage(msg.from.id, _("Pong!"), true)
 		--[[if res then
@@ -31,10 +31,10 @@ function plugin.onTextMessage(msg, blocks)
 	if blocks[1] == 'echo' then
 		local res, code = api.sendMessage(msg.chat.id, blocks[2], true)
 		if not res then
-			api.sendMessage(msg.chat.id, misc.get_sm_error_string(code), true)
+			api.sendMessage(msg.chat.id, u.get_sm_error_string(code), true)
 		end
 	end
-	if blocks[1] == 'about' or blocks[1] == 'info' then
+	if blocks[1] == 'about' then
 		local keyboard = do_keyboard_credits()
 		local text = _("This bot is based on [otouto](https://github.com/topkecleon/otouto) (AKA @mokubot, channel: @otouto), a multipurpose Lua bot.\nGroup Butler wouldn't exist without it.\n\nThe owner of this bot is @bac0nnn, do not pm him: use /groups command instead.\n\nBot version: `%s`\n*Some useful links:*"):format(config.human_readable_version .. ' rev.' .. bot.revision)
 		api.sendMessage(msg.chat.id, text, true, keyboard)
@@ -42,10 +42,10 @@ function plugin.onTextMessage(msg, blocks)
 	if blocks[1] == 'group' then
 		if config.help_groups_link and config.help_groups_link ~= '' then
 			api.sendMessage(msg.chat.id, _("You can find the list of our support groups in [this channel](%s)"):format(config.help_groups_link), true)
-			end
 		end
+	end
 end
-		
+
 function plugin.onCallbackQuery(msg, blocks)
 	if blocks[1] == 'about' then
 		local keyboard = do_keyboard_credits()
@@ -65,7 +65,6 @@ plugin.triggers = {
 		config.cmd..'(echo) (.*)$',
 		config.cmd..'(about)$',
 		config.cmd..'(group)s?$',
-		config.cmd..'(info)?$',
 		'^/start (group)s$'
 	},
 	onCallbackQuery = {

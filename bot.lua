@@ -1,7 +1,7 @@
 local api = require 'methods'
 local redis = require 'redis'
 local clr = require 'term.colors'
-local misc, roles, config, plugins, last_update, last_cron
+local u, config, plugins, last_update, last_cron
 db = redis.connect('127.0.0.1', 6379)
 
 function bot_init(on_reload) -- The function run when the bot is started or reloaded.
@@ -13,13 +13,12 @@ function bot_init(on_reload) -- The function run when the bot is started or relo
 	
 	db:select(config.db or 0) --select the redis db
 	
-	local utilities = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
-	misc, roles, users, utilities = utilities.misc, utilities.roles, utilities.users, nil
+	u = dofile('utilities.lua') -- Load miscellaneous and cross-plugin functions.
 	locale = dofile('languages.lua')
 	now_ms = require('socket').gettime
 	
 	bot = api.getMe().result -- Get bot info
-	bot.revision = misc.bash('git rev-parse --short HEAD')
+	bot.revision = u.bash('git rev-parse --short HEAD')
 
 	plugins = {} -- Load plugins.
 	for i,v in ipairs(config.plugins) do
@@ -65,23 +64,20 @@ local function extract_usernames(msg)
 	if msg.forward_from and msg.forward_from.username then
 		db:hset('bot:usernames', '@'..msg.forward_from.username:lower(), msg.forward_from.id)
 	end
-	if msg.forward_from_chat and msg.forward_from_chat.username then
-		db:hset('bot:usernames', '@'..msg.forward_from_chat.username:lower(), msg.forward_from_chat.id)
-		end
 	if msg.new_chat_member then
 		if msg.new_chat_member.username then
 			db:hset('bot:usernames', '@'..msg.new_chat_member.username:lower(), msg.new_chat_member.id)
-	end
-		db:sadd(string.format('chat:%d:members', msg.chat.id), msg.new_chat_member.id)
 		end
+		db:sadd(string.format('chat:%d:members', msg.chat.id), msg.new_chat_member.id)
+	end
 	if msg.left_chat_member then
 		if msg.left_chat_member.username then
 			db:hset('bot:usernames', '@'..msg.left_chat_member.username:lower(), msg.left_chat_member.id)
 		end
 		db:srem(string.format('chat:%d:members', msg.chat.id), msg.left_chat_member.id)
 	end
-	if msg.reply then
-		extract_usernames(msg.reply)
+	if msg.reply_to_message then
+		extract_usernames(msg.reply_to_message)
 	end
 	if msg.pinned_message then
 		extract_usernames(msg.pinned_message)
@@ -105,9 +101,7 @@ end
 
 local function match_triggers(triggers, text)
   	if text and triggers then
-		-- avoid reaction to commands for other bots
 		text = text:gsub('^(/[%w_]+)@'..bot.username, '%1')
-
 		for i, trigger in pairs(triggers) do
 			local matches = {}
 	    	matches = { string.match(text, trigger) }
@@ -115,71 +109,72 @@ local function match_triggers(triggers, text)
 	    		return matches, trigger
 			end
 		end
-  	end
+	end
 end
 
 local function on_msg_receive(msg, callback) -- The fn run whenever a message is received.
-	--vardump('PARSED', msg)
-	if not msg then return end
-	
-	if msg.chat.type ~= 'group' then --do not process messages from normal groups
-		
-	if msg.date < os.time() - 7 then return end -- Do not process old messages.
-	if not msg.text then msg.text = msg.caption or '' end
-	
-	locale.language = db:get('lang:'..msg.chat.id) or 'en' --group language
-	if not config.available_languages[locale.language] then
-		locale.language = 'en'
+	--u.dump('PARSED', msg)
+	if not msg then
+		return
 	end
 
-	collect_stats(msg)
-
-	local continue = true
-	local onm_success
-	for i, plugin in pairs(plugins) do
+	if msg.chat.type ~= 'group' then --do not process messages from normal groups
+		
+		if msg.date < os.time() - 7 then return end -- Do not process old messages.
+		if not msg.text then msg.text = msg.caption or '' end
+		
+		locale.language = db:get('lang:'..msg.chat.id) or 'en' --group language
+		if not config.available_languages[locale.language] then
+			locale.language = 'en'
+		end
+		
+		collect_stats(msg)
+		
+		local continue = true
+		local onm_success
+		for i, plugin in pairs(plugins) do
 			if plugin.onEveryMessage then
-				onm_success, continue = xpcall(plugin.onEveryMessage, debug.traceback, msg)
+				onm_success, continue = pcall(plugin.onEveryMessage, msg)
 				if not onm_success then
-					print(continue)
 					api.sendAdmin('An #error occurred (preprocess).\n'..tostring(continue)..'\n'..locale.language..'\n'..msg.text)
 				end
 			end
 			if not continue then return end
-	end
-	
-	for i,plugin in pairs(plugins) do
-		if plugin.triggers then
+		end
+		
+		for i,plugin in pairs(plugins) do
+			if plugin.triggers then
 				local blocks, trigger = match_triggers(plugin.triggers[callback], msg.text)
-					if blocks then
-						
+				if blocks then
+					
 					if msg.chat.type ~= 'private' and msg.chat.type ~= 'inline'and not db:exists('chat:'..msg.chat.id..':settings') and not msg.service then --init agroup if the bot wasn't aware to be in
-							misc.initGroup(msg.chat.id)
+							u.initGroup(msg.chat.id)
 						end
-						
-						if config.bot_settings.stream_commands then --print some info in the terminal
+					
+					if config.bot_settings.stream_commands then --print some info in the terminal
 						print(clr.reset..clr.blue..'['..os.date('%F %T')..']'..clr.red..' '..trigger..clr.reset..' '..msg.from.first_name..' ['..msg.from.id..'] -> ['..msg.chat.id..']')
-      					end
-						
+					end
+					
 					--if not check_callback(msg, callback) then goto searchaction end
 					local success, result = xpcall(plugin[callback], debug.traceback, msg, blocks) --execute the main function of the plugin triggered
-						
-						if not success then --if a bug happens
+					
+					if not success then --if a bug happens
 							print(result)
 							if config.bot_settings.notify_bug then
 								api.sendReply(msg, _("🐞 Sorry, a *bug* occurred"), true)
 							end
-          					api.sendAdmin('An #error occurred.\n'..result..'\n'..locale.language..'\n'..msg.text)
+    	      				api.sendAdmin('An #error occurred.\n'..result..'\n'..locale.language..'\n'..msg.text)
 							return
 						end
-						
-						if type(result) == 'string' then --if the action returns a string, make that string the new msg.text
-							msg.text = result
+					
+					if type(result) == 'string' then --if the action returns a string, make that string the new msg.text
+						msg.text = result
 					elseif not result then --if the action returns true, then don't stop the loop of the plugin's actions
-							return
-						end
+						return
 					end
-
-		end
+				end
+				
+			end
 		end
 	else
 		if msg.group_chat_created or (msg.new_chat_member and msg.new_chat_member.id == bot.id) then
@@ -206,7 +201,7 @@ Unfortunately I can't work in normal groups, please ask the creator to convert t
 end
 
 local function parseMessageFunction(update)
-
+	
 	db:hincrby('bot:general', 'messages', 1)
 	
 	local msg, function_key
@@ -217,12 +212,21 @@ local function parseMessageFunction(update)
 		function_key = 'onTextMessage'
 		
 		--if not update.message then
-		if update.edited_message then
-			update.edited_message.edited = true
-			update.edited_message.original_date = update.edited_message.date
-			update.edited_message.date = update.edited_message.edit_date
-			function_key = 'onEditedMessage'
-		end
+			if update.edited_message then
+				update.edited_message.edited = true
+				update.edited_message.original_date = update.edited_message.date
+				update.edited_message.date = update.edited_message.edit_date
+				function_key = 'onEditedMessage'
+			--[[elseif update.channel_post then
+				update.channel_post.channel_post = true
+				function_key = 'onChannelPost'
+			elseif update.edited_channel_post then
+				update.edited_channel_post.edited_channel_post = true
+				update.edited_channel_post.original_date = update.edited_channel_post.date
+				update.edited_channel_post.date = update.edited_channel_post.edit_date
+				function_key = 'onEditedChannelPost']]
+			end
+		--end
 		
 		--msg = update.message or update.edited_message or update.channel_post or update.edited_channel_post
 		msg = update.message or update.edited_message
@@ -304,39 +308,28 @@ local function parseMessageFunction(update)
 			msg.text = '###pinned_message'
 		else
 			--callback = 'onUnknownType'
-			misc.vardump(update)
 			print('Unknown update type') return
 		end
-	
-		if msg.forward_from_chat and msg.forward_from_chat.type == 'channel' then
-			msg.spam = 'forwards'
+		
+		if msg.forward_from_chat then
+			if msg.forward_from_chat.type == 'channel' then
+				msg.spam = 'forwards'
+			end
 		end
 		if msg.caption then
 			local caption_lower = msg.caption:lower()
-			if caption_lower:match('telegram%.me') or caption_lower:match('telegram%.dog') then
+			if caption_lower:match('telegram%.me') or caption_lower:match('telegram%.dog') or caption_lower:match('t%.me') then
 				msg.spam = 'links'
 			end
 		end
 		if msg.entities then
 			for i, entity in pairs(msg.entities) do
 				if entity.type == 'text_mention' then
-					msg.mentions = msg.mentions or {}
-					msg.mentions[entity.user.id] = true
-					if entity.user.username then
-						db:hset('bot:usernames', '@'..entity.user.username:lower(), entity.user.id)
-					end
-				end
-				if entity.type == 'mention' and entity.offset == 0 then
-					-- FIXME: cut the username taking into consideration length of unicode characters
-					local username = msg.text:sub(entity.offset + 1, entity.offset + entity.length)
-					local user_id = misc.resolve_user(username, msg.chat.id)
-					if user_id then
-						msg.mentions = msg.mentions or {}
-						msg.mentions[user_id] = true
-					end
+					msg.mention_id = entity.user.id
 				end
 				if entity.type == 'url' or entity.type == 'text_link' then
 					local text_lower = msg.text or msg.caption
+					text_lower = entity.url and text_lower..entity.url or text_lower
 					text_lower = text_lower:lower()
 					if text_lower:match('telegram%.me') or
 						text_lower:match('telegram%.dog') or
@@ -355,6 +348,20 @@ local function parseMessageFunction(update)
 				msg.reply.text = msg.reply.caption
 			end
 		end
+	--[[elseif update.inline_query then
+		msg = update.inline_query
+		msg.inline = true
+		msg.chat = {id = msg.from.id, type = 'inline', title = 'inline'}
+		msg.date = os.time()
+		msg.text = '###inline:'..msg.query
+		function_key = 'onInlineQuery'
+	elseif update.chosen_inline_result then
+		msg = update.chosen_inline_result
+		msg.text = '###chosenresult:'..msg.query
+		msg.chat = {type = 'inline', id = msg.from.id, title = msg.from.first_name}
+		msg.message_id = msg.inline_message_id
+		msg.date = os.time()
+		function_key = 'onChosenInlineQuery']]
 	elseif update.callback_query then
 		msg = update.callback_query
 		msg.cb = true
@@ -362,8 +369,8 @@ local function parseMessageFunction(update)
 		if msg.message then
 			msg.original_text = msg.message.text
 			msg.original_date = msg.message.date
-		msg.message_id = msg.message.message_id
-		msg.chat = msg.message.chat
+			msg.message_id = msg.message.message_id
+			msg.chat = msg.message.chat
 		else --when the inline keyboard is sent via the inline mode
 			msg.chat = {type = 'inline', id = msg.from.id, title = msg.from.first_name}
 			msg.message_id = msg.inline_message_id
@@ -371,14 +378,24 @@ local function parseMessageFunction(update)
 		msg.date = os.time()
 		msg.cb_id = msg.id
 		msg.message = nil
-		msg.target_id = msg.data:match('(-?%d+)$') --callback datas often (always) ship IDs. Create a shortcut
+		msg.target_id = msg.data:match('(-%d+)$') --callback datas often ship IDs
 		function_key = 'onCallbackQuery'
 	else
 		--function_key = 'onUnknownType'
-		misc.vardump(update)
 		print('Unknown update type') return
 	end
 	
+	if (msg.chat.id < 0 or msg.target_id) and msg.from then
+		msg.from.admin = u.is_admin(msg.target_id or msg.chat.id, msg.from.id)
+		if msg.from.admin then
+			msg.from.mod = true
+		else
+            -- XXX: double call is_admin function
+			msg.from.mod = u.is_mod(msg.target_id or msg.chat.id, msg.from.id)
+		end
+	end
+	
+	--print('Mod:', msg.from.mod, 'Admin:', msg.from.admin)
 	return on_msg_receive(msg, function_key)
 end
 
@@ -399,6 +416,9 @@ while true do -- Start a loop while the bot should be running.
 	end
 	if last_cron ~= os.date('%M') then -- Run cron jobs every minute.
 		last_cron = os.date('%M')
+		last.h = current.h
+		current.h = 0
+		print(clr.yellow..'Cron...'..clr.reset)
 		for i,v in ipairs(plugins) do
 			if v.cron then -- Call each plugin's cron function, if it has one.
 				local res, err = xpcall(v.cron, debug.traceback)

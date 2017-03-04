@@ -10,8 +10,9 @@ local BASE_URL = 'https://api.telegram.org/bot' .. config.bot_api_key
 local api = {}
 
 local curl_context = curl.easy{verbose = config.bot_settings.debug_connections}
-	
+
 local function getCode(err)
+	err = err:lower()
 	for k,v in pairs(api_errors) do
 		if err:match(v) then
 			return k
@@ -30,7 +31,7 @@ local function performRequest(url)
 
 	return table.concat(data), c:getinfo_response_code()
 end
-	
+
 local function sendRequest(url)
 	local dat, code = performRequest(url)
 	local tab = JSON.decode(dat)
@@ -39,7 +40,7 @@ local function sendRequest(url)
 		print(clr.red..'Error while parsing JSON'..clr.reset, code)
 		print(clr.yellow..'Data:'..clr.reset, dat)
 		api.sendAdmin(dat..'\n'..code)
-		error('Incorrect response')
+		--error('Incorrect response')
 	end
 
 	if code ~= 200 then
@@ -67,7 +68,7 @@ end
 local function log_error(method, code, extras, description)
 	if not method or not code then return end
 	
-	local ignored_errors = {403, 429, 110, 111, 116, 131}
+	local ignored_errors = {110, 111, 116, 118, 131, 150, 155, 403, 429}
 	
 	for _, ignored_code in pairs(ignored_errors) do
 		if tonumber(code) == tonumber(ignored_code) then return end
@@ -133,7 +134,7 @@ function api.kickChatMember(chat_id, user_id)
 	
 	local success, code, description = sendRequest(url)
 	if success then
-	db:srem(string.format('chat:%d:members', chat_id), user_id)
+		db:srem(string.format('chat:%d:members', chat_id), user_id)
 	end
 
 	return success, code, description
@@ -160,9 +161,10 @@ function api.banUser(chat_id, user_id)
 	local res, code = api.kickChatMember(chat_id, user_id) --try to kick. "code" is already specific
 	
 	if res then --if the user has been kicked, then...
-		return true --return true and not the text
+		return res --return res and not the text
 	else ---else, the user haven't been kicked
-		return false, code, code2text(code) --return the motivation too
+		local text = code2text(code)
+		return res, code, text --return the motivation too
 	end
 end
 
@@ -184,7 +186,7 @@ end
 
 function api.unbanUser(chat_id, user_id)
 	
-		local res, code = api.unbanChatMember(chat_id, user_id)
+	local res, code = api.unbanChatMember(chat_id, user_id)
 	return true
 end
 
@@ -263,8 +265,8 @@ function api.sendMessage(chat_id, text, parse_mode, reply_markup, reply_to_messa
 		if type(parse_mode) == 'string' and parse_mode:lower() == 'html' then
 			url = url .. '&parse_mode=HTML'
 		else
-		url = url .. '&parse_mode=Markdown'
-	end
+			url = url .. '&parse_mode=Markdown'
+		end
 	end
 	
 	if reply_markup then
@@ -274,8 +276,6 @@ function api.sendMessage(chat_id, text, parse_mode, reply_markup, reply_to_messa
 	if not link_preview then
 		url = url .. '&disable_web_page_preview=true'
 	end
-	
-	url = url..'&disable_notification=true'
 	
 	local res, code, desc = sendRequest(url)
 	
@@ -287,9 +287,9 @@ function api.sendMessage(chat_id, text, parse_mode, reply_markup, reply_to_messa
 
 end
 
-function api.sendReply(msg, text, markd, reply_markup)
+function api.sendReply(msg, text, markd, reply_markup, link_preview)
 
-	return api.sendMessage(msg.chat.id, text, markd, reply_markup, msg.message_id)
+	return api.sendMessage(msg.chat.id, text, markd, reply_markup, msg.message_id, link_preview)
 
 end
 
@@ -301,8 +301,8 @@ function api.editMessageText(chat_id, message_id, text, parse_mode, keyboard)
 		if type(parse_mode) == 'string' and parse_mode:lower() == 'html' then
 			url = url .. '&parse_mode=HTML'
 		else
-		url = url .. '&parse_mode=Markdown'
-	end
+			url = url .. '&parse_mode=Markdown'
+		end
 	end
 	
 	url = url .. '&disable_web_page_preview=true'
@@ -368,12 +368,9 @@ function api.sendLocation(chat_id, latitude, longitude, reply_to_message_id)
 
 end
 
-function api.forwardMessage(chat_id, from_chat_id, message_id, send_sound)
+function api.forwardMessage(chat_id, from_chat_id, message_id)
 
 	local url = BASE_URL .. '/forwardMessage?chat_id=' .. chat_id .. '&from_chat_id=' .. from_chat_id .. '&message_id=' .. message_id
-	if not send_sound then
-		url = url..'&disable_notification=true' --messages are silent by default
-	end
 
 	local res, code, desc = sendRequest(url)
 	
@@ -421,7 +418,7 @@ end
 
 ----------------------------By Id----------------------------------------------
 
-function api.sendMediaId(chat_id, file_id, media, reply_to_message_id)
+function api.sendMediaId(chat_id, file_id, media, reply_to_message_id, caption)
 	local url = BASE_URL
 	if media == 'voice' then
 		url = url..'/sendVoice?chat_id='..chat_id..'&voice='
@@ -438,32 +435,40 @@ function api.sendMediaId(chat_id, file_id, media, reply_to_message_id)
 	if reply_to_message_id then
 		url = url..'&reply_to_message_id='..reply_to_message_id
 	end
+	if caption then
+		url = url..'&caption='..URL.escape(caption)
+	end
 	
 	return sendRequest(url)
 end
 
-function api.sendPhotoId(chat_id, file_id, reply_to_message_id)
+function api.sendPhotoId(chat_id, file_id, reply_to_message_id, caption)
 	
 	local url = BASE_URL .. '/sendPhoto?chat_id=' .. chat_id .. '&photo=' .. file_id
 	
 	if reply_to_message_id then
 		url = url..'&reply_to_message_id='..reply_to_message_id
 	end
-
+	if caption then
+		url = url..'&caption='..URL.escape(caption)
+	end
+	
 	return sendRequest(url)
 	
 end
 
-function api.sendDocumentId(chat_id, file_id, reply_to_message_id, caption)
+function api.sendDocumentId(chat_id, file_id, reply_to_message_id, caption, reply_markup)
 	
 	local url = BASE_URL .. '/sendDocument?chat_id=' .. chat_id .. '&document=' .. file_id
 	
 	if reply_to_message_id then
 		url = url..'&reply_to_message_id='..reply_to_message_id
 	end
-
 	if caption then
-		url = url..'&caption='..caption
+		url = url..'&caption='..URL.escape(caption)
+	end
+	if reply_markup then
+		url = url..'&reply_markup='..URL.escape(JSON.encode(reply_markup))
 	end
 
 	return sendRequest(url)
@@ -506,7 +511,7 @@ function api.sendDocument(chat_id, document, reply_to_message_id, caption)
 	if reply_to_message_id then
 		curl_command = curl_command .. ' -F "reply_to_message_id=' .. reply_to_message_id .. '"'
 	end
-
+	
 	if caption then
 		curl_command = curl_command .. ' -F "caption=' .. caption .. '"'
 	end
@@ -615,4 +620,4 @@ function api.sendLog(text, markdown)
 	return api.sendMessage(config.log.chat or config.log.admin, text, markdown)
 end
 
-return api	
+return api

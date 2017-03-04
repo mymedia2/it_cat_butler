@@ -1,6 +1,4 @@
 local config = require 'config'
-local misc = require 'utilities'.misc
-local roles = require 'utilities'.roles
 local api = require 'methods'
 
 local plugin = {}
@@ -53,34 +51,29 @@ local function doKeyboard_privsett(user_id)
 end
 
 function plugin.onTextMessage(msg, blocks)
-	if msg.chat.type == 'private' then
-		local keyboard = doKeyboard_privsett(msg.from.id)
-		api.sendMessage(msg.from.id, _('Change your private settings'), true, keyboard)
-	elseif blocks[1] == 'settings' then
-		return true  -- for alias in gruops also. See plugins/configure.lua
-	end
+    if msg.chat.type == 'private' then
+        local keyboard = doKeyboard_privsett(msg.from.id)
+        api.sendMessage(msg.from.id, _('Change your private settings'), true, keyboard)
+    end
 end
 
 function plugin.onCallbackQuery(msg, blocks)
-	if blocks[1] == 'alert' then
+    if blocks[1] == 'alert' then
         api.answerCallbackQuery(msg.cb_id, get_button_description(blocks[2]), true)
-	else
+    else
         change_private_setting(msg.from.id, blocks[2])
-		local keyboard = doKeyboard_privsett(msg.from.id)
-		api.editMarkup(msg.from.id, msg.message_id, keyboard)
+        local keyboard = doKeyboard_privsett(msg.from.id)
+        api.editMarkup(msg.from.id, msg.message_id, keyboard)
         api.answerCallbackQuery(msg.cb_id, _('⚙ Setting applied'))
-	end
+    end
 end
 
 plugin.triggers = {
-    onTextMessage = {
-		config.cmd..'(mysettings)$',
-		config.cmd..'(settings)$',
-	},
+    onTextMessage = {config.cmd..'(mysettings)$'},
     onCallbackQuery = {
         '^###cb:myset:(alert):(.*)$',
         '^###cb:myset:(switch):(.*)$',
-	},
+        }
 }
 
 return plugin

@@ -1,6 +1,5 @@
 local config = require 'config'
-local misc = require 'utilities'.misc
-local roles = require 'utilities'.roles
+local u = require 'utilities'
 local api = require 'methods'
 
 local plugin = {}
@@ -16,10 +15,8 @@ local function getFloodSettings_text(chat_id)
     local action = (db:hget(hash, 'ActionFlood')) or 'kick'
     if action == 'kick' then
         action = _("👞 kick")
-    elseif action == 'ban' then
+    else
         action = _("🔨️ ️ban")
-	elseif action == 'tempban' then
-			action = _("🔑 tempban")
     end
     local num = (db:hget(hash, 'MaxFlood')) or 5
     local exceptions = {
@@ -73,11 +70,11 @@ function plugin.onTextMessage(msg, blocks)
         local chat_id = msg.chat.id
         local keyboard = doKeyboard_dashboard(chat_id)
         local res = api.sendMessage(msg.from.id, _("Navigate this message to see *all the info* about this group!"), true, keyboard)
-        if not misc.is_silentmode_on(msg.chat.id) then --send the responde in the group only if the silent mode is off
+        if not u.is_silentmode_on(msg.chat.id) then --send the responde in the group only if the silent mode is off
             if res then
                 api.sendMessage(msg.chat.id, _("_I've sent you the group dashboard via private message_"), true)
             else
-                misc.sendStartMe(msg.chat.id, _("_Please message me first so I can message you_"))
+                u.sendStartMe(msg)
             end
         end
     end
@@ -85,44 +82,51 @@ end
 
 function plugin.onCallbackQuery(msg, blocks)
     local chat_id = msg.target_id
-        local request = blocks[2]
-        local text, notification
+    local request = blocks[2]
+    local text, notification
     local parse_mode = true
-		local res = api.getChat(chat_id)
-		if not res then
+	local res = api.getChat(chat_id)
+	if not res then
 		api.answerCallbackQuery(msg.cb_id, _("🚫 This group does not exist"))
-			return
-		end
+		return
+	end
 	-- Private chats don't have an username
-		local private = not res.result.username
-		local res = api.getChatMember(chat_id, msg.from.id)
-		if not res or (res.result.status == 'left' or res.result.status == 'kicked') and private then
+	local private = not res.result.username
+	local res = api.getChatMember(chat_id, msg.from.id)
+	if not res or (res.result.status == 'left' or res.result.status == 'kicked') and private then
 		api.editMessageText(msg.from.id, msg.message_id, _("🚷 You are not a member of the chat. " ..
 			"You can't see the settings of a private group."))
-			return
-		end
+		return
+	end
     local keyboard = doKeyboard_dashboard(chat_id)
-        if request == 'settings' then
-            text = misc.getSettings(chat_id)
-            notification = _("ℹ️ Group ► Settings")
+    if request == 'settings' then
+        text = u.getSettings(chat_id)
+        notification = _("ℹ️ Group ► Settings")
+    end
+    if request == 'rules' then
+        text = u.getRules(chat_id)
+        notification = _("ℹ️ Group ► Rules")
+    end
+    if request == 'adminlist' then
+        parse_mode = 'html'
+        local adminlist = u.getAdminlist(chat_id)
+        if adminlist then
+        	local is_empty, modlist = u.getModlist(chat_id)
+        	text = adminlist..'\n'..modlist
+        else
+            text = _("I got kicked out of this group 😓")
         end
-        if request == 'rules' then
-            text = misc.getRules(chat_id)
-            notification = _("ℹ️ Group ► Rules")
-        end
-        if request == 'adminlist' then
-            text = misc.getAdminlist(chat_id, msg.from.id)
-            notification = _("ℹ️ Group ► Admin list")
-        end
-        if request == 'extra' then
-            text = misc.getExtraList(chat_id)
-            notification = _("ℹ️ Group ► Extra")
-        end
-        if request == 'flood' then
-            text = getFloodSettings_text(chat_id)
-            notification = _("ℹ️ Group ► Flood")
-        end
-        if request == 'media' then
+        notification = _("ℹ️ Group ► Admin list")
+    end
+    if request == 'extra' then
+        text = u.getExtraList(chat_id)
+        notification = _("ℹ️ Group ► Extra")
+    end
+    if request == 'flood' then
+        text = getFloodSettings_text(chat_id)
+        notification = _("ℹ️ Group ► Flood")
+    end
+    if request == 'media' then
 		local media_texts = {
 			photo = _("Images"),
 			gif = _("GIFs"),
@@ -137,21 +141,21 @@ function plugin.onCallbackQuery(msg, blocks)
 			game = _("Games"),
 			location = _("Locations"),
 		}
-            text = _("*Current media settings*:\n\n")
-            for media, default_status in pairs(config.chat_settings['media']) do
-                local status = (db:hget('chat:'..chat_id..':media', media)) or default_status
-                if status == 'ok' then
-                    status = '✅'
-                else
+        text = _("*Current media settings*:\n\n")
+        for media, default_status in pairs(config.chat_settings['media']) do
+            local status = (db:hget('chat:'..chat_id..':media', media)) or default_status
+            if status == 'ok' then
+                status = '✅'
+            else
                 status = '🚫'
-                end
+            end
             local media_cute_name = media_texts[media] or media
             text = text..'`'..media_cute_name..'` ≡ '..status..'\n'
-            end
-            notification = _("ℹ️ Group ► Media")
         end
+        notification = _("ℹ️ Group ► Media")
+    end
     api.editMessageText(msg.from.id, msg.message_id, text, parse_mode, keyboard)
-        api.answerCallbackQuery(msg.cb_id, notification)
+    api.answerCallbackQuery(msg.cb_id, notification)
 end
 
 plugin.triggers = {
