@@ -695,7 +695,8 @@ function utilities.getSettings(chat_id)
 		Arab = _("Arab"),
 		Rtl = _("RTL"),
 		Reports = _("Reports"),
-		Welbut = _("Welcome button")
+		Welbut = _("Welcome button"),
+		voteban = _("Polls for ban"),
 	}
     for key, default in pairs(config.chat_settings['settings']) do
         

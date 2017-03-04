@@ -249,7 +249,7 @@ function plugin.onTextMessage(msg, blocks)
 		local all = db:hgetall('bot:usernames')
 		for username,id in pairs(all) do
 			if tostring(id) == user_id then
-				api.sendReply(msg, username)
+				api.sendReply(msg, '@'..username)
 				return
 			end
 		end

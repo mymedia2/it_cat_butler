@@ -418,7 +418,6 @@ while true do -- Start a loop while the bot should be running.
 		last_cron = os.date('%M')
 		last.h = current.h
 		current.h = 0
-		print(clr.yellow..'Cron...'..clr.reset)
 		for i,v in ipairs(plugins) do
 			if v.cron then -- Call each plugin's cron function, if it has one.
 				local res, err = xpcall(v.cron, debug.traceback)
