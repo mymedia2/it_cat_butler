@@ -21,7 +21,8 @@ function plugin.onTextMessage(msg, blocks)
 			return
 		end
 		if config.bot_settings.admin_mode and not u.is_superadmin(msg.from.id) then
-			api.sendMessage(msg.chat.id, _("_Admin mode is on: only the bot admin can add me to a new group_"), true)
+			api.sendMessage(msg.chat.id, _("_Admin mode is active._ "
+							.. "Please contact @mymedia to add me to a new group"), true)
 			api.leaveChat(msg.chat.id)
 			return
 		end

@@ -1791,6 +1791,12 @@ msgstr ""
 "_Админ-режим активирован: только админ бота может добавить меня в новую "
 "группу_"
 
+#: plugins/service:24
+msgid "_Admin mode is active._ Please contact @mymedia to add me to a new "
+"group"
+msgstr "_Активен режим админа._ Обратись к @mymedia, чтобы добавить меня в "
+"новую группу"
+
 #: plugins/service.lua:34
 #, lua-format
 msgid ""
