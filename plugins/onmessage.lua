@@ -19,6 +19,8 @@ local function is_ignored(chat_id, msg_type)
     local status = (db:hget(hash, msg_type)) or 'no'
     if status == 'yes' then
         return true
+    elseif msg_type == 'voice' then
+        return true
     elseif status == 'no' then
         return false
     end
