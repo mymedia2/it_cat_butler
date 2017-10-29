@@ -48,11 +48,10 @@ while true do -- Start a loop while the bot should be running.
 	else
 		print('Connection error')
 	end
-	if last_cron ~= os.date('%H') then -- Run cron jobs every hour.
-		last_cron = os.date('%H')
+	if last_cron ~= os.date('%M') then -- Run cron jobs every minute.
+		last_cron = os.date('%M')
 		-- last.h = current.h
 		current.h = 0
-		print(clr.yellow..'Cron...'..clr.reset)
 		for i=1, #plugins do
 			if plugins[i].cron then -- Call each plugin's cron function, if it has one.
 				local res2, err = pcall(plugins[i].cron)
