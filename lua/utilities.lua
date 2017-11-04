@@ -555,6 +555,36 @@ function utilities.getRules(chat_id)
 	end
 end
 
+-- Make mention of the user or the chat room to display. The first parameter is
+-- the user object or the chat object, the second specifies how it will use the
+-- result: for send in a message body (false) or for answer to a callback query
+-- (true). In first case the name will be escaped, otherwise the function won't
+-- escape it.
+function utilities.full_name(chat, without_link)
+	if chat.first_name == '' then
+		-- if the user deleted his account, API returns an User object with id
+		-- and first_name fields
+		return i18n("Deleted account")
+	end
+	local result = chat.first_name or chat.title
+	if chat.last_name then
+		result = result .. ' ' .. chat.last_name
+	end
+	if without_link then
+		return result
+	end
+	if chat.username then
+		local name = result:escape_hard('link')
+		if name:match('^%s*$') then
+			-- this condition will be true, if name contains only right square
+			-- brackets and spaces
+			return '@' .. chat.username:escape()
+		end
+		return string.format('[%s](https://telegram.me/%s)', name, chat.username)
+	end
+	return result:escape()
+end
+
 function utilities.getAdminlist(chat_id)
 	local list, code = api.getChatAdministrators(chat_id)
 	if not list then
