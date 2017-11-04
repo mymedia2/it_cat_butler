@@ -106,6 +106,7 @@ local _M =
 		'warn',
 		'welcome',
 		'admin',
+		'voteban',
 		'extra', --must be the last plugin in the list.
 	},
 	available_languages = {
@@ -214,6 +215,10 @@ local _M =
 			['timeframe'] = 'd',
 			['duration'] = 1
 		},
+		['voteban'] = {
+			['quorum'] = 5,
+			['duration'] = 1800,  -- half an hour
+		}
 	},
 	private_settings = {
 		rules_on_join = 'off',

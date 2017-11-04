@@ -111,6 +111,49 @@ local function changeCharSettings(chat_id, field)
 	return text
 end
 
+local function step(count, direction)
+	assert(direction == -1 or direction == 1)
+	if count <= 5 and direction == -1 then return 5 end
+	if count >= 720 and direction == 1 then return 720 end
+
+	local ex = {5, 10, 15, 20, 30, 45, 60, 120, 180, 300, 360, 480, 600, 720}
+	local index
+	for i, v in pairs(ex) do
+		if v == count then
+			index = i
+			break
+		end
+	end
+	if not index then return 10 end
+	return ex[index + direction]
+end
+
+local function changeVotebanSetting(chat_id, action)
+	local hash = string.format('chat:%d:voteban', chat_id)
+
+	if action == 'DimDuration' or action == 'RaiseDuration' then
+		local old_value = tonumber(db:hget(hash, 'duration') or config.chat_settings.voteban.duration)
+		local direction = 1
+		if action == 'DimDuration' then direction = -1 end
+		local new_value = step(old_value / 60, direction) * 60
+		db:hset(hash, 'duration', new_value)
+		return old_value, new_value
+	end
+
+	if action == 'DimQuorum' or action == 'RaiseQuorum' then
+		local old_value = tonumber(db:hget(hash, 'quorum') or config.chat_settings.voteban.quorum)
+		local new_value = old_value + 1
+		if action == 'DimQuorum' then
+			new_value = old_value - 1
+		end
+		if new_value < 2 then new_value = old_value end
+		db:hset(hash, 'quorum', new_value)
+		return old_value, new_value
+	end
+
+	error('unreachable')
+end
+
 local function usersettings_table(settings, chat_id)
 	local return_table = {}
 	local icon_off, icon_on = '👤', '👥'
@@ -132,7 +175,7 @@ local function adminsettings_table(settings, chat_id)
 	local return_table = {}
 	local icon_off, icon_on = '☑️', '✅'
 	for field, default in pairs(settings) do
-		if field ~= 'Extra' and field ~= 'Rules' then
+		if field ~= 'Extra' and field ~= 'Rules' and field ~= 'voteban' then
 			local status = (db:hget('chat:'..chat_id..':settings', field)) or default
 			if status == 'off' then
 				return_table[field] = icon_off
@@ -161,6 +204,43 @@ local function charsettings_table(settings, chat_id)
 	end
 
 	return return_table
+end
+
+local function insert_voteban_section(keyboard, chat_id)
+	local hash = string.format('chat:%d:settings', chat_id)
+	local status = db:hget(hash, 'voteban') or config.chat_settings.voteban.status
+	if status == 'off' then
+		status = '👤'
+	else
+		status = '👥'
+	end
+	hash = string.format('chat:%d:voteban', chat_id)
+	local duration = tonumber(db:hget(hash, 'duration')) or config.chat_settings.voteban.duration
+	if duration < 70 * 60 then
+		-- TRANSLATORS: this is an abbreviation for minutes
+		duration = i18n("%d min"):format(duration / 60)
+	else
+		-- TODO: make plural forms
+		duration = i18n("%d hours"):format(duration / 3600)
+	end
+	local quorum = db:hget(hash, 'quorum') or config.chat_settings.voteban.quorum
+
+	table.insert(keyboard, {
+		{text = i18n("Polls for ban"), callback_data='menu:alert:settings:polls:'..locale.language},
+		{text = status, callback_data='menu:voteban:'..chat_id},
+	})
+	table.insert(keyboard, {
+		{text = i18n("Duration"), callback_data='menu:alert:settings:duration:'..locale.language},
+		{text = '➖', callback_data='menu:DimDuration:'..chat_id},
+		{text = tostring(duration), callback_data='menu:alert:values:'..chat_id},
+		{text = '➕', callback_data='menu:RaiseDuration:'..chat_id},
+	})
+	table.insert(keyboard, {
+		{text = i18n("Quorum"), callback_data='menu:alert:settings:quorum:'..locale.language},
+		{text = '➖', callback_data='menu:DimQuorum:'..chat_id},
+		{text = tostring(quorum), callback_data='menu:alert:values:'..chat_id},
+		{text = '➕', callback_data='menu:RaiseQuorum:'..chat_id},
+	})
 end
 
 local function insert_settings_section(keyboard, settings_section, chat_id)
@@ -201,6 +281,8 @@ local function doKeyboard_menu(chat_id)
 
 	settings_section = charsettings_table(config.chat_settings['char'], chat_id)
 	keyboard = insert_settings_section(keyboard, settings_section, chat_id)
+
+	insert_voteban_section(keyboard.inline_keyboard, chat_id)
 
 	--warn
 	local max = (db:hget('chat:'..chat_id..':warnsettings', 'max')) or config.chat_settings['warnsettings']['max']
@@ -264,6 +346,9 @@ function plugin.onCallbackQuery(msg, blocks)
 				end
 			elseif blocks[2] == 'Rtl' or blocks[2] == 'Arab' then
 				text = changeCharSettings(chat_id, blocks[2])
+			elseif blocks[2] == 'DimDuration' or blocks[2] == 'RaiseDuration'
+					or blocks[2] == 'DimQuorum' or blocks[2] == 'RaiseQuorum' then
+				text = string.format('%d → %d', changeVotebanSetting(chat_id, blocks[2]))
 			else
 				text, show_alert = u.changeSettingStatus(chat_id, blocks[2])
 			end
